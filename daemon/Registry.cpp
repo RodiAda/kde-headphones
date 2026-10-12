@@ -9,6 +9,7 @@
 #include "NothingBackend.h"
 #include "HuaweiBackend.h"
 #include "SennheiserBackend.h"
+#include "JabraBackend.h"
 #include "SonyBackend.h"
 #include "XiaomiBackend.h"
 #include "SoundcoreBackend.h"
@@ -26,6 +27,7 @@ constexpr KnownService KnownServices[] = {
     {"0000FD2D-0000-1000-8000-00805F9B34FB", DeviceKind::Xiaomi, "Redmi Buds", false},
     {"0000FD2D-0000-1000-8000-00805F9B34FB", DeviceKind::Xiaomi, "Xiaomi Buds", false},
     {"A2129FF3-081B-4C45-8AFE-469D9C4842EC", DeviceKind::Sennheiser, nullptr, false},
+    {"00001101-0000-1000-8000-00805F9B34FB", DeviceKind::Jabra, "Jabra", false},
     {"00001101-0000-1000-8000-00805F9B34FB", DeviceKind::Bose, "Bose", false},
     {"00001101-0000-1000-8000-00805F9B34FB", DeviceKind::Huawei, "FreeBuds", false},
     {"00001101-0000-1000-8000-00805F9B34FB", DeviceKind::Huawei, "FreeLace", false},
@@ -70,6 +72,8 @@ std::unique_ptr<Backend> createBackend(MDRConnection *connection, const DeviceIn
         return std::make_unique<SoundcoreBackend>(connection, device);
     case DeviceKind::Sennheiser:
         return std::make_unique<SennheiserBackend>(connection, device);
+    case DeviceKind::Jabra:
+        return std::make_unique<JabraBackend>(connection, device);
     default:
         return nullptr;
     }
