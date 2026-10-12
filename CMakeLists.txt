@@ -22,6 +22,7 @@ add_executable(headphonesd
     daemon/SonyBackend.cpp
     daemon/GalaxyBackend.cpp
     daemon/AirPodsBackend.cpp
+    daemon/PixelBudsBackend.cpp
     daemon/Registry.cpp
     daemon/Log.cpp
 )
@@ -70,6 +71,9 @@ if (HEADPHONES_TESTS)
     add_executable(airpods-test tests/airpods_test.cpp daemon/AirPodsBackend.cpp daemon/Log.cpp)
     target_include_directories(airpods-test PRIVATE daemon)
     target_link_libraries(airpods-test PRIVATE mdr Qt6::Core Qt6::DBus)
+    add_executable(pixelbuds-test tests/pixelbuds_test.cpp daemon/PixelBudsBackend.cpp daemon/Log.cpp)
+    target_include_directories(pixelbuds-test PRIVATE daemon)
+    target_link_libraries(pixelbuds-test PRIVATE mdr Qt6::Core Qt6::DBus)
 endif()
 
 set(CPACK_PACKAGE_NAME kde-headphones)
