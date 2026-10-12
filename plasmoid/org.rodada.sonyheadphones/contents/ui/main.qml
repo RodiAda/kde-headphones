@@ -30,10 +30,34 @@ PlasmoidItem {
     readonly property bool canConnectMore: connectedDevices.length < 2
     readonly property var cfg: available ? parseJson(unwrap(hp.Settings, ""), {}) : {}
     readonly property string alert: available ? unwrap(hp.Alert, "") : ""
+    readonly property var batteries: available ? parseJson(unwrap(hp.Batteries, ""), []) : []
+    readonly property bool hasMainBattery: batteries.some(b => b.part === "main")
+    readonly property var modes: available ? parseJson(unwrap(hp.Modes, ""), []) : []
     property bool showPaired: false
     property int currentTab: 0
 
-    readonly property var eqBandLabels: ["400", "1k", "2.5k", "6.3k", "16k"]
+    function eqBandLabels(count) {
+        if (count === 5)
+            return ["400", "1k", "2.5k", "6.3k", "16k"]
+        if (count === 10)
+            return ["31", "63", "125", "250", "500", "1k", "2k", "4k", "8k", "16k"]
+        return []
+    }
+
+    function batteryPartLabel(part) {
+        switch (part) {
+        case "left": return i18nc("left earbud", "L")
+        case "right": return i18nc("right earbud", "R")
+        case "case": return i18nc("charging case", "Case")
+        }
+        return ""
+    }
+
+    function batterySummary() {
+        if (root.hasMainBattery || root.batteries.length === 0)
+            return root.battery >= 0 ? i18n("battery %1%", root.battery) : ""
+        return root.batteries.map(b => i18n("%1 %2%", root.batteryPartLabel(b.part), b.level)).join(", ")
+    }
     readonly property int eqCustomPreset: 24
 
     function mergeProperties(map) {
@@ -205,10 +229,11 @@ PlasmoidItem {
             return i18n("sony-headphonesd is not running")
         if (!available)
             return i18n("Not connected")
-        const parts = [modeLabel(mode)]
-        if (battery >= 0)
-            parts.push(i18n("battery %1%", battery))
-        return parts.join(" · ") + "\n" + i18n("Middle-click to cycle the mode")
+        const parts = [modeLabel(mode), batterySummary()].filter(s => s.length > 0)
+        let text = parts.join(" · ")
+        if (modes.length > 1)
+            text += "\n" + i18n("Middle-click to cycle the mode")
+        return text
     }
 
     component SettingSwitch: RowLayout {
@@ -274,7 +299,7 @@ PlasmoidItem {
         onPressed: wasExpanded = root.expanded
         onClicked: mouse => {
             if (mouse.button === Qt.MiddleButton) {
-                if (root.available)
+                if (root.available && root.modes.length > 1)
                     root.call("CycleMode")
             } else {
                 root.expanded = !wasExpanded
@@ -337,15 +362,27 @@ PlasmoidItem {
                         text: root.cfg.codec || ""
                         opacity: 0.7
                     }
-                    Kirigami.Icon {
-                        visible: root.battery >= 0
-                        source: root.batteryIcon(root.battery)
-                        implicitWidth: Kirigami.Units.iconSizes.small
-                        implicitHeight: Kirigami.Units.iconSizes.small
-                    }
-                    PlasmaComponents3.Label {
-                        visible: root.battery >= 0
-                        text: i18n("%1%", root.battery)
+                    Repeater {
+                        model: root.hasMainBattery || root.batteries.length === 0
+                            ? (root.battery >= 0 ? [{ part: "main", level: root.battery }] : [])
+                            : root.batteries
+                        delegate: RowLayout {
+                            required property var modelData
+                            spacing: Kirigami.Units.smallSpacing
+                            PlasmaComponents3.Label {
+                                visible: modelData.part !== "main"
+                                text: root.batteryPartLabel(modelData.part)
+                                opacity: 0.7
+                            }
+                            Kirigami.Icon {
+                                source: root.batteryIcon(modelData.level)
+                                implicitWidth: Kirigami.Units.iconSizes.small
+                                implicitHeight: Kirigami.Units.iconSizes.small
+                            }
+                            PlasmaComponents3.Label {
+                                text: i18n("%1%", modelData.level)
+                            }
+                        }
                     }
                 }
                 PlasmaComponents3.TabBar {
@@ -418,13 +455,14 @@ PlasmoidItem {
 
                 RowLayout {
                     Layout.fillWidth: true
+                    visible: root.modes.length > 0
                     spacing: Kirigami.Units.smallSpacing
                     Repeater {
                         model: [
                             { mode: "noise-cancelling", icon: "audio-volume-muted" },
                             { mode: "ambient", icon: "audio-input-microphone" },
                             { mode: "off", icon: "system-shutdown" }
-                        ]
+                        ].filter(m => root.modes.includes(m.mode))
                         delegate: PlasmaComponents3.Button {
                             required property var modelData
                             Layout.fillWidth: true
@@ -698,7 +736,7 @@ PlasmoidItem {
                                 }
                                 PlasmaComponents3.Label {
                                     Layout.alignment: Qt.AlignHCenter
-                                    text: root.eqBandLabels[bandColumn.index] || ""
+                                    text: root.eqBandLabels((root.cfg.equalizer || { bands: [] }).bands.length)[bandColumn.index] || ""
                                     font: Kirigami.Theme.smallFont
                                     opacity: 0.7
                                 }

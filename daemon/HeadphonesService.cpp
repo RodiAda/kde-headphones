@@ -56,6 +56,8 @@ constexpr Names<MDRPlaybackStatus> PlaybackStatuses[] = {
     {MDR_PLAYBACK_STOPPED, "stopped"}, {MDR_PLAYBACK_PLAYING, "playing"}, {MDR_PLAYBACK_PAUSED, "paused"}};
 constexpr Names<MDRPlaybackAction> PlaybackActions[] = {
     {MDR_PLAYBACK_PLAY, "play"}, {MDR_PLAYBACK_PAUSE, "pause"}, {MDR_PLAYBACK_NEXT, "next"}, {MDR_PLAYBACK_PREVIOUS, "previous"}};
+constexpr Names<MDRBatteryPart> BatteryParts[] = {
+    {MDR_BATTERY_MAIN, "main"}, {MDR_BATTERY_LEFT, "left"}, {MDR_BATTERY_RIGHT, "right"}, {MDR_BATTERY_CASE, "case"}};
 constexpr Names<MDRAudioCodec> Codecs[] = {
     {MDR_AUDIO_CODEC_SBC, "SBC"}, {MDR_AUDIO_CODEC_AAC, "AAC"}, {MDR_AUDIO_CODEC_LDAC, "LDAC"},
     {MDR_AUDIO_CODEC_APTX, "aptX"}, {MDR_AUDIO_CODEC_APTX_HD, "aptX HD"}, {MDR_AUDIO_CODEC_LC3, "LC3"}};
@@ -154,7 +156,6 @@ void HeadphonesService::tick()
 
 std::optional<HeadphonesService::Device> HeadphonesService::findConnectedDevice() const
 {
-    const QString sonyUuid = QString::fromLatin1(MDR_SERVICE_UUID_XM5);
     auto call = QDBusMessage::createMethodCall(QStringLiteral("org.bluez"), QStringLiteral("/"),
                                                QStringLiteral("org.freedesktop.DBus.ObjectManager"),
                                                QStringLiteral("GetManagedObjects"));
@@ -169,14 +170,19 @@ std::optional<HeadphonesService::Device> HeadphonesService::findConnectedDevice(
         if (dev == ifaces.cend() || !dev->value(QStringLiteral("Connected")).toBool())
             continue;
         const QStringList uuids = dev->value(QStringLiteral("UUIDs")).toStringList();
-        if (!uuids.contains(sonyUuid, Qt::CaseInsensitive))
+        MDRProtocolVersion protocol;
+        if (uuids.contains(QString::fromLatin1(MDR_SERVICE_UUID_XM5), Qt::CaseInsensitive))
+            protocol = MDR_PROTOCOL_V2;
+        else if (uuids.contains(QString::fromLatin1(MDR_SERVICE_UUID_LEGACY), Qt::CaseInsensitive))
+            protocol = MDR_PROTOCOL_V1;
+        else
             continue;
         const QString adapterPath = dev->value(QStringLiteral("Adapter")).value<QDBusObjectPath>().path();
         const QString adapterAddress = objects.value(QDBusObjectPath(adapterPath))
                                            .value(QStringLiteral("org.bluez.Adapter1"))
                                            .value(QStringLiteral("Address"))
                                            .toString();
-        return Device{dev->value(QStringLiteral("Alias")).toString(), dev->value(QStringLiteral("Address")).toString(), adapterAddress};
+        return Device{dev->value(QStringLiteral("Alias")).toString(), dev->value(QStringLiteral("Address")).toString(), adapterAddress, protocol};
     }
     return std::nullopt;
 }
@@ -192,7 +198,8 @@ void HeadphonesService::tryConnect()
         return;
     _device = *device;
     qCInfo(lcHp) << "connecting to" << _device.name << _device.address;
-    const MDRResult r = mdrConnectionConnect(_conn, _device.address.toLatin1().constData(), MDR_SERVICE_UUID_XM5);
+    const char *uuid = _device.protocol == MDR_PROTOCOL_V1 ? MDR_SERVICE_UUID_LEGACY : MDR_SERVICE_UUID_XM5;
+    const MDRResult r = mdrConnectionConnect(_conn, _device.address.toLatin1().constData(), uuid);
     if (r != MDR_RESULT_OK && r != MDR_RESULT_INPROGRESS) {
         qCInfo(lcHp) << "connect failed:" << mdrConnectionGetLastError(_conn);
         mdrConnectionDisconnect(_conn);
@@ -213,7 +220,7 @@ void HeadphonesService::pollConnecting()
         dropConnection(QString::fromUtf8(mdrConnectionGetLastError(_conn)));
         return;
     }
-    if (mdrHeadphonesCreate(MDR_ABI_VERSION, _conn, MDR_PROTOCOL_V2, &_hp) != MDR_RESULT_OK) {
+    if (mdrHeadphonesCreate(MDR_ABI_VERSION, _conn, _device.protocol, &_hp) != MDR_RESULT_OK) {
         dropConnection(QStringLiteral("libmdr ABI mismatch"));
         return;
     }
@@ -222,7 +229,8 @@ void HeadphonesService::pollConnecting()
         dropConnection(QStringLiteral("init request failed"));
         return;
     }
-    qCInfo(lcHp) << "connected to" << _device.name << _device.address;
+    qCInfo(lcHp) << "connected to" << _device.name << _device.address
+                 << (_device.protocol == MDR_PROTOCOL_V1 ? "(protocol V1)" : "(protocol V2)");
     _link = Link::Connected;
 }
 
@@ -332,11 +340,12 @@ void HeadphonesService::dropConnection(const QString &reason)
 
 void HeadphonesService::onPacket(void *self, MDRPacketDirection direction, const unsigned char *frame, int size)
 {
-    if (direction != MDR_PACKET_DIRECTION_RX)
+    auto *service = static_cast<HeadphonesService *>(self);
+    if (direction != MDR_PACKET_DIRECTION_RX || service->_device.protocol != MDR_PROTOCOL_V2)
         return;
     const QByteArray payload = framePayload(frame, size);
     if (!payload.isEmpty())
-        static_cast<HeadphonesService *>(self)->handlePayload(payload);
+        service->handlePayload(payload);
 }
 
 void HeadphonesService::handlePayload(const QByteArray &p)
@@ -389,15 +398,34 @@ void HeadphonesService::publishState()
     int ambient = _lastAmbientLevel;
     bool voice = false;
     QJsonArray devices;
+    QJsonArray batteryArray;
+    QStringList modeList;
     if (up) {
         std::array<MDRBattery, 4> batteries{};
         uint32_t count = batteries.size();
         if (mdrHeadphonesGetBatteries(_hp, batteries.data(), &count) == MDR_RESULT_OK) {
+            int buds = -1;
             for (uint32_t i = 0; i < count; i++) {
-                if (batteries[i].present && batteries[i].part == MDR_BATTERY_MAIN)
-                    battery = batteries[i].level_percent;
+                const MDRBattery &b = batteries[i];
+                if (b.present != MDR_TRUE)
+                    continue;
+                const QString part = nameOf(BatteryParts, b.part);
+                if (part.isEmpty())
+                    continue;
+                batteryArray.append(QJsonObject{
+                    {QStringLiteral("part"), part},
+                    {QStringLiteral("level"), int(b.level_percent)},
+                    {QStringLiteral("charging"), b.charging == MDR_CHARGING_YES},
+                });
+                if (b.part == MDR_BATTERY_MAIN)
+                    battery = b.level_percent;
+                else if (b.part == MDR_BATTERY_LEFT || b.part == MDR_BATTERY_RIGHT)
+                    buds = buds < 0 ? b.level_percent : std::min<int>(buds, b.level_percent);
             }
+            if (battery < 0)
+                battery = buds;
         }
+        modeList = availableModes();
 
         MDRNoiseControl nc{};
         if (mdrHeadphonesGetNoiseControl(_hp, &nc) == MDR_RESULT_OK) {
@@ -432,6 +460,8 @@ void HeadphonesService::publishState()
         QSettings().setValue(AmbientLevelKey, ambient);
     }
     s[QStringLiteral("Battery")] = battery;
+    s[QStringLiteral("Batteries")] = QString::fromUtf8(QJsonDocument(batteryArray).toJson(QJsonDocument::Compact));
+    s[QStringLiteral("Modes")] = QString::fromUtf8(QJsonDocument(QJsonArray::fromStringList(modeList)).toJson(QJsonDocument::Compact));
     s[QStringLiteral("Mode")] = mode;
     s[QStringLiteral("AmbientLevel")] = ambient;
     s[QStringLiteral("FocusOnVoice")] = voice;
@@ -474,6 +504,10 @@ void HeadphonesService::SetMode(const QString &mode)
 {
     if (!requireConnected())
         return;
+    if (!availableModes().contains(mode)) {
+        sendErrorReply(QDBusError::NotSupported, QStringLiteral("These headphones do not support mode %1").arg(mode));
+        return;
+    }
     if (mode == ModeNc) {
         _pending.noiseMode = MDR_NOISE_MODE_CANCELLING;
     } else if (mode == ModeAmbient) {
@@ -514,8 +548,11 @@ void HeadphonesService::CycleMode()
 {
     if (!requireConnected())
         return;
-    const QString current = mode();
-    SetMode(current == ModeNc ? ModeAmbient : current == ModeAmbient ? ModeOff : ModeNc);
+    const QStringList available = availableModes();
+    if (available.isEmpty())
+        return;
+    const qsizetype i = available.indexOf(mode());
+    SetMode(available.at((i + 1) % available.size()));
 }
 
 void HeadphonesService::queueDeviceCommand(MDRPairedDeviceCommand command, const QString &mac)
@@ -916,4 +953,16 @@ void HeadphonesService::RespondToAlert(bool accept)
         return mdrHeadphonesRequestRespondToAlert(hp, accept ? MDR_ALERT_ACTION_POSITIVE : MDR_ALERT_ACTION_NEGATIVE);
     });
     publishState();
+}
+
+QStringList HeadphonesService::availableModes() const
+{
+    QStringList modes;
+    if (has(MDR_FEATURE_NOISE_CANCELLING))
+        modes << ModeNc;
+    if (has(MDR_FEATURE_AMBIENT_SOUND))
+        modes << ModeAmbient;
+    if (!modes.isEmpty())
+        modes << ModeOff;
+    return modes;
 }

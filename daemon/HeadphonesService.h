@@ -31,6 +31,8 @@ class HeadphonesService : public QObject, protected QDBusContext
     Q_PROPERTY(QString Devices READ devices)
     Q_PROPERTY(QString DeviceAction READ deviceAction)
     Q_PROPERTY(QString Settings READ settings)
+    Q_PROPERTY(QString Batteries READ batteries)
+    Q_PROPERTY(QString Modes READ modes)
     Q_PROPERTY(QString Alert READ alert)
 
 public:
@@ -50,6 +52,8 @@ public:
     QString devices() const { return _state.value(QStringLiteral("Devices")).toString(); }
     QString deviceAction() const { return _state.value(QStringLiteral("DeviceAction")).toString(); }
     QString settings() const { return _state.value(QStringLiteral("Settings")).toString(); }
+    QString batteries() const { return _state.value(QStringLiteral("Batteries")).toString(); }
+    QString modes() const { return _state.value(QStringLiteral("Modes")).toString(); }
     QString alert() const { return _state.value(QStringLiteral("Alert")).toString(); }
 
 public Q_SLOTS:
@@ -72,6 +76,7 @@ private:
         QString name;
         QString address;
         QString adapterAddress;
+        MDRProtocolVersion protocol = MDR_PROTOCOL_V2;
     };
     struct Pending {
         std::optional<MDRNoiseMode> noiseMode;
@@ -93,6 +98,7 @@ private:
     bool has(MDRFeature feature) const;
     QString text(MDRText id, uint32_t index = 0) const;
     QJsonObject settingsJson() const;
+    QStringList availableModes() const;
     void queueOp(std::function<MDRResult()> op);
     void runOps();
 

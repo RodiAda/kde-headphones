@@ -16,6 +16,13 @@ A Plasma 6 system tray widget and a small user daemon for controlling Sony headp
 
 Only the features the headphones report as supported are shown.
 
+Both protocol generations handled by libmdr are supported: MDR V2 (WH-1000XM5/XM6, WF-1000XM5/XM6,
+WH-CH720N, WF-C510, WF-C700N, LinkBuds) and the legacy MDR V1 (WH-1000XM3/XM4, WF-1000XM3/XM4),
+picked by the Sony control service the device exposes. Only the WH-1000XM5 has been tested with this
+widget; see the [libmdr support matrix](https://github.com/mos9527/SonyHeadphonesClient/tree/main/docs/device-support).
+Paired device management, the connection order and the connect/disconnect results are available
+on MDR V2 only. BLE-only devices are not supported.
+
 ```
 sony-headphonesd  ── RFCOMM ──  headphones
       │ session D-Bus: org.rodada.SonyHeadphones
@@ -65,7 +72,9 @@ busctl --user introspect org.rodada.SonyHeadphones /org/rodada/SonyHeadphones
 busctl --user call org.rodada.SonyHeadphones /org/rodada/SonyHeadphones org.rodada.SonyHeadphones CycleMode
 ```
 
-Properties: `Connected`, `DeviceName`, `Address`, `Battery` (-1 when unknown), `Mode`
+Properties: `Connected`, `DeviceName`, `Address`, `Battery` (-1 when unknown; the lower earbud on
+true wireless models), `Batteries` (JSON array of `part`: main|left|right|case, `level`, `charging`),
+`Modes` (JSON array of the noise modes the model supports), `Mode`
 (`noise-cancelling` | `ambient` | `off`), `AmbientLevel` (1..20), `FocusOnVoice`,
 `Devices` (JSON array of `mac`, `name`, `connected`, `order`, `active`, `self`),
 `DeviceAction` (JSON describing the last connect/disconnect: `pending` → `in-progress` → `ok` | `error` | `busy`).
