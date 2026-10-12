@@ -1,9 +1,12 @@
 #include <QCoreApplication>
 #include <QJsonArray>
 
+#include <algorithm>
 #include <cstdio>
+#include <optional>
 
 #include "AirPodsBackend.h"
+#include "Registry.h"
 
 namespace {
 
@@ -42,9 +45,9 @@ QByteArray infoPacket(const char *name, const char *modelNumber)
     return p;
 }
 
-AirPodsBackend makeBackend(const char *name)
+AirPodsBackend makeBackend(const char *name, DeviceKind kind = DeviceKind::AirPods)
 {
-    return AirPodsBackend(nullptr, DeviceInfo{QString::fromLatin1(name), QStringLiteral("00:11:22:33:44:55"), {}, DeviceKind::AirPods, {}, true});
+    return AirPodsBackend(nullptr, DeviceInfo{QString::fromLatin1(name), QStringLiteral("00:11:22:33:44:55"), {}, kind, {}, true});
 }
 
 QJsonObject findBattery(const Snapshot &s, const char *part)
@@ -220,6 +223,195 @@ void testMalformed()
     check(b.setMode(ModeNc).isValid(), QStringLiteral("commands rejected before ready"));
 }
 
+void testBeatsModels()
+{
+    const struct {
+        const char *number;
+        AirPodsModel model;
+        const char *name;
+    } numbers[] = {
+        {"A2047", AirPodsModel::PowerbeatsPro, "Powerbeats Pro"},
+        {"A2454", AirPodsModel::PowerbeatsPro, "Powerbeats Pro"},
+        {"A3158", AirPodsModel::PowerbeatsPro2, "Powerbeats Pro 2"},
+        {"A1747", AirPodsModel::Powerbeats3, "Powerbeats3"},
+        {"A2015", AirPodsModel::Powerbeats4, "Powerbeats 4"},
+        {"A3476", AirPodsModel::PowerbeatsFit, "Powerbeats Fit"},
+        {"A2577", AirPodsModel::BeatsFitPro, "Beats Fit Pro"},
+        {"A2512", AirPodsModel::BeatsStudioBuds, "Beats Studio Buds"},
+        {"A2872", AirPodsModel::BeatsStudioBudsPlus, "Beats Studio Buds +"},
+        {"A3151", AirPodsModel::BeatsSoloBuds, "Beats Solo Buds"},
+        {"A2295", AirPodsModel::BeatsFlex, "Beats Flex"},
+        {"A1763", AirPodsModel::BeatsX, "BeatsX"},
+        {"A1796", AirPodsModel::BeatsSolo3, "Beats Solo3"},
+        {"A3140", AirPodsModel::BeatsSolo4, "Beats Solo 4"},
+        {"A1881", AirPodsModel::BeatsSoloPro, "Beats Solo Pro"},
+        {"A1914", AirPodsModel::BeatsStudio3, "Beats Studio3"},
+        {"A2924", AirPodsModel::BeatsStudioPro, "Beats Studio Pro"},
+        {"A3577", AirPodsModel::Beats360, "Beats 360"},
+    };
+    for (const auto &n : numbers) {
+        const AirPodsModel model = AirPodsBackend::modelFromNumber(QLatin1String(n.number));
+        check(model == n.model && AirPodsBackend::isBeats(model) && AirPodsBackend::modelName(model) == QLatin1String(n.name),
+              QStringLiteral("Beats model number %1 -> %2").arg(QLatin1String(n.number), AirPodsBackend::modelName(model)));
+    }
+    check(!AirPodsBackend::isBeats(AirPodsModel::AirPodsPro2) && !AirPodsBackend::isBeats(AirPodsModel::Unknown), QStringLiteral("AirPods are not Beats"));
+    check(AirPodsBackend::modelFromName(QStringLiteral("Rodion's Beats Fit Pro")) == AirPodsModel::BeatsFitPro, QStringLiteral("Beats model from name: Fit Pro"));
+    check(AirPodsBackend::modelFromName(QStringLiteral("Beats Studio Buds+")) == AirPodsModel::BeatsStudioBudsPlus, QStringLiteral("Beats model from name: Studio Buds+"));
+    check(AirPodsBackend::modelFromName(QStringLiteral("Powerbeats Pro")) == AirPodsModel::Unknown, QStringLiteral("ambiguous Powerbeats Pro name stays unknown"));
+    check(AirPodsBackend::modelFromName(QStringLiteral("Beats Studio Buds")) == AirPodsModel::Unknown, QStringLiteral("ambiguous Studio Buds name stays unknown"));
+}
+
+void testBeatsFitPro()
+{
+    AirPodsBackend b = makeBackend("Headphones", DeviceKind::Beats);
+    b.handlePacket(infoPacket("Beats Fit Pro", "A2576"));
+    check(b.model() == AirPodsModel::BeatsFitPro, QStringLiteral("Fit Pro: model from information packet"));
+    check(b.vendor() == QLatin1String("beats"), QStringLiteral("Fit Pro: vendor beats"));
+    b.handlePacket(hex("04 00 04 00 04 00 03 04 01 3c 02 01 02 01 46 02 01 08 01 32 01 01"));
+    b.handlePacket(hex("04 00 04 00 09 00 0d 02 00 00 00"));
+    b.handlePacket(hex("04 00 04 00 09 00 0a 01 00 00 00"));
+    b.handlePacket(hex("04 00 04 00 09 00 28 01 00 00 00"));
+    b.handlePacket(hex("04 00 04 00 09 00 26 01 00 00 00"));
+    b.handlePacket(hex("04 00 04 00 09 00 2e 32 00 00 00"));
+    b.handlePacket(hex("04 00 04 00 09 00 34 01 00 00 00"));
+    const Snapshot s = b.snapshot();
+    check(b.ready(), QStringLiteral("Fit Pro: ready"));
+    check(findBattery(s, "left").value(QStringLiteral("level")).toInt() == 60, QStringLiteral("Fit Pro: left battery 60"));
+    check(findBattery(s, "right").value(QStringLiteral("level")).toInt() == 70, QStringLiteral("Fit Pro: right battery 70"));
+    check(findBattery(s, "case").value(QStringLiteral("level")).toInt() == 50 && findBattery(s, "case").value(QStringLiteral("charging")).toBool(),
+          QStringLiteral("Fit Pro: case battery 50, charging"));
+    check(findBattery(s, "main").isEmpty() && s.battery == 60, QStringLiteral("Fit Pro: overall battery is the lower bud"));
+    check(s.modes == QStringList({ModeNc, ModeAmbient, ModeOff}), QStringLiteral("Fit Pro: modes %1").arg(s.modes.join(QLatin1Char(','))));
+    check(s.mode == ModeNc, QStringLiteral("Fit Pro: noise cancelling"));
+    check(s.settings.value(QStringLiteral("model")).toString() == QLatin1String("Beats Fit Pro"), QStringLiteral("Fit Pro: model name"));
+    check(s.settings.value(QStringLiteral("untested")).toBool(), QStringLiteral("Fit Pro: marked untested"));
+    check(findControl(s, "toggles", "earDetection").value(QStringLiteral("value")) == QJsonValue(true), QStringLiteral("Fit Pro: ear detection toggle"));
+    check(findControl(s, "toggles", "offListeningMode").value(QStringLiteral("value")) == QJsonValue(true), QStringLiteral("Fit Pro: off option toggle"));
+    check(findControl(s, "toggles", "conversationAwareness").isEmpty(), QStringLiteral("Fit Pro: no conversation awareness"));
+    check(findControl(s, "toggles", "personalizedVolume").isEmpty(), QStringLiteral("Fit Pro: no personalized volume"));
+    check(!s.settings.contains(QStringLiteral("sliders")), QStringLiteral("Fit Pro: no adaptive audio slider"));
+    check(b.setMode(ModeAdaptive).isValid(), QStringLiteral("Fit Pro: adaptive rejected"));
+    b.takeOutgoing();
+    check(!b.setMode(ModeAmbient).isValid(), QStringLiteral("Fit Pro: transparency accepted"));
+    const QList<QByteArray> out = b.takeOutgoing();
+    check(out.size() == 1 && hexOf(out.at(0)) == QLatin1String("04 00 04 00 09 00 0d 03 00 00 00"), QStringLiteral("Fit Pro: transparency command"));
+}
+
+void testBeatsStudioBudsPlus()
+{
+    AirPodsBackend b = makeBackend("Beats Studio Buds+", DeviceKind::Beats);
+    check(b.model() == AirPodsModel::BeatsStudioBudsPlus, QStringLiteral("Studio Buds +: model from name"));
+    b.handlePacket(hex("04 00 04 00 04 00 03 04 01 64 02 01 02 01 00 04 01 08 01 0a 02 01"));
+    b.handlePacket(hex("04 00 04 00 09 00 0d 03 00 00 00"));
+    b.handlePacket(hex("04 00 04 00 09 00 0a 01 00 00 00"));
+    const Snapshot s = b.snapshot();
+    check(findBattery(s, "left").value(QStringLiteral("level")).toInt() == 100 && findBattery(s, "right").isEmpty(),
+          QStringLiteral("Studio Buds +: disconnected right bud dropped"));
+    check(findBattery(s, "case").value(QStringLiteral("level")).toInt() == 10, QStringLiteral("Studio Buds +: case battery 10"));
+    check(s.modes == QStringList({ModeNc, ModeAmbient, ModeOff}) && s.mode == ModeAmbient, QStringLiteral("Studio Buds +: transparency"));
+    check(findControl(s, "toggles", "earDetection").isEmpty(), QStringLiteral("Studio Buds +: no ear detection toggle"));
+}
+
+void testBeatsSoloBuds()
+{
+    AirPodsBackend b = makeBackend("Kitchen", DeviceKind::Beats);
+    b.handlePacket(infoPacket("Beats Solo Buds", "A3150"));
+    b.handlePacket(hex("04 00 04 00 04 00 02 04 01 5a 02 01 02 01 50 02 01"));
+    b.handlePacket(hex("04 00 04 00 09 00 0d 02 00 00 00"));
+    const Snapshot s = b.snapshot();
+    check(b.model() == AirPodsModel::BeatsSoloBuds, QStringLiteral("Solo Buds: model"));
+    check(s.batteries.size() == 2 && findBattery(s, "case").isEmpty(), QStringLiteral("Solo Buds: buds only, no case battery"));
+    check(s.battery == 80, QStringLiteral("Solo Buds: overall battery 80"));
+    check(s.modes.isEmpty() && s.mode.isEmpty(), QStringLiteral("Solo Buds: no noise control even if reported"));
+    check(b.setMode(ModeNc).isValid(), QStringLiteral("Solo Buds: noise cancelling rejected"));
+}
+
+void testBeatsHeadphones()
+{
+    AirPodsBackend pro = makeBackend("Studio", DeviceKind::Beats);
+    pro.handlePacket(infoPacket("Beats Studio Pro", "A2924"));
+    pro.handlePacket(hex("04 00 04 00 04 00 01 01 01 3c 02 01"));
+    pro.handlePacket(hex("04 00 04 00 09 00 0d 01 00 00 00"));
+    Snapshot s = pro.snapshot();
+    check(findBattery(s, "main").value(QStringLiteral("level")).toInt() == 60 && s.battery == 60, QStringLiteral("Studio Pro: headset battery 60"));
+    check(s.modes == QStringList({ModeNc, ModeAmbient, ModeOff}) && s.mode == ModeOff, QStringLiteral("Studio Pro: off"));
+    check(!s.settings.contains(QStringLiteral("wearing")), QStringLiteral("Studio Pro: no per-bud wearing"));
+
+    AirPodsBackend solo = makeBackend("Solo", DeviceKind::Beats);
+    solo.handlePacket(infoPacket("Beats Solo 4", "A3140"));
+    solo.handlePacket(hex("04 00 04 00 04 00 01 01 01 5a 01 01"));
+    s = solo.snapshot();
+    check(findBattery(s, "main").value(QStringLiteral("charging")).toBool() && s.battery == 90, QStringLiteral("Solo 4: headset battery 90, charging"));
+    check(s.modes.isEmpty(), QStringLiteral("Solo 4: no noise control"));
+    check(s.settings.value(QStringLiteral("model")).toString() == QLatin1String("Beats Solo 4"), QStringLiteral("Solo 4: model name"));
+}
+
+void testPowerbeatsPro()
+{
+    AirPodsBackend b = makeBackend("Powerbeats Pro", DeviceKind::Beats);
+    b.handlePacket(infoPacket("Powerbeats Pro", "A2048"));
+    b.handlePacket(hex("04 00 04 00 04 00 03 02 01 64 02 01 04 01 64 01 01 08 01 32 02 01"));
+    b.handlePacket(hex("04 00 04 00 09 00 0a 01 00 00 00"));
+    b.handlePacket(hex("04 00 04 00 09 00 0d 02 00 00 00"));
+    b.handlePacket(hex("04 00 04 00 06 00 00 00"));
+    const Snapshot s = b.snapshot();
+    check(b.model() == AirPodsModel::PowerbeatsPro, QStringLiteral("Powerbeats Pro: model"));
+    check(s.modes.isEmpty(), QStringLiteral("Powerbeats Pro: no noise control"));
+    check(findControl(s, "toggles", "earDetection").value(QStringLiteral("value")) == QJsonValue(true), QStringLiteral("Powerbeats Pro: ear detection toggle"));
+    check(findBattery(s, "left").value(QStringLiteral("charging")).toBool() && findBattery(s, "case").value(QStringLiteral("level")).toInt() == 50,
+          QStringLiteral("Powerbeats Pro: left charging, case 50"));
+    const QJsonObject wearing = s.settings.value(QStringLiteral("wearing")).toObject();
+    check(wearing.value(QStringLiteral("left")).toBool() && wearing.value(QStringLiteral("right")).toBool(), QStringLiteral("Powerbeats Pro: both buds in ear"));
+}
+
+void testDiscovery()
+{
+    const QString aap = QStringLiteral("74ec2172-0bad-4d01-8f77-997b2be0722a");
+    const QString spp = QStringLiteral("00001101-0000-1000-8000-00805f9b34fb");
+    const auto match = [](const QString &alias, const QStringList &uuids) {
+        const auto services = knownServices();
+        const auto it = std::find_if(services.begin(), services.end(), [&](const KnownService &s) {
+            return (!s.uuid || uuids.contains(QString::fromLatin1(s.uuid), Qt::CaseInsensitive))
+                && (!s.nameHint || alias.contains(QLatin1String(s.nameHint), Qt::CaseInsensitive));
+        });
+        return it == services.end() ? std::optional<KnownService>() : std::optional<KnownService>(*it);
+    };
+    const auto kindOf = [&](const QString &alias, const QStringList &uuids) {
+        const auto s = match(alias, uuids);
+        return s ? std::optional<DeviceKind>(s->kind) : std::optional<DeviceKind>();
+    };
+    check(kindOf(QStringLiteral("AirPods Pro"), {aap}) == DeviceKind::AirPods, QStringLiteral("discovery: AirPods by the AAP UUID"));
+    check(kindOf(QStringLiteral("Beats Fit Pro"), {aap}) == DeviceKind::Beats, QStringLiteral("discovery: Beats with the AAP UUID"));
+    check(kindOf(QStringLiteral("Powerbeats Pro"), {}) == DeviceKind::Beats, QStringLiteral("discovery: Powerbeats by name"));
+    check(kindOf(QStringLiteral("Beats Studio Buds"), {spp}) == DeviceKind::Beats, QStringLiteral("discovery: Studio Buds not taken by the Galaxy Buds hint"));
+    check(kindOf(QStringLiteral("Galaxy Buds+ (A1B2)"), {spp}) == DeviceKind::GalaxyClassic, QStringLiteral("discovery: Galaxy Buds+ stays Galaxy"));
+    check(!kindOf(QStringLiteral("Car kit"), {spp}), QStringLiteral("discovery: other devices are ignored"));
+    const auto beats = match(QStringLiteral("Beats Solo 4"), {});
+    check(beats && beats->ownTransport, QStringLiteral("discovery: Beats use their own transport"));
+
+    const auto backend = createBackend(nullptr, DeviceInfo{QStringLiteral("Beats Solo 4"), QStringLiteral("00:11:22:33:44:55"), {}, DeviceKind::Beats, {}, true});
+    check(dynamic_cast<AirPodsBackend *>(backend.get()) && backend->vendor() == QLatin1String("beats"), QStringLiteral("discovery: Beats handled by the AAP backend"));
+}
+
+void testBeatsUnknown()
+{
+    AirPodsBackend b = makeBackend("Headphones", DeviceKind::Beats);
+    check(b.vendor() == QLatin1String("beats"), QStringLiteral("unknown Beats: vendor beats"));
+    b.handlePacket(infoPacket("Beats", "A9999"));
+    b.handlePacket(hex("04 00 04 00 04 00 01 01 01 30 02 01"));
+    const Snapshot s = b.snapshot();
+    check(s.settings.value(QStringLiteral("model")).toString() == QLatin1String("Beats (A9999)"), QStringLiteral("unknown Beats: model shows number"));
+    check(s.settings.value(QStringLiteral("untested")).toBool(), QStringLiteral("unknown Beats: marked untested"));
+
+    AirPodsBackend named = makeBackend("Rodion's Beats");
+    check(named.vendor() == QLatin1String("beats"), QStringLiteral("unknown Beats behind the AAP UUID: vendor from name"));
+    AirPodsBackend apple = makeBackend("Kitchen");
+    check(apple.vendor() == QLatin1String("apple"), QStringLiteral("unknown AirPods: vendor apple"));
+    apple.handlePacket(infoPacket("Kitchen", "A9999"));
+    apple.handlePacket(hex("04 00 04 00 04 00 01 01 01 30 02 01"));
+    check(apple.snapshot().settings.value(QStringLiteral("model")).toString() == QLatin1String("AirPods (A9999)"), QStringLiteral("unknown AirPods: model shows number"));
+}
+
 }
 
 int main(int argc, char *argv[])
@@ -232,6 +424,14 @@ int main(int argc, char *argv[])
     testAirPodsMax();
     testUnknown();
     testMalformed();
+    testBeatsModels();
+    testBeatsFitPro();
+    testBeatsStudioBudsPlus();
+    testBeatsSoloBuds();
+    testBeatsHeadphones();
+    testPowerbeatsPro();
+    testBeatsUnknown();
+    testDiscovery();
     std::printf(failures ? "%d failed\n" : "all passed\n", failures);
     return failures ? 1 : 0;
 }
