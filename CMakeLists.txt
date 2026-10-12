@@ -24,6 +24,7 @@ add_executable(headphonesd
     daemon/AirPodsBackend.cpp
     daemon/PixelBudsBackend.cpp
     daemon/NothingBackend.cpp
+    daemon/BoseBackend.cpp
     daemon/Registry.cpp
     daemon/Log.cpp
 )
@@ -78,6 +79,9 @@ if (HEADPHONES_TESTS)
     add_executable(nothing-test tests/nothing_test.cpp daemon/NothingBackend.cpp daemon/Log.cpp)
     target_include_directories(nothing-test PRIVATE daemon)
     target_link_libraries(nothing-test PRIVATE mdr Qt6::Core Qt6::DBus)
+    add_executable(bose-test tests/bose_test.cpp daemon/BoseBackend.cpp daemon/Log.cpp)
+    target_include_directories(bose-test PRIVATE daemon)
+    target_link_libraries(bose-test PRIVATE mdr Qt6::Core Qt6::DBus)
 endif()
 
 set(CPACK_PACKAGE_NAME kde-headphones)
