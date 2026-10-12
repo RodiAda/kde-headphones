@@ -198,6 +198,8 @@ PlasmoidItem {
         case "spoken-word": return i18n("Spoken word")
         case "treble-booster": return i18n("Treble booster")
         case "treble-reducer": return i18n("Treble reducer")
+        case "smooth": return i18n("Smooth")
+        case "energize": return i18n("Energize")
         }
         const generic = /^preset-(\d+)$/.exec(key)
         if (generic)
@@ -250,7 +252,19 @@ PlasmoidItem {
         case "adaptiveSound": return i18n("Adaptive sound")
         case "noiseCancellingMode": return i18n("Noise cancelling scene")
         case "transparencyMode": return i18n("Transparency mode")
+        case "smartPause": return i18n("Smart pause")
+        case "comfortCall": return i18n("Comfort call")
+        case "batteryProtection": return i18n("Battery protection")
+        case "windNoiseReduction": return i18n("Wind noise reduction")
+        case "muteReminder": return i18n("Mute reminder")
+        case "autoRejectCalls": return i18n("Reject incoming calls automatically")
+        case "buttonSounds": return i18n("Button sounds")
+        case "sidetoneLevel": return i18n("Own voice level on calls")
+        case "callEqualizer": return i18n("Call equalizer")
         }
+        const band = /^eqBand(\d+)$/.exec(key)
+        if (band)
+            return i18n("Band %1", band[1])
         return humanize(key)
     }
 
@@ -281,6 +295,11 @@ PlasmoidItem {
         case "vocal": return i18n("Vocal")
         case "talk": return i18n("Talk")
         case "manual": return i18n("Manual")
+        case "tones": return i18n("Tones")
+        case "voice": return i18n("Voice")
+        case "neutral": return i18n("Neutral")
+        case "bass": return i18n("Bass")
+        case "treble": return i18n("Treble")
         }
         const minutes = /^(\d+)-min$/.exec(option)
         if (minutes)
