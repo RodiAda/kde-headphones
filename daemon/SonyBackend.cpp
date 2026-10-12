@@ -12,6 +12,7 @@ namespace {
 
 constexpr qint64 SyncIntervalMs = 60000;
 constexpr int MaxEventsPerTick = 32;
+constexpr qint64 ExpectedHoldMs = 4000;
 const QString AmbientLevelKey = QStringLiteral("sony/ambientLevel");
 
 template<class T>
@@ -187,8 +188,17 @@ void SonyBackend::applyPending()
             if (_pending.focusOnVoice)
                 nc.focus_on_voice = mdrBool(*_pending.focusOnVoice);
             const MDRResult r = mdrHeadphonesSetNoiseControl(_hp, &nc);
-            if (r != MDR_RESULT_OK)
+            if (r != MDR_RESULT_OK) {
                 qCWarning(lcHp) << "SetNoiseControl failed:" << r;
+            } else {
+                if (_pending.noiseMode)
+                    _expected.noiseMode = _pending.noiseMode;
+                if (_pending.ambientLevel)
+                    _expected.ambientLevel = _pending.ambientLevel;
+                if (_pending.focusOnVoice)
+                    _expected.focusOnVoice = _pending.focusOnVoice;
+                _sinceExpected.start();
+            }
         }
         _pending.noiseMode.reset();
         _pending.ambientLevel.reset();
@@ -332,11 +342,20 @@ Snapshot SonyBackend::snapshot()
 
     MDRNoiseControl nc{};
     if (mdrHeadphonesGetNoiseControl(_hp, &nc) == MDR_RESULT_OK) {
-        const MDRNoiseMode m = _pending.noiseMode.value_or(nc.mode);
+        const bool deviceFocus = nc.focus_on_voice == MDR_TRUE;
+        if (_sinceExpected.isValid() && _sinceExpected.elapsed() > ExpectedHoldMs)
+            _expected = {};
+        if (_expected.noiseMode && *_expected.noiseMode == nc.mode)
+            _expected.noiseMode.reset();
+        if (_expected.focusOnVoice && *_expected.focusOnVoice == deviceFocus)
+            _expected.focusOnVoice.reset();
+        if (_expected.ambientLevel && *_expected.ambientLevel == nc.ambient_level)
+            _expected.ambientLevel.reset();
+        const MDRNoiseMode m = _pending.noiseMode.value_or(_expected.noiseMode.value_or(nc.mode));
         s.mode = m == MDR_NOISE_MODE_CANCELLING ? ModeNc : m == MDR_NOISE_MODE_AMBIENT ? ModeAmbient : ModeOff;
-        s.focusOnVoice = _pending.focusOnVoice.value_or(nc.focus_on_voice == MDR_TRUE);
+        s.focusOnVoice = _pending.focusOnVoice.value_or(_expected.focusOnVoice.value_or(deviceFocus));
         if (m == MDR_NOISE_MODE_AMBIENT)
-            s.ambientLevel = std::clamp(_pending.ambientLevel.value_or(nc.ambient_level), 1, 20);
+            s.ambientLevel = std::clamp(_pending.ambientLevel.value_or(_expected.ambientLevel.value_or(nc.ambient_level)), 1, 20);
     }
     if (s.ambientLevel != _lastAmbientLevel) {
         _lastAmbientLevel = s.ambientLevel;

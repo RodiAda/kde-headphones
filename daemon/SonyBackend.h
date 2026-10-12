@@ -53,6 +53,8 @@ private:
 
     MDRHeadphones *_hp = nullptr;
     Pending _pending;
+    Pending _expected;
+    QElapsedTimer _sinceExpected;
     QHash<QString, int> _connectionOrder;
     QJsonObject _deviceAction;
     std::deque<std::function<MDRResult()>> _ops;

@@ -35,6 +35,13 @@ PlasmoidItem {
     readonly property var modes: available ? parseJson(unwrap(hp.Modes, ""), []) : []
     property bool showPaired: false
     property int currentTab: 0
+    property string pendingMode: ""
+
+    Timer {
+        id: pendingModeHold
+        interval: 3000
+        onTriggered: root.pendingMode = ""
+    }
 
     function eqBandLabels(count) {
         if (count === 5)
@@ -427,7 +434,12 @@ PlasmoidItem {
             checked: settingSwitch.checked
             onToggled: {
                 settingSwitch.toggled(checked)
-                checked = Qt.binding(() => settingSwitch.checked)
+                toggleHold.restart()
+            }
+            Timer {
+                id: toggleHold
+                interval: 3000
+                onTriggered: toggle.checked = Qt.binding(() => settingSwitch.checked)
             }
         }
     }
@@ -649,9 +661,11 @@ PlasmoidItem {
                             text: root.modeLabel(modelData.mode)
                             display: PlasmaComponents3.AbstractButton.TextUnderIcon
                             checkable: true
-                            checked: root.mode === modelData.mode
+                            checked: (root.pendingMode || root.mode) === modelData.mode
                             onClicked: {
-                                checked = Qt.binding(() => root.mode === modelData.mode)
+                                checked = Qt.binding(() => (root.pendingMode || root.mode) === modelData.mode)
+                                root.pendingMode = modelData.mode
+                                pendingModeHold.restart()
                                 root.call("SetMode", [new DBus.string(modelData.mode)])
                             }
                         }
@@ -709,12 +723,18 @@ PlasmoidItem {
                         }
                     }
                     PlasmaComponents3.CheckBox {
+                        id: focusBox
                         visible: !!root.ambientRange && root.ambientRange.focusOnVoice === true
                         text: i18n("Focus on voice")
                         checked: root.focusOnVoice
                         onToggled: {
                             root.call("SetFocusOnVoice", [new DBus.bool(checked)])
-                            checked = Qt.binding(() => root.focusOnVoice)
+                            focusHold.restart()
+                        }
+                        Timer {
+                            id: focusHold
+                            interval: 3000
+                            onTriggered: focusBox.checked = Qt.binding(() => root.focusOnVoice)
                         }
                     }
                 }
