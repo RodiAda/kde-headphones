@@ -1,7 +1,7 @@
 # Maintainer: Rodion Adamenok <https://github.com/RodiAda>
 
 pkgname=kde-headphones
-pkgver=0.3.2
+pkgver=0.3.3
 pkgrel=1
 pkgdesc="KDE Plasma tray widget for Bluetooth headphones"
 arch=('x86_64' 'aarch64')

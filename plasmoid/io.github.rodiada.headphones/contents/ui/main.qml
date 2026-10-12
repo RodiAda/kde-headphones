@@ -930,25 +930,6 @@ PlasmoidItem {
                                             bandSlider.value = Qt.binding(() => bandColumn.bandValue)
                                         }
                                     }
-                                    Item {
-                                        readonly property int steps: bandSlider.to - bandSlider.from
-                                        x: bandSlider.width + 1
-                                        y: bandSlider.topPadding + bandSlider.handle.height / 2
-                                        width: Kirigami.Units.smallSpacing
-                                        height: bandSlider.availableHeight - bandSlider.handle.height
-                                        Repeater {
-                                            model: parent.steps + 1
-                                            delegate: Rectangle {
-                                                required property int index
-                                                readonly property bool withinFill: bandSlider.to - index <= Math.round(bandSlider.value)
-                                                width: parent.width
-                                                height: 1
-                                                y: Math.round(index * parent.height / parent.steps)
-                                                color: withinFill ? Kirigami.Theme.highlightColor : Kirigami.Theme.textColor
-                                                opacity: withinFill ? 1 : 0.3
-                                            }
-                                        }
-                                    }
                                 }
                                 PlasmaComponents3.Label {
                                     Layout.alignment: Qt.AlignHCenter
