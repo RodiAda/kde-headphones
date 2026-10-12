@@ -26,6 +26,7 @@ using ManagedObjects = QMap<QDBusObjectPath, InterfaceMap>;
 constexpr auto TickInterval = 50ms;
 constexpr qint64 ReconnectIntervalMs = 5000;
 constexpr qint64 ConnectTimeoutMs = 15000;
+constexpr qint64 FailedDeviceBackoffMs = 30000;
 
 QString compact(const QJsonArray &a)
 {
@@ -74,8 +75,14 @@ void HeadphonesService::tick()
         pollConnecting();
         break;
     case Link::Connected:
-        if (!_backend->tick())
+        if (!_backend->tick()) {
             dropConnection(_backend->errorString());
+            break;
+        }
+        if (!_deviceReady && _backend->ready()) {
+            _deviceReady = true;
+            _failedDevices.remove(_device.address);
+        }
         break;
     }
     publishState();
@@ -95,6 +102,9 @@ std::optional<DeviceInfo> HeadphonesService::findConnectedDevice() const
     for (const InterfaceMap &ifaces : std::as_const(objects)) {
         const auto dev = ifaces.constFind(QStringLiteral("org.bluez.Device1"));
         if (dev == ifaces.cend() || !dev->value(QStringLiteral("Connected")).toBool())
+            continue;
+        const auto failed = _failedDevices.constFind(dev->value(QStringLiteral("Address")).toString());
+        if (failed != _failedDevices.cend() && failed->elapsed() < FailedDeviceBackoffMs)
             continue;
         const QStringList uuids = dev->value(QStringLiteral("UUIDs")).toStringList();
         const QString alias = dev->value(QStringLiteral("Alias")).toString();
@@ -173,6 +183,9 @@ void HeadphonesService::startBackend()
 
 void HeadphonesService::dropConnection(const QString &reason)
 {
+    if (!_deviceReady && !_device.address.isEmpty())
+        _failedDevices[_device.address].start();
+    _deviceReady = false;
     qCInfo(lcHp) << "disconnected:" << reason;
     _backend.reset();
     mdrConnectionDisconnect(_conn);

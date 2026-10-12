@@ -200,6 +200,10 @@ PlasmoidItem {
         case "treble-reducer": return i18n("Treble reducer")
         case "smooth": return i18n("Smooth")
         case "energize": return i18n("Energize")
+        case "bass": return i18n("Bass")
+        case "piano": return i18n("Piano")
+        case "club": return i18n("Club")
+        case "studio": return i18n("Studio")
         }
         const generic = /^preset-(\d+)$/.exec(key)
         if (generic)
@@ -261,6 +265,7 @@ PlasmoidItem {
         case "buttonSounds": return i18n("Button sounds")
         case "sidetoneLevel": return i18n("Own voice level on calls")
         case "callEqualizer": return i18n("Call equalizer")
+        case "ambientType": return i18n("Ambient sound type")
         }
         const band = /^eqBand(\d+)$/.exec(key)
         if (band)
@@ -300,7 +305,12 @@ PlasmoidItem {
         case "neutral": return i18n("Neutral")
         case "bass": return i18n("Bass")
         case "treble": return i18n("Treble")
+        case "ambientAware": return i18n("Ambient Aware")
+        case "talkThru": return i18n("TalkThru")
         }
+        const longMinutes = /^(\d+)-minutes$/.exec(option)
+        if (longMinutes)
+            return i18n("%1 min", longMinutes[1])
         const minutes = /^(\d+)-min$/.exec(option)
         if (minutes)
             return i18n("%1 min", minutes[1])

@@ -2,7 +2,7 @@
 
 A Plasma 6 system tray widget and a small user daemon for controlling Bluetooth headphones without
 the vendor apps: Sony, Samsung Galaxy Buds, AirPods and Beats, Pixel Buds, Nothing and CMF, Bose,
-Soundcore, Huawei, Xiaomi, Sennheiser and Jabra.
+Soundcore, Huawei, Xiaomi, Sennheiser, Jabra and JBL.
 
 | Main | Sound | Settings |
 | --- | --- | --- |
@@ -45,6 +45,7 @@ an "untested" notice for these. If you try one, please
 | Xiaomi / Redmi | Redmi Buds 3 Pro, 5 Pro, 6, 6 Pro, 6 Lite, 6 Active, 4 Active, REDMI Buds 8 Active; other Xiaomi Buds with a minimal layout | untested | Gadgetbridge |
 | Sennheiser | MOMENTUM 4 Wireless, MOMENTUM 5 | untested | [momentum4-control](https://github.com/Ariazonaa/momentum4-control) |
 | Jabra | Evolve2 55, Evolve2 65, Evolve2 85, Evolve 65 | untested | Gadgetbridge, [jabridge](https://github.com/Watchdog0x/jabridge) |
+| JBL | Tour One M2, Live Pro 2, Tune Flex 2 and other models with the JBL Headphones app (over Bluetooth LE) | untested | [volume](https://github.com/xinutec/volume), [JblTray](https://github.com/emperorbug46/JblTray) |
 
 Notes:
 
@@ -53,6 +54,9 @@ Notes:
   transparency customization) are left out.
 - Not supported for lack of a public protocol description: Sennheiser true wireless earbuds, Jabra
   Elite earbuds, pre-Apple Beats, and several Soundcore models listed in the backend.
+- JBL headphones are controlled over Bluetooth LE GATT; the daemon finds the LE side of a connected
+  JBL device through BlueZ. Any connected device named "JBL" is tried, including speakers; devices that
+  do not answer are skipped for 30 seconds.
 - All protocol references were used for facts only (UUIDs, message layouts, test vectors); no code from
   them is included.
 

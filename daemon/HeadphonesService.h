@@ -2,6 +2,7 @@
 
 #include <QDBusContext>
 #include <QElapsedTimer>
+#include <QHash>
 #include <QObject>
 #include <QTimer>
 #include <QVariantMap>
@@ -94,6 +95,8 @@ private:
 
     QTimer _tick;
     QElapsedTimer _sinceConnectAttempt;
+    QHash<QString, QElapsedTimer> _failedDevices;
+    bool _deviceReady = false;
 
     QVariantMap _state;
 };
