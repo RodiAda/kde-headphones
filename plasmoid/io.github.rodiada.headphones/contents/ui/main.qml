@@ -39,6 +39,8 @@ PlasmoidItem {
     function eqBandLabels(count) {
         if (count === 5)
             return ["400", "1k", "2.5k", "6.3k", "16k"]
+        if (count === 8)
+            return ["100", "200", "400", "800", "1.6k", "3.2k", "6.4k", "12.8k"]
         if (count === 10)
             return ["31", "63", "125", "250", "500", "1k", "2k", "4k", "8k", "16k"]
         return []
@@ -59,6 +61,13 @@ PlasmoidItem {
         return root.batteries.map(b => i18n("%1 %2%", root.batteryPartLabel(b.part), b.level)).join(", ")
     }
     readonly property var ambientRange: cfg.ambient || null
+    readonly property string eqPresetKey: {
+        const eq = cfg.equalizer
+        if (!eq)
+            return ""
+        const preset = (eq.presets || []).find(p => p.id === eq.preset)
+        return preset ? preset.key : ""
+    }
 
     function mergeProperties(map) {
         const next = Object.assign({}, root.hp)
@@ -155,7 +164,44 @@ PlasmoidItem {
         case "soft": return i18n("Soft")
         case "dynamic": return i18n("Dynamic")
         case "clear": return i18n("Clear")
+        case "balanced": return i18n("Balanced")
+        case "more-bass": return i18n("More bass")
+        case "more-treble": return i18n("More treble")
+        case "voice": return i18n("Voice")
+        case "electronic": return i18n("Electronic")
+        case "classical": return i18n("Classical")
+        case "enhance-vocals": return i18n("Enhance vocals")
+        case "dirac": return i18n("Dirac Opteo")
+        case "default": return i18n("Default")
+        case "lively": return i18n("Lively")
+        case "movie": return i18n("Movie")
+        case "gaming": return i18n("Gaming")
+        case "podcast": return i18n("Podcast")
+        case "punchy": return i18n("Punchy")
+        case "adaptive": return i18n("Adaptive")
+        case "natural": return i18n("Natural")
+        case "concert": return i18n("Concert")
+        case "shooter": return i18n("Shooter")
+        case "standard": return i18n("Standard")
+        case "volume-boost": return i18n("Volume boost")
+        case "soundcore-signature": return i18n("Soundcore Signature")
+        case "bass-booster": return i18n("Bass booster")
+        case "bass-reducer": return i18n("Bass reducer")
+        case "deep": return i18n("Deep")
+        case "flat": return i18n("Flat")
+        case "hip-hop": return i18n("Hip-hop")
+        case "latin": return i18n("Latin")
+        case "lounge": return i18n("Lounge")
+        case "piano": return i18n("Piano")
+        case "rnb": return i18n("R&B")
+        case "small-speakers": return i18n("Small speakers")
+        case "spoken-word": return i18n("Spoken word")
+        case "treble-booster": return i18n("Treble booster")
+        case "treble-reducer": return i18n("Treble reducer")
         }
+        const generic = /^preset-(\d+)$/.exec(key)
+        if (generic)
+            return i18n("Preset %1", generic[1])
         const user = /^user-(\d+)$/.exec(key)
         if (user)
             return i18n("User Setting %1", user[1])
@@ -184,6 +230,26 @@ PlasmoidItem {
         case "headTracking": return i18n("Head tracking")
         case "bassBoost": return i18n("Bass boost")
         case "autoPowerOff": return i18n("Automatic power off")
+        case "volumeEq": return i18n("Volume EQ")
+        case "monoAudio": return i18n("Mono audio")
+        case "balance": return i18n("Balance")
+        case "eqLowBass": return i18n("Low bass")
+        case "eqBass": return i18n("Bass")
+        case "eqMid": return i18n("Mid")
+        case "eqTreble": return i18n("Treble")
+        case "eqUpperTreble": return i18n("Upper treble")
+        case "offListeningMode": return i18n("Allow Off listening mode")
+        case "autoAnswer": return i18n("Answer calls automatically")
+        case "windBlock": return i18n("Wind noise reduction")
+        case "ancLevel": return i18n("Noise cancelling level")
+        case "sidetone": return i18n("Hear your own voice on calls")
+        case "audioMode": return i18n("Audio mode")
+        case "voiceBoost": return i18n("Voice boost")
+        case "touchTone": return i18n("Touch tones")
+        case "surroundSound": return i18n("Surround sound")
+        case "adaptiveSound": return i18n("Adaptive sound")
+        case "noiseCancellingMode": return i18n("Noise cancelling scene")
+        case "transparencyMode": return i18n("Transparency mode")
         }
         return humanize(key)
     }
@@ -196,7 +262,29 @@ PlasmoidItem {
         case "medium": return i18n("Medium")
         case "high": return i18n("High")
         case "auto": return i18n("Auto")
+        case "wind": return i18n("Wind")
+        case "comfort": return i18n("Comfort")
+        case "normal": return i18n("Normal")
+        case "ultra": return i18n("Ultra")
+        case "dynamic": return i18n("Dynamic")
+        case "dual-engine": return i18n("Dual engine")
+        case "regular": return i18n("Regular")
+        case "enhance-voice": return i18n("Enhance voices")
+        case "enhance-ambient": return i18n("Enhance ambient sound")
+        case "still": return i18n("Fixed")
+        case "motion": return i18n("Head tracking")
+        case "never": return i18n("Never")
+        case "transport": return i18n("Transport")
+        case "outdoor": return i18n("Outdoor")
+        case "indoor": return i18n("Indoor")
+        case "full": return i18n("Full")
+        case "vocal": return i18n("Vocal")
+        case "talk": return i18n("Talk")
+        case "manual": return i18n("Manual")
         }
+        const minutes = /^(\d+)-min$/.exec(option)
+        if (minutes)
+            return i18n("%1 min", minutes[1])
         return humanize(option)
     }
 
@@ -775,7 +863,7 @@ PlasmoidItem {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.preferredHeight: Kirigami.Units.gridUnit * 7
-                        visible: parent.eq.preset !== 0 && (parent.eq.bands || []).length > 0
+                        visible: root.eqPresetKey !== "off" && (parent.eq.bands || []).length > 0
                         Repeater {
                             model: (parent.parent.eq.bands || []).length
                             delegate: ColumnLayout {
@@ -825,7 +913,7 @@ PlasmoidItem {
                     }
                     RowLayout {
                         Layout.fillWidth: true
-                        visible: parent.eq.preset !== 0 && parent.eq.clearBass !== undefined
+                        visible: root.eqPresetKey !== "off" && parent.eq.clearBass !== undefined
                         PlasmaComponents3.Label {
                             text: i18n("Clear Bass")
                         }

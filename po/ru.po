@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sony-headphones-kde\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-12 21:11+0200\n"
+"POT-Creation-Date: 2026-10-12 21:37+0200\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10,296 +10,584 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:49
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:51
 msgctxt "left earbud"
 msgid "L"
 msgstr "Л"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:50
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:52
 msgctxt "right earbud"
 msgid "R"
 msgstr "П"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:51
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:53
 msgctxt "charging case"
 msgid "Case"
 msgstr "Кейс"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:58
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:60
 msgid "battery %1%"
 msgstr "заряд %1%"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:59
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:61
 msgid "%1 %2%"
 msgstr "%1 %2%"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:110
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:119
 msgid "Connecting…"
 msgstr "Подключение…"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:110
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:119
 msgid "Disconnecting…"
 msgstr "Отключение…"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:112
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:121
 msgid "Could not connect"
 msgstr "Не удалось подключить"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:112
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:121
 msgid "Could not disconnect"
 msgstr "Не удалось отключить"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:115
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:124
 msgid "This computer · connected first"
 msgstr "Этот компьютер · подключён первым"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:115
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:124
 msgid "This computer · connected second"
 msgstr "Этот компьютер · подключён вторым"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:117
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:126
 msgid "Connected first"
 msgstr "Подключено первым"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:117
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:126
 msgid "Connected second"
 msgstr "Подключено вторым"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:118
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:127
 msgid "Paired, not connected"
 msgstr "Сопряжено, не подключено"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:128
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:137
 msgid "Noise cancelling"
 msgstr "Шумоподавление"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:129
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:138
 msgid "Ambient sound"
 msgstr "Окружающий звук"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:130
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:138
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:193
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:139
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:147
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:259
 msgid "Off"
 msgstr "Выключено"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:131
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:140
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:181
 msgid "Adaptive"
 msgstr "Адаптивный"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:139
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:148
 msgid "Rock"
 msgstr "Рок"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:140
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:149
 msgid "Pop"
 msgstr "Поп"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:141
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:150
 msgid "Jazz"
 msgstr "Джаз"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:142
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:151
 msgid "Dance"
 msgstr "Танцевальная"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:143
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:152
 msgid "EDM"
 msgstr "EDM"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:144
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:153
 msgid "R&B/Hip-Hop"
 msgstr "R&B/хип-хоп"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:145
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:154
 msgid "Acoustic"
 msgstr "Акустика"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:146
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:155
 msgid "Bright"
 msgstr "Яркий"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:147
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:156
 msgid "Excited"
 msgstr "Возбуждающий"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:148
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:157
 msgid "Mellow"
 msgstr "Мягкий"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:149
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:158
 msgid "Relaxed"
 msgstr "Расслабляющий"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:150
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:159
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:281
 msgid "Vocal"
 msgstr "Вокал"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:151
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:160
 msgid "Treble Boost"
 msgstr "Усиление высоких"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:152
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:161
 msgid "Bass Boost"
 msgstr "Усиление басов"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:153
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:162
 msgid "Speech"
 msgstr "Речь"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:154
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:163
 msgid "Custom"
 msgstr "Пользовательский"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:155
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:164
 msgid "Soft"
 msgstr "Мягкий"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:156
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:165
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:269
 msgid "Dynamic"
 msgstr "Динамичный"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:157
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:166
 msgid "Clear"
 msgstr "Чистый"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:161
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:167
+msgid "Balanced"
+msgstr "Сбалансированный"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:168
+msgid "More bass"
+msgstr "Больше басов"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:169
+msgid "More treble"
+msgstr "Больше высоких"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:170
+msgid "Voice"
+msgstr "Голос"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:171
+msgid "Electronic"
+msgstr "Электроника"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:172
+msgid "Classical"
+msgstr "Классика"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:173
+msgid "Enhance vocals"
+msgstr "Выделение вокала"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:174
+msgid "Dirac Opteo"
+msgstr "Dirac Opteo"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:175
+msgid "Default"
+msgstr "По умолчанию"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:176
+msgid "Lively"
+msgstr "Живой"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:177
+msgid "Movie"
+msgstr "Кино"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:178
+msgid "Gaming"
+msgstr "Игры"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:179
+msgid "Podcast"
+msgstr "Подкасты"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:180
+msgid "Punchy"
+msgstr "Энергичный"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:182
+msgid "Natural"
+msgstr "Естественный"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:183
+msgid "Concert"
+msgstr "Концерт"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:184
+msgid "Shooter"
+msgstr "Шутеры"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:185
+msgid "Standard"
+msgstr "Стандартный"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:186
+msgid "Volume boost"
+msgstr "Усиление громкости"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:187
+msgid "Soundcore Signature"
+msgstr "Soundcore Signature"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:188
+msgid "Bass booster"
+msgstr "Усиление басов"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:189
+msgid "Bass reducer"
+msgstr "Ослабление басов"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:190
+msgid "Deep"
+msgstr "Глубокий"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:191
+msgid "Flat"
+msgstr "Ровный"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:192
+msgid "Hip-hop"
+msgstr "Хип-хоп"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:193
+msgid "Latin"
+msgstr "Латина"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:194
+msgid "Lounge"
+msgstr "Лаунж"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:195
+msgid "Piano"
+msgstr "Фортепиано"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:196
+msgid "R&B"
+msgstr "R&B"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:197
+msgid "Small speakers"
+msgstr "Маленькие динамики"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:198
+msgid "Spoken word"
+msgstr "Речь"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:199
+msgid "Treble booster"
+msgstr "Усиление высоких"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:200
+msgid "Treble reducer"
+msgstr "Ослабление высоких"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:204
+msgid "Preset %1"
+msgstr "Пресет %1"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:207
 msgid "User Setting %1"
 msgstr "Настройка пользователя %1"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:172
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:218
 msgid "Conversation awareness"
 msgstr "Распознавание разговора"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:173
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:219
 msgid "Automatic ear detection"
 msgstr "Автоопределение ношения"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:174
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:220
 msgid "Personalized volume"
 msgstr "Персональная громкость"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:175
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:221
 msgid "Adaptive audio"
 msgstr "Адаптивный звук"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:176
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:222
 msgid "Noise cancelling strength"
 msgstr "Сила шумоподавления"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:177
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:223
 msgid "Ambient sound strength"
 msgstr "Сила окружающего звука"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:178
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:206
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:224
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:294
 msgid "Connect to 2 devices simultaneously"
 msgstr "Подключение к двум устройствам одновременно"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:179
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:225
 msgid "Low latency mode"
 msgstr "Режим низкой задержки"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:180
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:226
 msgid "Voice prompts"
 msgstr "Голосовые подсказки"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:181
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:227
 msgid "Touch controls"
 msgstr "Сенсорное управление"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:182
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:228
 msgid "Wear detection"
 msgstr "Датчик ношения"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:183
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:229
 msgid "Spatial audio"
 msgstr "Пространственный звук"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:184
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:230
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:275
 msgid "Head tracking"
 msgstr "Отслеживание головы"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:185
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:231
 msgid "Bass boost"
 msgstr "Усиление басов"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:186
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:232
 msgid "Automatic power off"
 msgstr "Автовыключение"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:194
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:233
+msgid "Volume EQ"
+msgstr "Эквалайзер по громкости"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:234
+msgid "Mono audio"
+msgstr "Монозвук"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:235
+msgid "Balance"
+msgstr "Баланс"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:236
+msgid "Low bass"
+msgstr "Низкие басы"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:237
+msgid "Bass"
+msgstr "Басы"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:238
+msgid "Mid"
+msgstr "Средние"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:239
+msgid "Treble"
+msgstr "Высокие"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:240
+msgid "Upper treble"
+msgstr "Верхние высокие"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:241
+msgid "Allow Off listening mode"
+msgstr "Разрешить режим «Выкл»"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:242
+msgid "Answer calls automatically"
+msgstr "Автоматически отвечать на звонки"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:243
+msgid "Wind noise reduction"
+msgstr "Подавление шума ветра"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:244
+msgid "Noise cancelling level"
+msgstr "Уровень шумоподавления"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:245
+msgid "Hear your own voice on calls"
+msgstr "Слышать свой голос при звонке"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:246
+msgid "Audio mode"
+msgstr "Режим звука"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:247
+msgid "Voice boost"
+msgstr "Усиление голоса"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:248
+msgid "Touch tones"
+msgstr "Звуки касаний"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:249
+msgid "Surround sound"
+msgstr "Объёмный звук"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:250
+msgid "Adaptive sound"
+msgstr "Адаптивный звук"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:251
+msgid "Noise cancelling scene"
+msgstr "Сценарий шумоподавления"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:252
+msgid "Transparency mode"
+msgstr "Режим прозрачности"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:260
 msgid "On"
 msgstr "Вкл"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:195
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:883
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:261
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:971
 msgid "Low"
 msgstr "Низкая"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:196
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:262
 msgid "Medium"
 msgstr "Средняя"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:197
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:882
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:263
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:970
 msgid "High"
 msgstr "Высокая"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:198
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:881
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:264
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:969
 msgid "Auto"
 msgstr "Авто"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:205
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:265
+msgid "Wind"
+msgstr "Ветер"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:266
+msgid "Comfort"
+msgstr "Комфорт"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:267
+msgid "Normal"
+msgstr "Обычный"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:268
+msgid "Ultra"
+msgstr "Максимальный"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:270
+msgid "Dual engine"
+msgstr "Двойной"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:271
+msgid "Regular"
+msgstr "Обычный"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:272
+msgid "Enhance voices"
+msgstr "Выделять голоса"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:273
+msgid "Enhance ambient sound"
+msgstr "Усиливать окружающий звук"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:274
+msgid "Fixed"
+msgstr "Фиксированный"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:276
+msgid "Never"
+msgstr "Никогда"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:277
+msgid "Transport"
+msgstr "Транспорт"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:278
+msgid "Outdoor"
+msgstr "На улице"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:279
+msgid "Indoor"
+msgstr "В помещении"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:280
+msgid "Full"
+msgstr "Полный"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:282
+msgid "Talk"
+msgstr "Разговор"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:283
+msgid "Manual"
+msgstr "Вручную"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:287
+msgid "%1 min"
+msgstr "%1 мин"
+
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:293
 msgid "Touch sensor control panel"
 msgstr "Сенсорная панель управления"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:269
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:357
 msgid "Headphones"
 msgstr "Наушники"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:272
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:360
 msgid "headphonesd is not running"
 msgstr "Служба headphonesd не запущена"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:274
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:362
 msgid "Not connected"
 msgstr "Не подключены"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:276
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:364
 msgid "Support for this model is untested"
 msgstr "Поддержка этой модели не проверена"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:280
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:368
 msgid "Middle-click to cycle the mode"
 msgstr "Средняя кнопка — сменить режим"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:428
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:516
 msgid "%1%"
 msgstr "%1%"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:439
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:527
 msgid "Main"
 msgstr "Основное"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:442
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:530
 msgid "Sound"
 msgstr "Звук"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:445
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:533
 msgid "Settings"
 msgstr "Настройки"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:457
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:545
 msgid "Headphones not connected"
 msgstr "Наушники не подключены"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:457
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:545
 msgid "Service not running"
 msgstr "Служба не запущена"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:459
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:547
 msgid ""
 "Connect the headphones over Bluetooth. If they are also connected to a "
 "phone, close the headphones app there (Sound Connect, Galaxy Wearable)."
@@ -307,7 +595,7 @@ msgstr ""
 "Подключите наушники по Bluetooth. Если они подключены и к телефону, закройте "
 "там приложение наушников (Sound Connect, Galaxy Wearable)."
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:460
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:548
 msgid ""
 "Start it with:\n"
 "systemctl --user start headphonesd"
@@ -315,277 +603,274 @@ msgstr ""
 "Запустите её командой:\n"
 "systemctl --user start headphonesd"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:482
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:570
 msgid "Support for these headphones has not been tested on real hardware yet."
 msgstr "Поддержка этих наушников ещё не проверялась на реальном устройстве."
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:485
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:573
 msgid "Report how it works"
 msgstr "Сообщить, как работает"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:496
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:584
 msgid ""
 "The headphones ask to confirm this change. They may disconnect for a moment."
 msgstr ""
 "Наушники просят подтвердить изменение. Они могут ненадолго отключиться."
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:499
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:587
 msgid "Confirm"
 msgstr "Подтвердить"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:504
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:592
 msgid "Cancel"
 msgstr "Отмена"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:549
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:637
 msgid "Noise control works only with both earbuds in your ears."
 msgstr ""
 "Шумоподавление и окружающий звук работают, только когда оба наушника в ушах."
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:552
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:640
 msgid "Allow with one earbud"
 msgstr "Разрешить с одним наушником"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:569
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:657
 msgid "Ambient sound level"
 msgstr "Уровень окружающего звука"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:596
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:684
 msgid "Focus on voice"
 msgstr "Фокус на голосе"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:613
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:701
 msgid "Devices"
 msgstr "Устройства"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:660
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:748
 msgid "Play audio from this device"
 msgstr "Звук с этого устройства"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:671
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:759
 msgid "Disconnect from the headphones"
 msgstr "Отключить от наушников"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:672
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:760
 msgid "Connect to the headphones"
 msgstr "Подключить к наушникам"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:673
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:761
 msgid "Two devices are already connected; disconnect one first"
 msgstr "Уже подключены два устройства — сначала отключите одно"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:684
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:772
 msgid "Hide other devices"
 msgstr "Скрыть другие устройства"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:685
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:773
 msgid "Other devices (%1)"
 msgstr "Другие устройства (%1)"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:704
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:792
 msgid "%1 — %2"
 msgstr "%1 — %2"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:765
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:853
 msgid "Equalizer"
 msgstr "Эквалайзер"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:830
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:918
 msgid "Clear Bass"
 msgstr "Clear Bass"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:859
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:947
 msgid "DSEE Extreme"
 msgstr "DSEE Extreme"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:860
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:948
 msgid "Restores detail lost in compressed audio"
 msgstr "Восстанавливает детали, потерянные при сжатии звука"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:872
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:960
 msgid "Speak-to-Chat"
 msgstr "Speak-to-Chat"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:873
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:961
 msgid "Pauses playback and lets ambient sound in when you start talking"
 msgstr ""
 "Ставит музыку на паузу и пропускает окружающий звук, когда вы начинаете "
 "говорить"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:879
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:967
 msgid "Voice detection sensitivity"
 msgstr "Чувствительность распознавания голоса"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:890
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:978
 msgid "End Speak-to-Chat"
 msgstr "Завершение Speak-to-Chat"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:892
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:980
 msgid "Short (about 15 s)"
 msgstr "Быстро (около 15 с)"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:893
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:981
 msgid "Standard (about 30 s)"
 msgstr "Стандартно (около 30 с)"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:894
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:982
 msgid "Long (about 1 min)"
 msgstr "Долго (около 1 мин)"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:895
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:983
 msgid "Don't end automatically"
 msgstr "Не завершать автоматически"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:979
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1067
 msgid "Lock touch controls"
 msgstr "Блокировка сенсора"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:980
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1068
 msgid "Ignore taps on the earbuds"
 msgstr "Не реагировать на касания наушников"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:986
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1074
 msgid "Noise control with one earbud"
 msgstr "Шумоподавление с одним наушником"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:987
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1075
 msgid "Allow noise cancelling and ambient sound when only one earbud is worn"
 msgstr ""
 "Включать шумоподавление и окружающий звук, даже когда надет один наушник"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:993
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1081
 msgid "Seamless earbud connection"
 msgstr "Бесшовное подключение наушников"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:994
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1082
 msgid ""
 "Switch automatically between devices signed in to the same Samsung account"
 msgstr ""
 "Автоматически переключаться между устройствами с одним аккаунтом Samsung"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1001
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1089
 msgid "NC/AMB button"
 msgstr "Кнопка NC/AMB"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1003
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1091
 msgid "Noise cancelling → Ambient sound → Off"
 msgstr "Шумоподавление → Окружающий звук → Выкл"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1004
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1092
 msgid "Noise cancelling ↔ Ambient sound"
 msgstr "Шумоподавление ↔ Окружающий звук"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1005
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1093
 msgid "Noise cancelling ↔ Off"
 msgstr "Шумоподавление ↔ Выкл"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1006
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1094
 msgid "Ambient sound ↔ Off"
 msgstr "Окружающий звук ↔ Выкл"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1028
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1116
 msgid "Switch audio between devices automatically"
 msgstr "Автоматически переключать звук между устройствами"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1029
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1117
 msgid "When playback starts on the other connected device"
 msgstr "Когда воспроизведение начинается на другом подключённом устройстве"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1036
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1124
 msgid "Bluetooth connection quality"
 msgstr "Качество Bluetooth-соединения"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1038
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1126
 msgid "Priority on sound quality"
 msgstr "Приоритет качества звука"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1039
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1127
 msgid "Priority on stable connection"
 msgstr "Приоритет стабильного соединения"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1052
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1140
 msgid "Pause when headphones are taken off"
 msgstr "Пауза, когда наушники сняты"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1058
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1146
 msgid "Turn off when headphones are taken off"
 msgstr "Выключать, когда наушники сняты"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1064
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1152
 msgid "Automatic power off when idle"
 msgstr "Автовыключение без использования"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1066
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1154
 msgid "Don't turn off"
 msgstr "Не выключать"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1067
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1155
 msgid "After 5 minutes"
 msgstr "Через 5 минут"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1068
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1156
 msgid "After 15 minutes"
 msgstr "Через 15 минут"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1069
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1157
 msgid "After 30 minutes"
 msgstr "Через 30 минут"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1070
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1158
 msgid "After 1 hour"
 msgstr "Через 1 час"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1071
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1159
 msgid "After 3 hours"
 msgstr "Через 3 часа"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1078
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1166
 msgid "Voice guidance"
 msgstr "Голосовые подсказки"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1079
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1167
 msgid "Spoken notifications such as battery level and mode changes"
 msgstr "Голосовые уведомления, например о заряде и смене режима"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1097
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1185
 msgid "Pair a new device"
 msgstr "Сопряжение нового устройства"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1101
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1189
 msgid "Pairing mode is on; the headphones are discoverable"
 msgstr "Режим сопряжения включён, наушники видны другим устройствам"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1102
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1190
 msgid "Makes the headphones discoverable over Bluetooth"
 msgstr "Делает наушники видимыми для поиска по Bluetooth"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1109
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1197
 msgid "Stop"
 msgstr "Остановить"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1109
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1197
 msgid "Start"
 msgstr "Начать"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1119
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1207
 msgid "Click again to turn the headphones off"
 msgstr "Нажмите ещё раз, чтобы выключить наушники"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1119
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1207
 msgid "Turn off the headphones"
 msgstr "Выключить наушники"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1126
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1214
 msgid "Turn off"
 msgstr "Выключить"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1126
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1214
 msgid "Turn off…"
 msgstr "Выключить…"
 
-#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1146
+#: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1234
 msgid "firmware %1"
 msgstr "прошивка %1"
-
-#~ msgid "Preset %1"
-#~ msgstr "Пресет %1"
