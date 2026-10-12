@@ -906,7 +906,7 @@ PlasmoidItem {
                                 spacing: Kirigami.Units.smallSpacing
                                 PlasmaComponents3.Label {
                                     Layout.alignment: Qt.AlignHCenter
-                                    text: bandSlider.value > 0 ? "+" + bandSlider.value : bandSlider.value
+                                    text: Math.round(bandSlider.value) > 0 ? "+" + Math.round(bandSlider.value) : Math.round(bandSlider.value)
                                     font: Kirigami.Theme.smallFont
                                 }
                                 PlasmaComponents3.Slider {
@@ -916,7 +916,7 @@ PlasmoidItem {
                                     orientation: Qt.Vertical
                                     from: -10
                                     to: 10
-                                    stepSize: 1
+                                    stepSize: 0.5
                                     snapMode: PlasmaComponents3.Slider.SnapAlways
                                     value: bandColumn.bandValue
                                     onMoved: sendBand.restart()
@@ -925,7 +925,7 @@ PlasmoidItem {
                                         interval: 200
                                         onTriggered: {
                                             const bands = ((root.cfg.equalizer || { bands: [] }).bands).slice()
-                                            bands[bandColumn.index] = bandSlider.value
+                                            bands[bandColumn.index] = Math.round(bandSlider.value)
                                             root.applyEqualizer({ bands: bands })
                                             bandSlider.value = Qt.binding(() => bandColumn.bandValue)
                                         }

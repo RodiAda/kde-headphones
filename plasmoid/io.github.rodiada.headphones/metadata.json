@@ -14,7 +14,7 @@
         "License": "MIT",
         "Name": "Headphones",
         "Name[ru]": "Наушники",
-        "Version": "0.3.0",
+        "Version": "0.3.1",
         "Website": "https://github.com/RodiAda/kde-headphones"
     },
     "X-Plasma-API-Minimum-Version": "6.0",
