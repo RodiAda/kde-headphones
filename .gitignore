@@ -1,2 +1,3 @@
 build/
-plasmoid/org.rodada.sonyheadphones/contents/locale/
+build-test/
+plasmoid/org.rodada.headphones/contents/locale/

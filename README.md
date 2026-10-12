@@ -1,7 +1,7 @@
-# Sony Headphones for KDE Plasma
+# Headphones for KDE Plasma
 
-A Plasma 6 system tray widget and a small user daemon for controlling Sony headphones
-(tested with the WH-1000XM5).
+A Plasma 6 system tray widget and a small user daemon for controlling wireless headphones:
+Sony (tested with the WH-1000XM5) and Samsung Galaxy Buds2.
 
 - Noise cancelling / ambient sound / off, ambient level, focus on voice
 - Battery level, codec, firmware
@@ -14,22 +14,28 @@ A Plasma 6 system tray widget and a small user daemon for controlling Sony headp
 - Pause or power off when taken off, automatic power off, voice guidance
 - Pairing mode and powering the headphones off
 
-Only the features the headphones report as supported are shown.
+Only the features the headphones support are shown.
 
-Both protocol generations handled by libmdr are supported: MDR V2 (WH-1000XM5/XM6, WF-1000XM5/XM6,
+Sony: both protocol generations handled by libmdr are supported: MDR V2 (WH-1000XM5/XM6, WF-1000XM5/XM6,
 WH-CH720N, WF-C510, WF-C700N, LinkBuds) and the legacy MDR V1 (WH-1000XM3/XM4, WF-1000XM3/XM4),
 picked by the Sony control service the device exposes. Only the WH-1000XM5 has been tested with this
 widget; see the [libmdr support matrix](https://github.com/mos9527/SonyHeadphonesClient/tree/main/docs/device-support).
 Paired device management, the connection order and the connect/disconnect results are available
 on MDR V2 only. BLE-only devices are not supported.
 
+Samsung Galaxy Buds2: own implementation of the Galaxy Buds RFCOMM protocol (service
+`2E73A4AD-332D-41FC-90E2-16BEF06523F2`): earbud and case battery, noise cancelling / ambient / off,
+ambient level, equalizer presets, touch lock and seamless connection. Other Galaxy Buds models
+that use the same service may partly work; the status layout is model specific.
+
 ```
-sony-headphonesd  ── RFCOMM ──  headphones
-      │ session D-Bus: org.rodada.SonyHeadphones
-plasmoid org.rodada.sonyheadphones (pure QML)
+headphonesd  ── RFCOMM ──  headphones
+   │  backends: Sony (libmdr), Samsung Galaxy Buds
+   │ session D-Bus: org.rodada.Headphones
+plasmoid org.rodada.headphones (pure QML)
 ```
 
-The protocol is handled by [libmdr](https://github.com/mos9527/SonyHeadphonesClient/tree/main/libmdr)
+The Sony protocol is handled by [libmdr](https://github.com/mos9527/SonyHeadphonesClient/tree/main/libmdr)
 from SonyHeadphonesClient, pulled in as a git submodule.
 
 ## Install
@@ -43,8 +49,8 @@ git clone --recurse-submodules <this repo>
 ```
 
 The script builds the daemon, installs it to `~/.local/bin`, enables the
-`sony-headphonesd.service` user unit, compiles the translations and installs the widget.
-Add the widget via *Configure System Tray → Entries → Sony Headphones*. If it is not listed,
+`headphonesd.service` user unit, compiles the translations and installs the widget.
+Add the widget via *Configure System Tray → Entries → Headphones*. If it is not listed,
 restart plasmashell: `systemctl --user restart plasma-plasmashell`.
 
 Middle-click the tray icon to cycle the noise mode.
@@ -52,15 +58,15 @@ Middle-click the tray icon to cycle the noise mode.
 ## Translations
 
 The widget follows the system language. Strings are written in English and translated through
-gettext catalogs in `po/` (domain `plasma_applet_org.rodada.sonyheadphones`); `install.sh` compiles
+gettext catalogs in `po/` (domain `plasma_applet_org.rodada.headphones`); `install.sh` compiles
 them into the widget package. Currently available: Russian.
 
 To update the template after changing strings and merge it into a catalog:
 
 ```
-xgettext --from-code=UTF-8 -C -kde -ki18n:1 -ki18nc:1c,2 -o po/plasma_applet_org.rodada.sonyheadphones.pot \
-    plasmoid/org.rodada.sonyheadphones/contents/ui/*.qml
-msgmerge -U po/ru.po po/plasma_applet_org.rodada.sonyheadphones.pot
+xgettext --from-code=UTF-8 -C -kde -ki18n:1 -ki18nc:1c,2 -o po/plasma_applet_org.rodada.headphones.pot \
+    plasmoid/org.rodada.headphones/contents/ui/*.qml
+msgmerge -U po/ru.po po/plasma_applet_org.rodada.headphones.pot
 ```
 
 A new language is a new `po/<lang>.po`.
@@ -68,18 +74,18 @@ A new language is a new `po/<lang>.po`.
 ## D-Bus
 
 ```
-busctl --user introspect org.rodada.SonyHeadphones /org/rodada/SonyHeadphones
-busctl --user call org.rodada.SonyHeadphones /org/rodada/SonyHeadphones org.rodada.SonyHeadphones CycleMode
+busctl --user introspect org.rodada.Headphones /org/rodada/Headphones
+busctl --user call org.rodada.Headphones /org/rodada/Headphones org.rodada.Headphones CycleMode
 ```
 
-Properties: `Connected`, `DeviceName`, `Address`, `Battery` (-1 when unknown; the lower earbud on
+Properties: `Connected`, `Vendor` (sony | samsung), `DeviceName`, `Address`, `Battery` (-1 when unknown; the lower earbud on
 true wireless models), `Batteries` (JSON array of `part`: main|left|right|case, `level`, `charging`),
 `Modes` (JSON array of the noise modes the model supports), `Mode`
 (`noise-cancelling` | `ambient` | `off`), `AmbientLevel` (1..20), `FocusOnVoice`,
 `Devices` (JSON array of `mac`, `name`, `connected`, `order`, `active`, `self`),
 `DeviceAction` (JSON describing the last connect/disconnect: `pending` → `in-progress` → `ok` | `error` | `busy`).
 
-`Settings` (JSON with every supported setting, see below), `Alert` (non-empty while the headphones
+`Settings` (JSON with every supported setting, see below; `ambient` gives the level range), `Alert` (non-empty while the headphones
 wait for a confirmation).
 
 Methods: `SetMode(s)`, `SetAmbientLevel(i)`, `SetFocusOnVoice(b)`, `CycleMode()`,
@@ -89,7 +95,7 @@ Methods: `SetMode(s)`, `SetAmbientLevel(i)`, `SetFocusOnVoice(b)`, `CycleMode()`
 `Apply` takes a partial object with the same shape as `Settings`:
 
 ```
-busctl --user call org.rodada.SonyHeadphones /org/rodada/SonyHeadphones org.rodada.SonyHeadphones \
+busctl --user call org.rodada.Headphones /org/rodada/Headphones org.rodada.Headphones \
     Apply s '{"speakToChat":{"enabled":true,"timeout":"long"},"dsee":true}'
 ```
 
@@ -97,14 +103,14 @@ Keys: `speakToChat` {`enabled`, `sensitivity`: auto|high|low, `timeout`: short|m
 `equalizer` {`preset`, `bands`, `clearBass`}, `dsee`, `noiseButton` (nc-ambient-off | nc-ambient | nc-off |
 ambient-off), `power` {`autoPowerOff`: 0|5|15|30|60|180, `offWhenRemoved`, `autoPause`},
 `voiceGuidance` {`enabled`, `volume`}, `connectionMode` (quality | stability), `autoSwitch`, `pairing`,
-`volume` (0..30), `general` {"<index>": bool}.
+`volume` (0..30), `general` {"<index>": bool}. Galaxy Buds: `equalizer` {`preset`}, `touchLock`, `seamless`.
 
 `CycleMode` works well as a global shortcut (*System Settings → Shortcuts → Add Command*).
 
 ## Notes
 
-- The daemon picks the first connected BlueZ device that exposes the Sony control service
-  `956C7B26-D49A-4BA8-B03F-B17D393CB6E2` and retries every 5 seconds.
+- The daemon picks the first connected BlueZ device that exposes a known control service
+  and retries every 5 seconds.
 - The headphones accept a single control connection. If a phone holds it (Sound Connect open),
   the daemon cannot connect.
 - The daemon refuses to disconnect the computer it runs on, since that would drop the control link.
@@ -112,12 +118,20 @@ ambient-off), `power` {`autoPowerOff`: 0|5|15|30|60|180, `offWhenRemoved`, `auto
   both from raw packets (`PERI_RET/NTFY_PARAM` type 2 and `PERI_NTFY_EXTENDED_PARAM`).
 - Connecting a device reports `in-progress` first and `ok` or `error` later; `error` means the
   device itself refused.
-- The last ambient level is kept in `~/.config/rodada/sony-headphonesd.conf`, because the headphones
+- The last Sony ambient level is kept in `~/.config/rodada/headphonesd.conf`, because the headphones
   do not report it while noise cancelling is on.
 - `DBus.Properties` in plasmashell does not expose all properties before the first
   `PropertiesChanged`, so the widget reads the initial state with its own `GetAll`.
 - After reinstalling the widget, restart plasmashell; `kpackagetool6 -u` only updates the files.
-- Logs: `journalctl --user -u sony-headphonesd`.
+- Logs: `journalctl --user -u headphonesd`.
+
+## Tests
+
+```
+cmake -B build-test -DHEADPHONES_TESTS=ON && cmake --build build-test --target galaxy-test && build-test/galaxy-test
+```
+
+The Galaxy backend test replays an extended status frame captured from a Galaxy Buds2.
 
 ## License
 

@@ -10,7 +10,7 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
-    app.setApplicationName(QStringLiteral("sony-headphonesd"));
+    app.setApplicationName(QStringLiteral("headphonesd"));
     app.setOrganizationName(QStringLiteral("rodada"));
 
     static volatile std::sig_atomic_t stopRequested = 0;

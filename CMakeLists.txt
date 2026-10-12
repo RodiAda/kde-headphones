@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.31)
-project(sony-headphones-kde C CXX)
+project(kde-headphones C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -15,11 +15,21 @@ add_subdirectory(third_party/SonyHeadphonesClient EXCLUDE_FROM_ALL)
 set(CMAKE_AUTOMOC ON)
 find_package(Qt6 REQUIRED COMPONENTS Core DBus)
 
-add_executable(sony-headphonesd
+add_executable(headphonesd
     daemon/main.cpp
     daemon/HeadphonesService.cpp
+    daemon/SonyBackend.cpp
+    daemon/GalaxyBackend.cpp
+    daemon/Log.cpp
 )
-target_link_libraries(sony-headphonesd PRIVATE mdr mdr::bt Qt6::Core Qt6::DBus)
+target_link_libraries(headphonesd PRIVATE mdr mdr::bt Qt6::Core Qt6::DBus)
 
 include(GNUInstallDirs)
-install(TARGETS sony-headphonesd RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS headphonesd RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+option(HEADPHONES_TESTS "Build tests" OFF)
+if (HEADPHONES_TESTS)
+    add_executable(galaxy-test tests/galaxy_test.cpp daemon/GalaxyBackend.cpp daemon/Log.cpp)
+    target_include_directories(galaxy-test PRIVATE daemon)
+    target_link_libraries(galaxy-test PRIVATE mdr Qt6::Core Qt6::DBus)
+endif()

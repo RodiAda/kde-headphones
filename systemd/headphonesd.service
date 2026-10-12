@@ -1,10 +1,10 @@
 [Unit]
-Description=Sony headphones control daemon (D-Bus org.rodada.SonyHeadphones)
+Description=Headphones control daemon (D-Bus org.rodada.Headphones)
 PartOf=graphical-session.target
 After=graphical-session.target bluetooth.target
 
 [Service]
-ExecStart=%h/.local/bin/sony-headphonesd
+ExecStart=%h/.local/bin/headphonesd
 Restart=on-failure
 RestartSec=5
 

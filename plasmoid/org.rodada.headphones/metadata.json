@@ -7,13 +7,13 @@
             }
         ],
         "Category": "System Information",
-        "Description": "Noise cancelling, ambient sound and battery of Sony headphones",
-        "Description[ru]": "Шумоподавление, окружающий звук и заряд наушников Sony",
+        "Description": "Noise control, battery and settings of Sony and Samsung Galaxy headphones",
+        "Description[ru]": "Шумоподавление, заряд и настройки наушников Sony и Samsung Galaxy",
         "Icon": "audio-headphones",
-        "Id": "org.rodada.sonyheadphones",
+        "Id": "org.rodada.headphones",
         "License": "MIT",
-        "Name": "Sony Headphones",
-        "Name[ru]": "Наушники Sony",
+        "Name": "Headphones",
+        "Name[ru]": "Наушники",
         "Version": "0.1"
     },
     "X-Plasma-API-Minimum-Version": "6.0",

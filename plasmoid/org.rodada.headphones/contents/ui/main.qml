@@ -12,8 +12,8 @@ import org.kde.plasma.workspace.dbus as DBus
 PlasmoidItem {
     id: root
 
-    readonly property string service: "org.rodada.SonyHeadphones"
-    readonly property string objectPath: "/org/rodada/SonyHeadphones"
+    readonly property string service: "org.rodada.Headphones"
+    readonly property string objectPath: "/org/rodada/Headphones"
 
     property var hp: ({})
     readonly property bool daemonUp: watcher.registered
@@ -58,7 +58,7 @@ PlasmoidItem {
             return root.battery >= 0 ? i18n("battery %1%", root.battery) : ""
         return root.batteries.map(b => i18n("%1 %2%", root.batteryPartLabel(b.part), b.level)).join(", ")
     }
-    readonly property int eqCustomPreset: 24
+    readonly property var ambientRange: cfg.ambient || null
 
     function mergeProperties(map) {
         const next = Object.assign({}, root.hp)
@@ -132,29 +132,33 @@ PlasmoidItem {
         return ""
     }
 
-    function presetLabel(id) {
-        switch (id) {
-        case 0: return i18n("Off")
-        case 1: return i18n("Rock")
-        case 2: return i18n("Pop")
-        case 3: return i18n("Jazz")
-        case 4: return i18n("Dance")
-        case 5: return i18n("EDM")
-        case 6: return i18n("R&B/Hip-Hop")
-        case 7: return i18n("Acoustic")
-        case 8: return i18n("Bright")
-        case 9: return i18n("Excited")
-        case 10: return i18n("Mellow")
-        case 11: return i18n("Relaxed")
-        case 12: return i18n("Vocal")
-        case 13: return i18n("Treble Boost")
-        case 14: return i18n("Bass Boost")
-        case 15: return i18n("Speech")
-        case 24: return i18n("Custom")
+    function presetLabel(key) {
+        switch (key) {
+        case "off": return i18n("Off")
+        case "rock": return i18n("Rock")
+        case "pop": return i18n("Pop")
+        case "jazz": return i18n("Jazz")
+        case "dance": return i18n("Dance")
+        case "edm": return i18n("EDM")
+        case "rnb-hiphop": return i18n("R&B/Hip-Hop")
+        case "acoustic": return i18n("Acoustic")
+        case "bright": return i18n("Bright")
+        case "excited": return i18n("Excited")
+        case "mellow": return i18n("Mellow")
+        case "relaxed": return i18n("Relaxed")
+        case "vocal": return i18n("Vocal")
+        case "treble-boost": return i18n("Treble Boost")
+        case "bass-boost": return i18n("Bass Boost")
+        case "speech": return i18n("Speech")
+        case "custom": return i18n("Custom")
+        case "soft": return i18n("Soft")
+        case "dynamic": return i18n("Dynamic")
+        case "clear": return i18n("Clear")
         }
-        if (id >= 25 && id <= 29)
-            return i18n("User Setting %1", id - 24)
-        return i18n("Preset %1", id)
+        const user = /^user-(\d+)$/.exec(key)
+        if (user)
+            return i18n("User Setting %1", user[1])
+        return key
     }
 
     function generalLabel(subject) {
@@ -192,8 +196,8 @@ PlasmoidItem {
 
     function applyEqualizer(change) {
         const eq = root.cfg.equalizer
-        if (eq && (eq.preset < root.eqCustomPreset || eq.preset > root.eqCustomPreset + 5))
-            change.preset = root.eqCustomPreset
+        if (eq && eq.customPreset !== undefined && (eq.preset < eq.customPreset || eq.preset > eq.customPreset + 5))
+            change.preset = eq.customPreset
         apply({ equalizer: change })
     }
 
@@ -223,10 +227,10 @@ PlasmoidItem {
     Plasmoid.icon: "audio-headphones"
     Plasmoid.status: available || expanded ? PlasmaCore.Types.ActiveStatus : PlasmaCore.Types.HiddenStatus
 
-    toolTipMainText: available ? deviceName : i18n("Sony Headphones")
+    toolTipMainText: available ? deviceName : i18n("Headphones")
     toolTipSubText: {
         if (!daemonUp)
-            return i18n("sony-headphonesd is not running")
+            return i18n("headphonesd is not running")
         if (!available)
             return i18n("Not connected")
         const parts = [modeLabel(mode), batterySummary()].filter(s => s.length > 0)
@@ -410,8 +414,8 @@ PlasmoidItem {
             iconName: "audio-headphones"
             text: root.daemonUp ? i18n("Headphones not connected") : i18n("Service not running")
             explanation: root.daemonUp
-                ? i18n("Connect the headphones over Bluetooth. If they are also connected to a phone, close Sound Connect there.")
-                : i18n("Start it with:\nsystemctl --user start sony-headphonesd")
+                ? i18n("Connect the headphones over Bluetooth. If they are also connected to a phone, close the headphones app there (Sound Connect, Galaxy Wearable).")
+                : i18n("Start it with:\nsystemctl --user start headphonesd")
         }
 
         PlasmaComponents3.ScrollView {
@@ -482,7 +486,9 @@ PlasmoidItem {
 
                 ColumnLayout {
                     Layout.fillWidth: true
-                    visible: root.mode === "ambient"
+                    visible: root.ambientRange !== null && root.modes.includes("ambient")
+                    enabled: root.mode === "ambient"
+                    opacity: enabled ? 1 : 0.5
                     spacing: Kirigami.Units.smallSpacing
 
                     RowLayout {
@@ -499,8 +505,8 @@ PlasmoidItem {
                     PlasmaComponents3.Slider {
                         id: ambientSlider
                         Layout.fillWidth: true
-                        from: 1
-                        to: 20
+                        from: root.ambientRange ? root.ambientRange.min : 1
+                        to: root.ambientRange ? root.ambientRange.max : 20
                         stepSize: 1
                         snapMode: PlasmaComponents3.Slider.SnapAlways
                         value: root.ambientLevel
@@ -515,6 +521,7 @@ PlasmoidItem {
                         }
                     }
                     PlasmaComponents3.CheckBox {
+                        visible: !!root.ambientRange && root.ambientRange.focusOnVoice === true
                         text: i18n("Focus on voice")
                         checked: root.focusOnVoice
                         onToggled: {
@@ -526,10 +533,12 @@ PlasmoidItem {
 
                 Kirigami.Separator {
                     Layout.fillWidth: true
+                    visible: root.devices.length > 0
                 }
 
                 Kirigami.Heading {
                     level: 4
+                    visible: root.devices.length > 0
                     text: i18n("Devices")
                 }
 
@@ -686,7 +695,7 @@ PlasmoidItem {
                     }
                     PlasmaComponents3.ComboBox {
                         Layout.fillWidth: true
-                        model: parent.eq.presets.map(p => ({ text: root.presetLabel(p.id), value: p.id }))
+                        model: parent.eq.presets.map(p => ({ text: root.presetLabel(p.key), value: p.id }))
                         textRole: "text"
                         valueRole: "value"
                         currentIndex: parent.eq.presets.findIndex(p => p.id === parent.eq.preset)
@@ -695,9 +704,9 @@ PlasmoidItem {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.preferredHeight: Kirigami.Units.gridUnit * 7
-                        visible: parent.eq.preset !== 0
+                        visible: parent.eq.preset !== 0 && (parent.eq.bands || []).length > 0
                         Repeater {
-                            model: parent.parent.eq.bands.length
+                            model: (parent.parent.eq.bands || []).length
                             delegate: ColumnLayout {
                                 id: bandColumn
                                 required property int index
@@ -745,7 +754,7 @@ PlasmoidItem {
                     }
                     RowLayout {
                         Layout.fillWidth: true
-                        visible: parent.eq.preset !== 0
+                        visible: parent.eq.preset !== 0 && parent.eq.clearBass !== undefined
                         PlasmaComponents3.Label {
                             text: i18n("Clear Bass")
                         }
@@ -824,6 +833,21 @@ PlasmoidItem {
                 visible: root.currentTab === 2
                 spacing: Kirigami.Units.largeSpacing
 
+                SettingSwitch {
+                    visible: root.cfg.touchLock !== undefined
+                    text: i18n("Lock touch controls")
+                    subtitle: i18n("Ignore taps on the earbuds")
+                    checked: root.cfg.touchLock === true
+                    onToggled: on => root.apply({ touchLock: on })
+                }
+                SettingSwitch {
+                    visible: root.cfg.seamless !== undefined
+                    text: i18n("Seamless earbud connection")
+                    subtitle: i18n("Switch automatically between devices signed in to the same Samsung account")
+                    checked: root.cfg.seamless === true
+                    onToggled: on => root.apply({ seamless: on })
+                }
+
                 SettingChoice {
                     visible: !!root.cfg.noiseButton
                     text: i18n("NC/AMB button")
@@ -872,6 +896,7 @@ PlasmoidItem {
 
                 Kirigami.Separator {
                     Layout.fillWidth: true
+                    visible: !!root.cfg.power || !!root.cfg.voiceGuidance
                 }
 
                 SettingSwitch {
@@ -910,6 +935,7 @@ PlasmoidItem {
 
                 Kirigami.Separator {
                     Layout.fillWidth: true
+                    visible: root.cfg.pairing !== undefined || root.cfg.canPowerOff === true
                 }
 
                 RowLayout {

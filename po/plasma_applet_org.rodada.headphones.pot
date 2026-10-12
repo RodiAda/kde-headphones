@@ -1,0 +1,484 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the kde-headphones package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: kde-headphones\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-12 20:18+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:49
+msgctxt "left earbud"
+msgid "L"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:50
+msgctxt "right earbud"
+msgid "R"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:51
+msgctxt "charging case"
+msgid "Case"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:58
+msgid "battery %1%"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:59
+msgid "%1 %2%"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:110
+msgid "Connecting…"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:110
+msgid "Disconnecting…"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:112
+msgid "Could not connect"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:112
+msgid "Could not disconnect"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:115
+msgid "This computer · connected first"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:115
+msgid "This computer · connected second"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:117
+msgid "Connected first"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:117
+msgid "Connected second"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:118
+msgid "Paired, not connected"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:128
+msgid "Noise cancelling"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:129
+msgid "Ambient sound"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:130
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:137
+msgid "Off"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:138
+msgid "Rock"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:139
+msgid "Pop"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:140
+msgid "Jazz"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:141
+msgid "Dance"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:142
+msgid "EDM"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:143
+msgid "R&B/Hip-Hop"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:144
+msgid "Acoustic"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:145
+msgid "Bright"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:146
+msgid "Excited"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:147
+msgid "Mellow"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:148
+msgid "Relaxed"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:149
+msgid "Vocal"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:150
+msgid "Treble Boost"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:151
+msgid "Bass Boost"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:152
+msgid "Speech"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:153
+msgid "Custom"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:154
+msgid "Soft"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:155
+msgid "Dynamic"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:156
+msgid "Clear"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:160
+msgid "User Setting %1"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:166
+msgid "Touch sensor control panel"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:167
+msgid "Connect to 2 devices simultaneously"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:230
+msgid "Headphones"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:233
+msgid "headphonesd is not running"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:235
+msgid "Not connected"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:239
+msgid "Middle-click to cycle the mode"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:387
+msgid "%1%"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:398
+msgid "Main"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:401
+msgid "Sound"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:404
+msgid "Settings"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:415
+msgid "Headphones not connected"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:415
+msgid "Service not running"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:417
+msgid ""
+"Connect the headphones over Bluetooth. If they are also connected to a "
+"phone, close the headphones app there (Sound Connect, Galaxy Wearable)."
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:418
+msgid ""
+"Start it with:\n"
+"systemctl --user start headphonesd"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:440
+msgid ""
+"The headphones ask to confirm this change. They may disconnect for a moment."
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:443
+msgid "Confirm"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:448
+msgid "Cancel"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:498
+msgid "Ambient sound level"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:525
+msgid "Focus on voice"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:542
+msgid "Devices"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:589
+msgid "Play audio from this device"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:600
+msgid "Disconnect from the headphones"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:601
+msgid "Connect to the headphones"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:602
+msgid "Two devices are already connected; disconnect one first"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:613
+msgid "Hide other devices"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:614
+msgid "Other devices (%1)"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:633
+msgid "%1 — %2"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:694
+msgid "Equalizer"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:759
+msgid "Clear Bass"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:788
+msgid "DSEE Extreme"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:789
+msgid "Restores detail lost in compressed audio"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:801
+msgid "Speak-to-Chat"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:802
+msgid "Pauses playback and lets ambient sound in when you start talking"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:808
+msgid "Voice detection sensitivity"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:810
+msgid "Auto"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:811
+msgid "High"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:812
+msgid "Low"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:819
+msgid "End Speak-to-Chat"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:821
+msgid "Short (about 15 s)"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:822
+msgid "Standard (about 30 s)"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:823
+msgid "Long (about 1 min)"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:824
+msgid "Don't end automatically"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:838
+msgid "Lock touch controls"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:839
+msgid "Ignore taps on the earbuds"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:845
+msgid "Seamless earbud connection"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:846
+msgid ""
+"Switch automatically between devices signed in to the same Samsung account"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:853
+msgid "NC/AMB button"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:855
+msgid "Noise cancelling → Ambient sound → Off"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:856
+msgid "Noise cancelling ↔ Ambient sound"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:857
+msgid "Noise cancelling ↔ Off"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:858
+msgid "Ambient sound ↔ Off"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:880
+msgid "Switch audio between devices automatically"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:881
+msgid "When playback starts on the other connected device"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:888
+msgid "Bluetooth connection quality"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:890
+msgid "Priority on sound quality"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:891
+msgid "Priority on stable connection"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:904
+msgid "Pause when headphones are taken off"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:910
+msgid "Turn off when headphones are taken off"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:916
+msgid "Automatic power off when idle"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:918
+msgid "Don't turn off"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:919
+msgid "After 5 minutes"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:920
+msgid "After 15 minutes"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:921
+msgid "After 30 minutes"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:922
+msgid "After 1 hour"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:923
+msgid "After 3 hours"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:930
+msgid "Voice guidance"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:931
+msgid "Spoken notifications such as battery level and mode changes"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:949
+msgid "Pair a new device"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:953
+msgid "Pairing mode is on; the headphones are discoverable"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:954
+msgid "Makes the headphones discoverable over Bluetooth"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:961
+msgid "Stop"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:961
+msgid "Start"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:971
+msgid "Click again to turn the headphones off"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:971
+msgid "Turn off the headphones"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:978
+msgid "Turn off"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:978
+msgid "Turn off…"
+msgstr ""
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:998
+msgid "firmware %1"
+msgstr ""

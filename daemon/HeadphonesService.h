@@ -2,59 +2,58 @@
 
 #include <QDBusContext>
 #include <QElapsedTimer>
-#include <QHash>
-#include <QJsonObject>
 #include <QObject>
 #include <QTimer>
 #include <QVariantMap>
 
-#include <deque>
-#include <functional>
+#include <memory>
 #include <optional>
 
-#include <mdr-c/Headphones.h>
+#include "Backend.h"
 
 struct MDRConnectionLinux;
 
 class HeadphonesService : public QObject, protected QDBusContext
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.rodada.SonyHeadphones")
+    Q_CLASSINFO("D-Bus Interface", "org.rodada.Headphones")
 
     Q_PROPERTY(bool Connected READ connected)
+    Q_PROPERTY(QString Vendor READ vendor)
     Q_PROPERTY(QString DeviceName READ deviceName)
     Q_PROPERTY(QString Address READ address)
     Q_PROPERTY(int Battery READ battery)
+    Q_PROPERTY(QString Batteries READ batteries)
+    Q_PROPERTY(QString Modes READ modes)
     Q_PROPERTY(QString Mode READ mode)
     Q_PROPERTY(int AmbientLevel READ ambientLevel)
     Q_PROPERTY(bool FocusOnVoice READ focusOnVoice)
     Q_PROPERTY(QString Devices READ devices)
     Q_PROPERTY(QString DeviceAction READ deviceAction)
     Q_PROPERTY(QString Settings READ settings)
-    Q_PROPERTY(QString Batteries READ batteries)
-    Q_PROPERTY(QString Modes READ modes)
     Q_PROPERTY(QString Alert READ alert)
 
 public:
-    static constexpr auto Service = "org.rodada.SonyHeadphones";
-    static constexpr auto Path = "/org/rodada/SonyHeadphones";
+    static constexpr auto Service = "org.rodada.Headphones";
+    static constexpr auto Path = "/org/rodada/Headphones";
 
     explicit HeadphonesService(QObject *parent = nullptr);
     ~HeadphonesService() override;
 
-    bool connected() const { return _state.value(QStringLiteral("Connected")).toBool(); }
-    QString deviceName() const { return _state.value(QStringLiteral("DeviceName")).toString(); }
-    QString address() const { return _state.value(QStringLiteral("Address")).toString(); }
-    int battery() const { return _state.value(QStringLiteral("Battery"), -1).toInt(); }
-    QString mode() const { return _state.value(QStringLiteral("Mode")).toString(); }
-    int ambientLevel() const { return _state.value(QStringLiteral("AmbientLevel"), 0).toInt(); }
-    bool focusOnVoice() const { return _state.value(QStringLiteral("FocusOnVoice")).toBool(); }
-    QString devices() const { return _state.value(QStringLiteral("Devices")).toString(); }
-    QString deviceAction() const { return _state.value(QStringLiteral("DeviceAction")).toString(); }
-    QString settings() const { return _state.value(QStringLiteral("Settings")).toString(); }
-    QString batteries() const { return _state.value(QStringLiteral("Batteries")).toString(); }
-    QString modes() const { return _state.value(QStringLiteral("Modes")).toString(); }
-    QString alert() const { return _state.value(QStringLiteral("Alert")).toString(); }
+    bool connected() const { return value("Connected").toBool(); }
+    QString vendor() const { return value("Vendor").toString(); }
+    QString deviceName() const { return value("DeviceName").toString(); }
+    QString address() const { return value("Address").toString(); }
+    int battery() const { return value("Battery", -1).toInt(); }
+    QString batteries() const { return value("Batteries").toString(); }
+    QString modes() const { return value("Modes").toString(); }
+    QString mode() const { return value("Mode").toString(); }
+    int ambientLevel() const { return value("AmbientLevel", 0).toInt(); }
+    bool focusOnVoice() const { return value("FocusOnVoice").toBool(); }
+    QString devices() const { return value("Devices").toString(); }
+    QString deviceAction() const { return value("DeviceAction").toString(); }
+    QString settings() const { return value("Settings").toString(); }
+    QString alert() const { return value("Alert").toString(); }
 
 public Q_SLOTS:
     void SetMode(const QString &mode);
@@ -72,58 +71,28 @@ public Q_SLOTS:
 private:
     enum class Link { Idle, Connecting, Connected };
 
-    struct Device {
-        QString name;
-        QString address;
-        QString adapterAddress;
-        MDRProtocolVersion protocol = MDR_PROTOCOL_V2;
-    };
-    struct Pending {
-        std::optional<MDRNoiseMode> noiseMode;
-        std::optional<int> ambientLevel;
-        std::optional<bool> focusOnVoice;
-        std::optional<std::pair<MDRPairedDeviceCommand, QByteArray>> deviceCommand;
-    };
+    QVariant value(const char *key, const QVariant &fallback = {}) const
+    {
+        return _state.value(QString::fromLatin1(key), fallback);
+    }
 
     void tick();
     void tryConnect();
     void pollConnecting();
-    void serviceHeadphones();
-    void applyPending();
     void dropConnection(const QString &reason);
     void publishState();
-    bool requireConnected();
-    void queueDeviceCommand(MDRPairedDeviceCommand command, const QString &mac);
-    std::optional<Device> findConnectedDevice() const;
-    bool has(MDRFeature feature) const;
-    QString text(MDRText id, uint32_t index = 0) const;
-    QJsonObject settingsJson() const;
-    QStringList availableModes() const;
-    void queueOp(std::function<MDRResult()> op);
-    void runOps();
-
-    static void onPacket(void *self, MDRPacketDirection direction, const unsigned char *frame, int size);
-    void handlePayload(const QByteArray &payload);
+    Backend *requireReady();
+    void reply(const QDBusError &error);
+    std::optional<DeviceInfo> findConnectedDevice() const;
 
     MDRConnectionLinux *_linux = nullptr;
     MDRConnection *_conn = nullptr;
-    MDRHeadphones *_hp = nullptr;
+    std::unique_ptr<Backend> _backend;
     Link _link = Link::Idle;
-    Device _device;
-    Pending _pending;
-    QHash<QString, int> _connectionOrder;
-    QJsonObject _deviceAction;
-    std::deque<std::function<MDRResult()>> _ops;
-    QString _alert;
-    QString _settingsCache;
-    bool _settingsDirty = true;
-    int _lastAmbientLevel = 10;
+    DeviceInfo _device;
 
     QTimer _tick;
     QElapsedTimer _sinceConnectAttempt;
-    QElapsedTimer _sinceSync;
-    bool _initDone = false;
-    bool _syncWanted = false;
 
     QVariantMap _state;
 };

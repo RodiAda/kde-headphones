@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sony-headphones-kde\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-12 20:04+0200\n"
+"POT-Creation-Date: 2026-10-12 20:18+0200\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10,450 +10,475 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:49
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:49
 msgctxt "left earbud"
 msgid "L"
 msgstr "Л"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:50
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:50
 msgctxt "right earbud"
 msgid "R"
 msgstr "П"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:51
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:51
 msgctxt "charging case"
 msgid "Case"
 msgstr "Кейс"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:58
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:58
 msgid "battery %1%"
 msgstr "заряд %1%"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:59
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:59
 msgid "%1 %2%"
 msgstr "%1 %2%"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:110
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:110
 msgid "Connecting…"
 msgstr "Подключение…"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:110
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:110
 msgid "Disconnecting…"
 msgstr "Отключение…"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:112
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:112
 msgid "Could not connect"
 msgstr "Не удалось подключить"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:112
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:112
 msgid "Could not disconnect"
 msgstr "Не удалось отключить"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:115
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:115
 msgid "This computer · connected first"
 msgstr "Этот компьютер · подключён первым"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:115
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:115
 msgid "This computer · connected second"
 msgstr "Этот компьютер · подключён вторым"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:117
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:117
 msgid "Connected first"
 msgstr "Подключено первым"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:117
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:117
 msgid "Connected second"
 msgstr "Подключено вторым"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:118
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:118
 msgid "Paired, not connected"
 msgstr "Сопряжено, не подключено"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:128
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:128
 msgid "Noise cancelling"
 msgstr "Шумоподавление"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:129
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:129
 msgid "Ambient sound"
 msgstr "Окружающий звук"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:130
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:137
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:130
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:137
 msgid "Off"
 msgstr "Выключено"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:138
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:138
 msgid "Rock"
 msgstr "Рок"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:139
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:139
 msgid "Pop"
 msgstr "Поп"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:140
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:140
 msgid "Jazz"
 msgstr "Джаз"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:141
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:141
 msgid "Dance"
 msgstr "Танцевальная"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:142
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:142
 msgid "EDM"
 msgstr "EDM"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:143
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:143
 msgid "R&B/Hip-Hop"
 msgstr "R&B/хип-хоп"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:144
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:144
 msgid "Acoustic"
 msgstr "Акустика"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:145
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:145
 msgid "Bright"
 msgstr "Яркий"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:146
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:146
 msgid "Excited"
 msgstr "Возбуждающий"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:147
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:147
 msgid "Mellow"
 msgstr "Мягкий"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:148
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:148
 msgid "Relaxed"
 msgstr "Расслабляющий"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:149
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:149
 msgid "Vocal"
 msgstr "Вокал"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:150
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:150
 msgid "Treble Boost"
 msgstr "Усиление высоких"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:151
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:151
 msgid "Bass Boost"
 msgstr "Усиление басов"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:152
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:152
 msgid "Speech"
 msgstr "Речь"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:153
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:153
 msgid "Custom"
 msgstr "Пользовательский"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:156
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:154
+msgid "Soft"
+msgstr "Мягкий"
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:155
+msgid "Dynamic"
+msgstr "Динамичный"
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:156
+msgid "Clear"
+msgstr "Чистый"
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:160
 msgid "User Setting %1"
 msgstr "Настройка пользователя %1"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:157
-msgid "Preset %1"
-msgstr "Пресет %1"
-
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:162
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:166
 msgid "Touch sensor control panel"
 msgstr "Сенсорная панель управления"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:163
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:167
 msgid "Connect to 2 devices simultaneously"
 msgstr "Подключение к двум устройствам одновременно"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:226
-msgid "Sony Headphones"
-msgstr "Наушники Sony"
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:230
+msgid "Headphones"
+msgstr "Наушники"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:229
-msgid "sony-headphonesd is not running"
-msgstr "Служба sony-headphonesd не запущена"
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:233
+msgid "headphonesd is not running"
+msgstr "Служба headphonesd не запущена"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:231
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:235
 msgid "Not connected"
 msgstr "Не подключены"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:235
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:239
 msgid "Middle-click to cycle the mode"
 msgstr "Средняя кнопка — сменить режим"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:383
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:387
 msgid "%1%"
 msgstr "%1%"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:394
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:398
 msgid "Main"
 msgstr "Основное"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:397
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:401
 msgid "Sound"
 msgstr "Звук"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:400
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:404
 msgid "Settings"
 msgstr "Настройки"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:411
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:415
 msgid "Headphones not connected"
 msgstr "Наушники не подключены"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:411
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:415
 msgid "Service not running"
 msgstr "Служба не запущена"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:413
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:417
 msgid ""
 "Connect the headphones over Bluetooth. If they are also connected to a "
-"phone, close Sound Connect there."
-msgstr ""
-"Подключите наушники по Bluetooth. Если они подключены и к телефону, закройте "
-"там Sound Connect."
+"phone, close the headphones app there (Sound Connect, Galaxy Wearable)."
+msgstr "Подключите наушники по Bluetooth. Если они подключены и к телефону, закройте там приложение наушников (Sound Connect, Galaxy Wearable)."
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:414
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:418
 msgid ""
 "Start it with:\n"
-"systemctl --user start sony-headphonesd"
-msgstr ""
-"Запустите её командой:\n"
-"systemctl --user start sony-headphonesd"
+"systemctl --user start headphonesd"
+msgstr "Запустите её командой:\nsystemctl --user start headphonesd"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:436
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:440
 msgid ""
 "The headphones ask to confirm this change. They may disconnect for a moment."
 msgstr ""
 "Наушники просят подтвердить изменение. Они могут ненадолго отключиться."
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:439
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:443
 msgid "Confirm"
 msgstr "Подтвердить"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:444
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:448
 msgid "Cancel"
 msgstr "Отмена"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:492
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:498
 msgid "Ambient sound level"
 msgstr "Уровень окружающего звука"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:518
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:525
 msgid "Focus on voice"
 msgstr "Фокус на голосе"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:533
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:542
 msgid "Devices"
 msgstr "Устройства"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:580
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:589
 msgid "Play audio from this device"
 msgstr "Звук с этого устройства"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:591
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:600
 msgid "Disconnect from the headphones"
 msgstr "Отключить от наушников"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:592
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:601
 msgid "Connect to the headphones"
 msgstr "Подключить к наушникам"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:593
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:602
 msgid "Two devices are already connected; disconnect one first"
 msgstr "Уже подключены два устройства — сначала отключите одно"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:604
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:613
 msgid "Hide other devices"
 msgstr "Скрыть другие устройства"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:605
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:614
 msgid "Other devices (%1)"
 msgstr "Другие устройства (%1)"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:624
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:633
 msgid "%1 — %2"
 msgstr "%1 — %2"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:685
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:694
 msgid "Equalizer"
 msgstr "Эквалайзер"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:750
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:759
 msgid "Clear Bass"
 msgstr "Clear Bass"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:779
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:788
 msgid "DSEE Extreme"
 msgstr "DSEE Extreme"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:780
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:789
 msgid "Restores detail lost in compressed audio"
 msgstr "Восстанавливает детали, потерянные при сжатии звука"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:792
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:801
 msgid "Speak-to-Chat"
 msgstr "Speak-to-Chat"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:793
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:802
 msgid "Pauses playback and lets ambient sound in when you start talking"
 msgstr ""
 "Ставит музыку на паузу и пропускает окружающий звук, когда вы начинаете "
 "говорить"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:799
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:808
 msgid "Voice detection sensitivity"
 msgstr "Чувствительность распознавания голоса"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:801
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:810
 msgid "Auto"
 msgstr "Авто"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:802
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:811
 msgid "High"
 msgstr "Высокая"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:803
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:812
 msgid "Low"
 msgstr "Низкая"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:810
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:819
 msgid "End Speak-to-Chat"
 msgstr "Завершение Speak-to-Chat"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:812
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:821
 msgid "Short (about 15 s)"
 msgstr "Быстро (около 15 с)"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:813
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:822
 msgid "Standard (about 30 s)"
 msgstr "Стандартно (около 30 с)"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:814
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:823
 msgid "Long (about 1 min)"
 msgstr "Долго (около 1 мин)"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:815
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:824
 msgid "Don't end automatically"
 msgstr "Не завершать автоматически"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:829
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:838
+msgid "Lock touch controls"
+msgstr "Блокировка сенсора"
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:839
+msgid "Ignore taps on the earbuds"
+msgstr "Не реагировать на касания наушников"
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:845
+msgid "Seamless earbud connection"
+msgstr "Бесшовное подключение наушников"
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:846
+msgid ""
+"Switch automatically between devices signed in to the same Samsung account"
+msgstr ""
+"Автоматически переключаться между устройствами с одним аккаунтом Samsung"
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:853
 msgid "NC/AMB button"
 msgstr "Кнопка NC/AMB"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:831
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:855
 msgid "Noise cancelling → Ambient sound → Off"
 msgstr "Шумоподавление → Окружающий звук → Выкл"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:832
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:856
 msgid "Noise cancelling ↔ Ambient sound"
 msgstr "Шумоподавление ↔ Окружающий звук"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:833
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:857
 msgid "Noise cancelling ↔ Off"
 msgstr "Шумоподавление ↔ Выкл"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:834
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:858
 msgid "Ambient sound ↔ Off"
 msgstr "Окружающий звук ↔ Выкл"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:856
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:880
 msgid "Switch audio between devices automatically"
 msgstr "Автоматически переключать звук между устройствами"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:857
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:881
 msgid "When playback starts on the other connected device"
 msgstr "Когда воспроизведение начинается на другом подключённом устройстве"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:864
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:888
 msgid "Bluetooth connection quality"
 msgstr "Качество Bluetooth-соединения"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:866
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:890
 msgid "Priority on sound quality"
 msgstr "Приоритет качества звука"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:867
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:891
 msgid "Priority on stable connection"
 msgstr "Приоритет стабильного соединения"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:879
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:904
 msgid "Pause when headphones are taken off"
 msgstr "Пауза, когда наушники сняты"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:885
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:910
 msgid "Turn off when headphones are taken off"
 msgstr "Выключать, когда наушники сняты"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:891
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:916
 msgid "Automatic power off when idle"
 msgstr "Автовыключение без использования"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:893
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:918
 msgid "Don't turn off"
 msgstr "Не выключать"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:894
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:919
 msgid "After 5 minutes"
 msgstr "Через 5 минут"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:895
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:920
 msgid "After 15 minutes"
 msgstr "Через 15 минут"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:896
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:921
 msgid "After 30 minutes"
 msgstr "Через 30 минут"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:897
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:922
 msgid "After 1 hour"
 msgstr "Через 1 час"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:898
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:923
 msgid "After 3 hours"
 msgstr "Через 3 часа"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:905
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:930
 msgid "Voice guidance"
 msgstr "Голосовые подсказки"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:906
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:931
 msgid "Spoken notifications such as battery level and mode changes"
 msgstr "Голосовые уведомления, например о заряде и смене режима"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:923
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:949
 msgid "Pair a new device"
 msgstr "Сопряжение нового устройства"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:927
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:953
 msgid "Pairing mode is on; the headphones are discoverable"
 msgstr "Режим сопряжения включён, наушники видны другим устройствам"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:928
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:954
 msgid "Makes the headphones discoverable over Bluetooth"
 msgstr "Делает наушники видимыми для поиска по Bluetooth"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:935
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:961
 msgid "Stop"
 msgstr "Остановить"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:935
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:961
 msgid "Start"
 msgstr "Начать"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:945
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:971
 msgid "Click again to turn the headphones off"
 msgstr "Нажмите ещё раз, чтобы выключить наушники"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:945
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:971
 msgid "Turn off the headphones"
 msgstr "Выключить наушники"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:952
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:978
 msgid "Turn off"
 msgstr "Выключить"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:952
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:978
 msgid "Turn off…"
 msgstr "Выключить…"
 
-#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:972
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:998
 msgid "firmware %1"
 msgstr "прошивка %1"
+
+#~ msgid "Preset %1"
+#~ msgstr "Пресет %1"
