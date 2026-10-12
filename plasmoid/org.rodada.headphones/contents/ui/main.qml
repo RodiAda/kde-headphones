@@ -344,7 +344,7 @@ PlasmoidItem {
             Screen.desktopAvailableHeight * 0.8)
         Layout.minimumWidth: Kirigami.Units.gridUnit * 22
         Layout.preferredWidth: Layout.minimumWidth
-        Layout.minimumHeight: root.available ? contentFitHeight : Kirigami.Units.gridUnit * 10
+        Layout.minimumHeight: root.available ? contentFitHeight : placeholder.implicitHeight + Kirigami.Units.gridUnit * 2
         Layout.preferredHeight: Layout.minimumHeight
         Layout.maximumHeight: Layout.minimumHeight
 
@@ -409,6 +409,7 @@ PlasmoidItem {
         }
 
         PlasmaExtras.PlaceholderMessage {
+            id: placeholder
             anchors.centerIn: parent
             width: parent.width - Kirigami.Units.gridUnit * 2
             visible: !root.available
