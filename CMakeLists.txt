@@ -21,6 +21,7 @@ add_executable(headphonesd
     daemon/HeadphonesService.cpp
     daemon/SonyBackend.cpp
     daemon/GalaxyBackend.cpp
+    daemon/SoundcoreBackend.cpp
     daemon/Registry.cpp
     daemon/Log.cpp
 )
@@ -66,6 +67,9 @@ if (HEADPHONES_TESTS)
     add_executable(galaxy-test tests/galaxy_test.cpp daemon/GalaxyBackend.cpp daemon/Log.cpp)
     target_include_directories(galaxy-test PRIVATE daemon)
     target_link_libraries(galaxy-test PRIVATE mdr Qt6::Core Qt6::DBus)
+    add_executable(soundcore-test tests/soundcore_test.cpp daemon/SoundcoreBackend.cpp daemon/Log.cpp)
+    target_include_directories(soundcore-test PRIVATE daemon)
+    target_link_libraries(soundcore-test PRIVATE mdr Qt6::Core Qt6::DBus)
 endif()
 
 set(CPACK_PACKAGE_NAME kde-headphones)
