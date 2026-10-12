@@ -46,7 +46,7 @@ jobs:
           chmod -R a+rX "$GITHUB_WORKSPACE"
           su builder -c 'makepkg --nodeps --noconfirm'
           mkdir -p "$GITHUB_WORKSPACE/dist"
-          cp ./*.pkg.tar.zst "$GITHUB_WORKSPACE/dist/"
+          find . -maxdepth 1 -name '*.pkg.tar.zst' ! -name '*-debug-*' -exec cp {} "$GITHUB_WORKSPACE/dist/" \;
       - uses: actions/upload-artifact@v4
         with:
           name: arch

@@ -41,10 +41,30 @@ Buds FE. Everything else follows the protocol documentation and has not been tri
 
 ## Install
 
+### Packages
+
+Download the package for your distribution from the
+[latest release](https://github.com/RodiAda/kde-headphones/releases/latest):
+
+- Arch Linux and derivatives: `sudo pacman -U kde-headphones-*.pkg.tar.zst`
+  (or build it yourself from [`packaging/arch/PKGBUILD`](packaging/arch/PKGBUILD))
+- Debian 13 and newer: `sudo apt install ./kde-headphones_*.deb`
+- Fedora: `sudo dnf install ./kde-headphones-*.rpm`
+
+Then add the widget via *Configure System Tray → Entries → Headphones* (restart plasmashell with
+`systemctl --user restart plasma-plasmashell` if it is not listed yet). The daemon is D-Bus activated:
+the widget starts it on demand, nothing has to be enabled.
+
+There is no Flatpak: Plasma widgets cannot be installed from a Flatpak, and the daemon needs raw
+Bluetooth sockets and the system BlueZ bus, which the sandbox does not provide.
+
+### From source
+
 Build dependencies:
 
 - Arch Linux: `sudo pacman -S --needed base-devel cmake ninja git qt6-base bluez-libs dbus gettext`
 - Debian / Ubuntu: `sudo apt install build-essential cmake ninja-build git qt6-base-dev libbluetooth-dev libdbus-1-dev gettext`
+- Fedora: `sudo dnf install gcc-c++ cmake ninja-build git qt6-qtbase-devel bluez-libs-devel dbus-devel gettext`
 
 CMake 3.31 or newer and a C++20 compiler are required. The first build downloads
 [{fmt}](https://github.com/fmtlib/fmt) for libmdr.
@@ -55,15 +75,17 @@ cd kde-headphones
 ./install.sh
 ```
 
-The script builds the daemon, installs it to `~/.local/bin`, enables the `headphonesd.service` user
-unit, compiles the translations and installs the widget; nothing needs root. Add the widget via
-*Configure System Tray → Entries → Headphones*. If it is not listed, restart plasmashell:
-`systemctl --user restart plasma-plasmashell`.
-
-Remove everything with `./uninstall.sh`.
+`install.sh` installs into `~/.local` (no root needed) and enables the user unit; `./uninstall.sh`
+removes it again. For a system-wide install use the usual
+`cmake -B build -DCMAKE_INSTALL_PREFIX=/usr && cmake --build build && sudo cmake --install build`.
 
 Middle-click the tray icon to cycle the noise mode. The widget hides itself while no supported
 headphones are connected.
+
+## Releases
+
+Pushing a `v*` tag that matches the version in `CMakeLists.txt` makes GitHub Actions build the Arch,
+Debian and Fedora packages and publish them as a release. Every push runs the build and the tests.
 
 ## D-Bus
 
