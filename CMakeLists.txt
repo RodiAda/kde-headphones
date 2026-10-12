@@ -16,20 +16,16 @@ set(CMAKE_AUTOMOC ON)
 find_package(Qt6 REQUIRED COMPONENTS Core DBus)
 include(GNUInstallDirs)
 
+file(GLOB BACKEND_SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/daemon/*Backend.cpp)
+add_library(headphones-backends STATIC ${BACKEND_SOURCES} daemon/Registry.cpp daemon/Log.cpp)
+target_include_directories(headphones-backends PUBLIC daemon)
+target_link_libraries(headphones-backends PUBLIC mdr mdr::bt Qt6::Core Qt6::DBus)
+
 add_executable(headphonesd
     daemon/main.cpp
     daemon/HeadphonesService.cpp
-    daemon/SonyBackend.cpp
-    daemon/GalaxyBackend.cpp
-    daemon/AirPodsBackend.cpp
-    daemon/PixelBudsBackend.cpp
-    daemon/NothingBackend.cpp
-    daemon/BoseBackend.cpp
-    daemon/HuaweiBackend.cpp
-    daemon/Registry.cpp
-    daemon/Log.cpp
 )
-target_link_libraries(headphonesd PRIVATE mdr mdr::bt Qt6::Core Qt6::DBus)
+target_link_libraries(headphonesd PRIVATE headphones-backends)
 install(TARGETS headphonesd RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 if (CMAKE_INSTALL_PREFIX STREQUAL "/usr")
@@ -68,24 +64,13 @@ add_custom_target(translations ALL DEPENDS ${MO_FILES})
 
 option(HEADPHONES_TESTS "Build tests" OFF)
 if (HEADPHONES_TESTS)
-    add_executable(galaxy-test tests/galaxy_test.cpp daemon/GalaxyBackend.cpp daemon/Log.cpp)
-    target_include_directories(galaxy-test PRIVATE daemon)
-    target_link_libraries(galaxy-test PRIVATE mdr Qt6::Core Qt6::DBus)
-    add_executable(airpods-test tests/airpods_test.cpp daemon/AirPodsBackend.cpp daemon/Log.cpp)
-    target_include_directories(airpods-test PRIVATE daemon)
-    target_link_libraries(airpods-test PRIVATE mdr Qt6::Core Qt6::DBus)
-    add_executable(pixelbuds-test tests/pixelbuds_test.cpp daemon/PixelBudsBackend.cpp daemon/Log.cpp)
-    target_include_directories(pixelbuds-test PRIVATE daemon)
-    target_link_libraries(pixelbuds-test PRIVATE mdr Qt6::Core Qt6::DBus)
-    add_executable(nothing-test tests/nothing_test.cpp daemon/NothingBackend.cpp daemon/Log.cpp)
-    target_include_directories(nothing-test PRIVATE daemon)
-    target_link_libraries(nothing-test PRIVATE mdr Qt6::Core Qt6::DBus)
-    add_executable(bose-test tests/bose_test.cpp daemon/BoseBackend.cpp daemon/Log.cpp)
-    target_include_directories(bose-test PRIVATE daemon)
-    target_link_libraries(bose-test PRIVATE mdr Qt6::Core Qt6::DBus)
-    add_executable(huawei-test tests/huawei_test.cpp daemon/HuaweiBackend.cpp daemon/GalaxyBackend.cpp daemon/SonyBackend.cpp daemon/Registry.cpp daemon/Log.cpp)
-    target_include_directories(huawei-test PRIVATE daemon)
-    target_link_libraries(huawei-test PRIVATE mdr Qt6::Core Qt6::DBus)
+    file(GLOB TEST_SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tests/*_test.cpp)
+    foreach(test_source ${TEST_SOURCES})
+        get_filename_component(test_name ${test_source} NAME_WE)
+        string(REPLACE "_test" "-test" test_target ${test_name})
+        add_executable(${test_target} ${test_source})
+        target_link_libraries(${test_target} PRIVATE headphones-backends)
+    endforeach()
 endif()
 
 set(CPACK_PACKAGE_NAME kde-headphones)
