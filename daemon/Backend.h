@@ -20,6 +20,11 @@ enum class DeviceKind {
     Soundcore,
     Huawei,
     Nothing,
+    Jbl,
+    Jabra,
+    Sennheiser,
+    Beats,
+    Xiaomi,
 };
 
 struct DeviceInfo {
