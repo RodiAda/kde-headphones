@@ -2,6 +2,7 @@
 
 #include <mdr-c/Headphones.h>
 
+#include "AirPodsBackend.h"
 #include "GalaxyBackend.h"
 #include "SonyBackend.h"
 
@@ -13,6 +14,7 @@ constexpr KnownService KnownServices[] = {
     {"2E73A4AD-332D-41FC-90E2-16BEF06523F2", DeviceKind::Galaxy, nullptr, false},
     {"00001102-0000-1000-8000-00805F9B34FD", DeviceKind::GalaxyLegacy, nullptr, false},
     {"00001101-0000-1000-8000-00805F9B34FB", DeviceKind::GalaxyClassic, "Buds", false},
+    {"74EC2172-0BAD-4D01-8F77-997B2BE0722A", DeviceKind::AirPods, nullptr, true},
 };
 
 }
@@ -32,6 +34,8 @@ std::unique_ptr<Backend> createBackend(MDRConnection *connection, const DeviceIn
     case DeviceKind::GalaxyClassic:
     case DeviceKind::GalaxyLegacy:
         return std::make_unique<GalaxyBackend>(connection, device);
+    case DeviceKind::AirPods:
+        return std::make_unique<AirPodsBackend>(connection, device);
     default:
         return nullptr;
     }
