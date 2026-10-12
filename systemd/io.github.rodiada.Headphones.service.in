@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=io.github.rodiada.Headphones
+Exec=@CMAKE_INSTALL_FULL_BINDIR@/headphonesd
+SystemdService=headphonesd.service

@@ -1,0 +1,47 @@
+# Maintainer: Rodion Adamenok <https://github.com/RodiAda>
+
+pkgname=kde-headphones
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="KDE Plasma tray widget for Sony and Samsung Galaxy headphones"
+arch=('x86_64' 'aarch64')
+url="https://github.com/RodiAda/kde-headphones"
+license=('MIT')
+depends=('qt6-base' 'bluez' 'bluez-libs' 'dbus' 'plasma-workspace')
+makedepends=('cmake' 'ninja' 'git' 'gettext')
+_fmtver=12.1.0
+source=("git+$url.git#tag=v$pkgver"
+        "git+https://github.com/mos9527/SonyHeadphonesClient.git"
+        "fmt-$_fmtver.tar.gz::https://github.com/fmtlib/fmt/archive/refs/tags/$_fmtver.tar.gz")
+sha256sums=('SKIP'
+            'SKIP'
+            'ea7de4299689e12b6dddd392f9896f08fb0777ac7168897a244a6d6085043fea')
+
+prepare() {
+  cd "$srcdir/$pkgname"
+  git submodule init
+  git config submodule.third_party/SonyHeadphonesClient.url "$srcdir/SonyHeadphonesClient"
+  git -c protocol.file.allow=always submodule update
+
+  cd "$srcdir/fmt-$_fmtver"
+  patch -Np1 -i "$srcdir/$pkgname/third_party/SonyHeadphonesClient/contrib/fmt.patch"
+}
+
+build() {
+  cmake -B build -S "$pkgname" -G Ninja \
+    -DCMAKE_BUILD_TYPE=None \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DHEADPHONES_TESTS=ON \
+    -DFETCHCONTENT_SOURCE_DIR_FMT="$srcdir/fmt-$_fmtver" \
+    -DFETCHCONTENT_FULLY_DISCONNECTED=ON
+  cmake --build build
+}
+
+check() {
+  build/galaxy-test
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+  install -Dm644 "$pkgname/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

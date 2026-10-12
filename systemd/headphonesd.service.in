@@ -4,7 +4,9 @@ PartOf=graphical-session.target
 After=graphical-session.target bluetooth.target
 
 [Service]
-ExecStart=%h/.local/bin/headphonesd
+Type=dbus
+BusName=io.github.rodiada.Headphones
+ExecStart=@CMAKE_INSTALL_FULL_BINDIR@/headphonesd
 Restart=on-failure
 RestartSec=5
 

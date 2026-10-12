@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      - name: Install dependencies
+        run: pacman -Syu --noconfirm --needed base-devel cmake ninja git qt6-base bluez-libs dbus gettext
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Build
+        run: |
+          cmake -B build -G Ninja -DHEADPHONES_TESTS=ON
+          cmake --build build
+      - name: Test
+        run: build/galaxy-test
