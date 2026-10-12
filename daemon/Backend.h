@@ -8,7 +8,7 @@
 
 #include <mdr-c/Connection.h>
 
-enum class DeviceKind { SonyV2, SonyV1, Galaxy };
+enum class DeviceKind { SonyV2, SonyV1, Galaxy, GalaxyClassic, GalaxyLegacy };
 
 struct DeviceInfo {
     QString name;
@@ -77,3 +77,4 @@ protected:
 inline const QString ModeNc = QStringLiteral("noise-cancelling");
 inline const QString ModeAmbient = QStringLiteral("ambient");
 inline const QString ModeOff = QStringLiteral("off");
+inline const QString ModeAdaptive = QStringLiteral("adaptive");

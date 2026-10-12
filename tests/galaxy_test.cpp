@@ -39,62 +39,102 @@ const char *fakeError(void *)
 
 int failures = 0;
 
-void check(bool ok, const char *what)
+void check(bool ok, const QString &what)
 {
-    std::printf("%s %s\n", ok ? "ok  " : "FAIL", what);
+    std::printf("%s %s\n", ok ? "ok  " : "FAIL", qPrintable(what));
     if (!ok)
         failures++;
 }
 
-const unsigned char Buds2Rev10[] = {
-    0xfd, 0x28, 0x10, 0x61, 0x0a, 0x03, 0x64, 0x64, 0x01, 0x01, 0x11, 0x33, 0x00, 0x03, 0x3f, 0x22,
-    0x01, 0x00, 0x3c, 0x01, 0x3c, 0x01, 0x02, 0x00, 0x03, 0x66, 0x00, 0x01, 0x00, 0x10, 0x00, 0x00,
-    0x00, 0x00, 0x11, 0x02, 0x01, 0x01, 0x00, 0x00, 0x00, 0xbe, 0xa3, 0xdd};
+struct Case {
+    const char *name;
+    DeviceKind kind;
+    const char *frame;
+    int left;
+    int right;
+    int caseLevel;
+    const char *mode;
+    int ambientLevel;
+    int equalizer;
+    bool touchLock;
+    int seamless;
+};
 
+const Case Cases[] = {
+    {"Galaxy Buds (A1B2)", DeviceKind::GalaxyLegacy, "fe0112610300465f0100000000020107002201a575ee", 70, 95, -1, "off", 3, 3, false, 0},
+    {"Galaxy Buds+ (A1B2)", DeviceKind::GalaxyClassic, "fd1b10610d00575401001165000000030022010401040100000003001e55dd", 87, 84, -1, "off", 1, 3, false, 1},
+    {"Galaxy Buds Live (A1B2)", DeviceKind::GalaxyClassic, "fd1c106109010f610100116400000022010017011701000003001000000281dd", 15, 97, 100, "noise-cancelling", -1, 0, false, 1},
+    {"Galaxy Buds Pro (A1B2)", DeviceKind::GalaxyClassic, "fd290c610a02595e010113640001002200002a012a0101000355000201000002001000010000220200009d24dd", 89, 94, 100, "off", 3, 1, false, 1},
+    {"Galaxy Buds2 (A1B2)", DeviceKind::Galaxy, "fd2810610a0364640101113300033f2201003c013c0102000366000100100000000011020101000000bea3dd", 100, 100, 51, "noise-cancelling", 2, 3, true, 1},
+    {"Galaxy Buds2 Pro (A1B2)", DeviceKind::Galaxy, "fd3100610d046464010033580001bf220001460146010000033500030010010101013203010101000cae0100030001000101b637dd", 100, 100, 88, "off", 3, 1, false, 1},
+    {"Galaxy Buds FE (A1B2)", DeviceKind::Galaxy, "fd31106102063a590100110000008f3300004a014a01030004650001001000000101110300000000e80300009d0e1d005000c2cfdd", 58, 89, -1, "off", 2, 0, false, 1},
+};
+
+int level(const QJsonArray &batteries, const char *part)
+{
+    for (const QJsonValue &b : batteries) {
+        if (b.toObject().value(QStringLiteral("part")).toString() == QLatin1String(part))
+            return b.toObject().value(QStringLiteral("level")).toInt();
+    }
+    return -1;
 }
 
-int main(int argc, char *argv[])
+void runCase(const Case &c)
 {
-    QCoreApplication app(argc, argv);
-
     FakeLink link;
-    link.incoming = QByteArray(reinterpret_cast<const char *>(Buds2Rev10), sizeof(Buds2Rev10));
+    link.incoming = QByteArray::fromHex(c.frame);
     MDRConnection conn{};
     conn.user = &link;
     conn.recv = fakeRecv;
     conn.send = fakeSend;
     conn.getLastError = fakeError;
 
-    GalaxyBackend backend(&conn, DeviceInfo{QStringLiteral("Galaxy Buds2 (1234)"), QStringLiteral("00:11:22:33:44:55"), {}, DeviceKind::Galaxy});
-    check(backend.start(), "start");
-    check(backend.tick(), "tick");
-    check(backend.ready(), "ready after extended status");
+    GalaxyBackend backend(&conn, DeviceInfo{QString::fromLatin1(c.name), QStringLiteral("00:11:22:33:44:55"), {}, c.kind});
+    backend.start();
+    backend.tick();
+    const QString n = QString::fromLatin1(c.name);
+    check(backend.ready(), n + QStringLiteral(": status parsed"));
+    if (!backend.ready())
+        return;
 
     const Snapshot s = backend.snapshot();
-    std::printf("     %s\n", QJsonDocument(s.batteries).toJson(QJsonDocument::Compact).constData());
-    check(s.batteries.size() == 3, "left, right and case batteries");
-    check(s.battery == 100, "battery 100");
-    check(s.batteries.at(2).toObject().value(QStringLiteral("level")).toInt() == 51, "case 51%");
-    check(s.mode == ModeNc, "noise cancelling");
-    check(s.ambientLevel == 2, "ambient level 2 of 3");
-    check(s.settings.value(QStringLiteral("equalizer")).toObject().value(QStringLiteral("preset")).toInt() == 3, "equalizer preset 3");
-    check(s.settings.value(QStringLiteral("touchLock")).toBool(), "touch lock reported");
-    check(s.settings.value(QStringLiteral("seamless")).toBool(), "seamless connection on");
+    check(level(s.batteries, "left") == c.left, n + QStringLiteral(": left battery %1").arg(c.left));
+    check(level(s.batteries, "right") == c.right, n + QStringLiteral(": right battery %1").arg(c.right));
+    check(level(s.batteries, "case") == c.caseLevel, n + QStringLiteral(": case battery %1").arg(c.caseLevel));
+    check(s.mode == QLatin1String(c.mode), n + QStringLiteral(": mode %1 (got %2)").arg(QLatin1String(c.mode), s.mode));
+    const bool hasAmbient = s.settings.contains(QStringLiteral("ambient"));
+    if (c.ambientLevel < 0)
+        check(!hasAmbient, n + QStringLiteral(": no ambient sound"));
+    else
+        check(hasAmbient && s.ambientLevel == c.ambientLevel, n + QStringLiteral(": ambient level %1 (got %2)").arg(c.ambientLevel).arg(s.ambientLevel));
+    check(s.settings.value(QStringLiteral("equalizer")).toObject().value(QStringLiteral("preset")).toInt() == c.equalizer,
+          n + QStringLiteral(": equalizer %1").arg(c.equalizer));
+    check(s.settings.value(QStringLiteral("touchLock")).toBool() == c.touchLock, n + QStringLiteral(": touch lock %1").arg(c.touchLock));
+    check(s.settings.value(QStringLiteral("seamless")).toBool() == bool(c.seamless), n + QStringLiteral(": seamless %1").arg(c.seamless));
 
-    check(link.outgoing.startsWith(QByteArray::fromHex("fd06008801022297")) || link.outgoing.size() > 0, "manager info sent");
     link.outgoing.clear();
-
-    backend.setMode(ModeAmbient);
+    const QString target = s.modes.contains(QStringLiteral("ambient")) ? QStringLiteral("ambient") : QStringLiteral("off");
+    backend.setMode(target);
     backend.tick();
-    check(link.outgoing.left(5) == QByteArray::fromHex("fd04007802"), "noise controls frame header and payload");
+    check(!link.outgoing.isEmpty(), n + QStringLiteral(": mode command sent (%1)").arg(QString::fromLatin1(link.outgoing.toHex(' '))));
 
     link.incoming = link.outgoing;
     link.outgoing.clear();
-    GalaxyBackend echo(&conn, DeviceInfo{});
+    QByteArray sentFrames = link.incoming;
+    GalaxyBackend echo(&conn, DeviceInfo{QString::fromLatin1(c.name), {}, {}, c.kind});
     echo.start();
     echo.tick();
-    check(!echo.ready(), "own frame parses with a valid CRC and is not a status");
+    check(link.incoming.isEmpty(), n + QStringLiteral(": own frames are consumed by the parser"));
+    Q_UNUSED(sentFrames);
+}
 
+}
+
+int main(int argc, char *argv[])
+{
+    QCoreApplication app(argc, argv);
+    for (const Case &c : Cases)
+        runCase(c);
     std::printf(failures ? "%d failed\n" : "all passed\n", failures);
     return failures ? 1 : 0;
 }

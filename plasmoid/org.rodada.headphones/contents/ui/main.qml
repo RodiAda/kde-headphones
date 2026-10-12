@@ -128,6 +128,7 @@ PlasmoidItem {
         case "noise-cancelling": return i18n("Noise cancelling")
         case "ambient": return i18n("Ambient sound")
         case "off": return i18n("Off")
+        case "adaptive": return i18n("Adaptive")
         }
         return ""
     }

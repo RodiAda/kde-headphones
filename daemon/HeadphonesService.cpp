@@ -7,6 +7,8 @@
 #include <QDBusObjectPath>
 #include <QJsonDocument>
 
+#include <algorithm>
+
 #include <mdr-bt/ConnectionLinux.h>
 #include <mdr-c/Headphones.h>
 
@@ -26,17 +28,18 @@ constexpr auto TickInterval = 50ms;
 constexpr qint64 ReconnectIntervalMs = 5000;
 constexpr qint64 ConnectTimeoutMs = 15000;
 
-constexpr auto GalaxyServiceUuid = "2E73A4AD-332D-41FC-90E2-16BEF06523F2";
-
 struct KnownService {
     const char *uuid;
     DeviceKind kind;
+    const char *nameHint;
 };
 
 constexpr KnownService KnownServices[] = {
-    {MDR_SERVICE_UUID_XM5, DeviceKind::SonyV2},
-    {MDR_SERVICE_UUID_LEGACY, DeviceKind::SonyV1},
-    {GalaxyServiceUuid, DeviceKind::Galaxy},
+    {MDR_SERVICE_UUID_XM5, DeviceKind::SonyV2, nullptr},
+    {MDR_SERVICE_UUID_LEGACY, DeviceKind::SonyV1, nullptr},
+    {"2E73A4AD-332D-41FC-90E2-16BEF06523F2", DeviceKind::Galaxy, nullptr},
+    {"00001102-0000-1000-8000-00805F9B34FD", DeviceKind::GalaxyLegacy, nullptr},
+    {"00001101-0000-1000-8000-00805F9B34FB", DeviceKind::GalaxyClassic, "Buds"},
 };
 
 const char *serviceUuid(DeviceKind kind)
@@ -118,8 +121,10 @@ std::optional<DeviceInfo> HeadphonesService::findConnectedDevice() const
         if (dev == ifaces.cend() || !dev->value(QStringLiteral("Connected")).toBool())
             continue;
         const QStringList uuids = dev->value(QStringLiteral("UUIDs")).toStringList();
+        const QString alias = dev->value(QStringLiteral("Alias")).toString();
         const auto known = std::find_if(std::begin(KnownServices), std::end(KnownServices), [&](const KnownService &s) {
-            return uuids.contains(QString::fromLatin1(s.uuid), Qt::CaseInsensitive);
+            return uuids.contains(QString::fromLatin1(s.uuid), Qt::CaseInsensitive)
+                && (!s.nameHint || alias.contains(QLatin1String(s.nameHint), Qt::CaseInsensitive));
         });
         if (known == std::end(KnownServices))
             continue;
@@ -128,8 +133,7 @@ std::optional<DeviceInfo> HeadphonesService::findConnectedDevice() const
                                            .value(QStringLiteral("org.bluez.Adapter1"))
                                            .value(QStringLiteral("Address"))
                                            .toString();
-        return DeviceInfo{dev->value(QStringLiteral("Alias")).toString(), dev->value(QStringLiteral("Address")).toString(),
-                          adapterAddress, known->kind};
+        return DeviceInfo{alias, dev->value(QStringLiteral("Address")).toString(), adapterAddress, known->kind};
     }
     return std::nullopt;
 }
@@ -166,7 +170,7 @@ void HeadphonesService::pollConnecting()
         dropConnection(QString::fromUtf8(mdrConnectionGetLastError(_conn)));
         return;
     }
-    if (_device.kind == DeviceKind::Galaxy)
+    if (_device.kind == DeviceKind::Galaxy || _device.kind == DeviceKind::GalaxyClassic || _device.kind == DeviceKind::GalaxyLegacy)
         _backend = std::make_unique<GalaxyBackend>(_conn, _device);
     else
         _backend = std::make_unique<SonyBackend>(_conn, _device);

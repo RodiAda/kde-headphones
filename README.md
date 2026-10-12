@@ -1,7 +1,7 @@
 # Headphones for KDE Plasma
 
 A Plasma 6 system tray widget and a small user daemon for controlling wireless headphones:
-Sony (tested with the WH-1000XM5) and Samsung Galaxy Buds2.
+Sony (tested with the WH-1000XM5) and Samsung Galaxy Buds.
 
 - Noise cancelling / ambient sound / off, ambient level, focus on voice
 - Battery level, codec, firmware
@@ -23,10 +23,13 @@ widget; see the [libmdr support matrix](https://github.com/mos9527/SonyHeadphone
 Paired device management, the connection order and the connect/disconnect results are available
 on MDR V2 only. BLE-only devices are not supported.
 
-Samsung Galaxy Buds2: own implementation of the Galaxy Buds RFCOMM protocol (service
-`2E73A4AD-332D-41FC-90E2-16BEF06523F2`): earbud and case battery, noise cancelling / ambient / off,
-ambient level, equalizer presets, touch lock and seamless connection. Other Galaxy Buds models
-that use the same service may partly work; the status layout is model specific.
+Samsung Galaxy Buds: own implementation of the Galaxy Buds RFCOMM protocol for every model it covers:
+Galaxy Buds, Buds+, Buds Live, Buds Pro, Buds2, Buds2 Pro, Buds FE, Buds3, Buds3 Pro, Buds3 FE,
+Buds Core, Buds4 and Buds4 Pro. Earbud and case battery, the noise modes each model has (noise
+cancelling, ambient sound, off; adaptive is shown when the earbuds report it), ambient level,
+equalizer presets, touch lock and seamless connection. The status parser is checked against frames
+captured from the Buds, Buds+, Buds Live, Buds Pro, Buds2, Buds2 Pro and Buds FE; newer models
+share the Buds Pro layout. Renamed Buds2-or-newer earbuds fall back to the Buds2 layout.
 
 ```
 headphonesd  ── RFCOMM ──  headphones
@@ -131,7 +134,7 @@ ambient-off), `power` {`autoPowerOff`: 0|5|15|30|60|180, `offWhenRemoved`, `auto
 cmake -B build-test -DHEADPHONES_TESTS=ON && cmake --build build-test --target galaxy-test && build-test/galaxy-test
 ```
 
-The Galaxy backend test replays an extended status frame captured from a Galaxy Buds2.
+The Galaxy backend test replays extended status frames captured from seven Galaxy Buds models.
 
 ## License
 
