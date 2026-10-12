@@ -60,6 +60,10 @@ private:
         bool seamless = false;
         bool seamlessKnown = false;
         int ambientVolume = 0;
+        bool wearingLeft = false;
+        bool wearingRight = false;
+        bool oneEarbud = false;
+        bool oneEarbudKnown = false;
     };
 
     bool legacyFraming() const { return _model == GalaxyModel::Buds; }

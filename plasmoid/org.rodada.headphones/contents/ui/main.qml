@@ -486,6 +486,20 @@ PlasmoidItem {
                     }
                 }
 
+                Kirigami.InlineMessage {
+                    Layout.fillWidth: true
+                    visible: root.cfg.oneEarbudNoise === false && !!root.cfg.wearing
+                             && !(root.cfg.wearing.left && root.cfg.wearing.right)
+                    type: Kirigami.MessageType.Information
+                    text: i18n("Noise control works only with both earbuds in your ears.")
+                    actions: [
+                        Kirigami.Action {
+                            text: i18n("Allow with one earbud")
+                            onTriggered: root.apply({ oneEarbudNoise: true })
+                        }
+                    ]
+                }
+
                 ColumnLayout {
                     Layout.fillWidth: true
                     visible: root.ambientRange !== null && root.modes.includes("ambient")
@@ -841,6 +855,13 @@ PlasmoidItem {
                     subtitle: i18n("Ignore taps on the earbuds")
                     checked: root.cfg.touchLock === true
                     onToggled: on => root.apply({ touchLock: on })
+                }
+                SettingSwitch {
+                    visible: root.cfg.oneEarbudNoise !== undefined
+                    text: i18n("Noise control with one earbud")
+                    subtitle: i18n("Allow noise cancelling and ambient sound when only one earbud is worn")
+                    checked: root.cfg.oneEarbudNoise === true
+                    onToggled: on => root.apply({ oneEarbudNoise: on })
                 }
                 SettingSwitch {
                     visible: root.cfg.seamless !== undefined

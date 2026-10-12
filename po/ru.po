@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sony-headphones-kde\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-12 20:26+0200\n"
+"POT-Creation-Date: 2026-10-12 20:31+0200\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -206,15 +206,15 @@ msgstr "Звук"
 msgid "Settings"
 msgstr "Настройки"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:416
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:417
 msgid "Headphones not connected"
 msgstr "Наушники не подключены"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:416
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:417
 msgid "Service not running"
 msgstr "Служба не запущена"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:418
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:419
 msgid ""
 "Connect the headphones over Bluetooth. If they are also connected to a "
 "phone, close the headphones app there (Sound Connect, Galaxy Wearable)."
@@ -222,7 +222,7 @@ msgstr ""
 "Подключите наушники по Bluetooth. Если они подключены и к телефону, закройте "
 "там приложение наушников (Sound Connect, Galaxy Wearable)."
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:419
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:420
 msgid ""
 "Start it with:\n"
 "systemctl --user start headphonesd"
@@ -230,261 +230,277 @@ msgstr ""
 "Запустите её командой:\n"
 "systemctl --user start headphonesd"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:441
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:442
 msgid ""
 "The headphones ask to confirm this change. They may disconnect for a moment."
 msgstr ""
 "Наушники просят подтвердить изменение. Они могут ненадолго отключиться."
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:444
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:445
 msgid "Confirm"
 msgstr "Подтвердить"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:449
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:450
 msgid "Cancel"
 msgstr "Отмена"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:499
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:494
+msgid "Noise control works only with both earbuds in your ears."
+msgstr "Шумоподавление и окружающий звук работают, только когда оба наушника в ушах."
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:497
+msgid "Allow with one earbud"
+msgstr "Разрешить с одним наушником"
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:514
 msgid "Ambient sound level"
 msgstr "Уровень окружающего звука"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:526
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:541
 msgid "Focus on voice"
 msgstr "Фокус на голосе"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:543
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:558
 msgid "Devices"
 msgstr "Устройства"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:590
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:605
 msgid "Play audio from this device"
 msgstr "Звук с этого устройства"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:601
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:616
 msgid "Disconnect from the headphones"
 msgstr "Отключить от наушников"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:602
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:617
 msgid "Connect to the headphones"
 msgstr "Подключить к наушникам"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:603
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:618
 msgid "Two devices are already connected; disconnect one first"
 msgstr "Уже подключены два устройства — сначала отключите одно"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:614
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:629
 msgid "Hide other devices"
 msgstr "Скрыть другие устройства"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:615
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:630
 msgid "Other devices (%1)"
 msgstr "Другие устройства (%1)"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:634
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:649
 msgid "%1 — %2"
 msgstr "%1 — %2"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:695
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:710
 msgid "Equalizer"
 msgstr "Эквалайзер"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:760
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:775
 msgid "Clear Bass"
 msgstr "Clear Bass"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:789
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:804
 msgid "DSEE Extreme"
 msgstr "DSEE Extreme"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:790
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:805
 msgid "Restores detail lost in compressed audio"
 msgstr "Восстанавливает детали, потерянные при сжатии звука"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:802
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:817
 msgid "Speak-to-Chat"
 msgstr "Speak-to-Chat"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:803
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:818
 msgid "Pauses playback and lets ambient sound in when you start talking"
 msgstr ""
 "Ставит музыку на паузу и пропускает окружающий звук, когда вы начинаете "
 "говорить"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:809
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:824
 msgid "Voice detection sensitivity"
 msgstr "Чувствительность распознавания голоса"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:811
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:826
 msgid "Auto"
 msgstr "Авто"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:812
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:827
 msgid "High"
 msgstr "Высокая"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:813
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:828
 msgid "Low"
 msgstr "Низкая"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:820
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:835
 msgid "End Speak-to-Chat"
 msgstr "Завершение Speak-to-Chat"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:822
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:837
 msgid "Short (about 15 s)"
 msgstr "Быстро (около 15 с)"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:823
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:838
 msgid "Standard (about 30 s)"
 msgstr "Стандартно (около 30 с)"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:824
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:839
 msgid "Long (about 1 min)"
 msgstr "Долго (около 1 мин)"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:825
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:840
 msgid "Don't end automatically"
 msgstr "Не завершать автоматически"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:839
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:854
 msgid "Lock touch controls"
 msgstr "Блокировка сенсора"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:840
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:855
 msgid "Ignore taps on the earbuds"
 msgstr "Не реагировать на касания наушников"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:846
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:861
+msgid "Noise control with one earbud"
+msgstr "Шумоподавление с одним наушником"
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:862
+msgid "Allow noise cancelling and ambient sound when only one earbud is worn"
+msgstr "Включать шумоподавление и окружающий звук, даже когда надет один наушник"
+
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:868
 msgid "Seamless earbud connection"
 msgstr "Бесшовное подключение наушников"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:847
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:869
 msgid ""
 "Switch automatically between devices signed in to the same Samsung account"
 msgstr ""
 "Автоматически переключаться между устройствами с одним аккаунтом Samsung"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:854
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:876
 msgid "NC/AMB button"
 msgstr "Кнопка NC/AMB"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:856
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:878
 msgid "Noise cancelling → Ambient sound → Off"
 msgstr "Шумоподавление → Окружающий звук → Выкл"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:857
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:879
 msgid "Noise cancelling ↔ Ambient sound"
 msgstr "Шумоподавление ↔ Окружающий звук"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:858
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:880
 msgid "Noise cancelling ↔ Off"
 msgstr "Шумоподавление ↔ Выкл"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:859
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:881
 msgid "Ambient sound ↔ Off"
 msgstr "Окружающий звук ↔ Выкл"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:881
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:903
 msgid "Switch audio between devices automatically"
 msgstr "Автоматически переключать звук между устройствами"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:882
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:904
 msgid "When playback starts on the other connected device"
 msgstr "Когда воспроизведение начинается на другом подключённом устройстве"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:889
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:911
 msgid "Bluetooth connection quality"
 msgstr "Качество Bluetooth-соединения"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:891
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:913
 msgid "Priority on sound quality"
 msgstr "Приоритет качества звука"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:892
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:914
 msgid "Priority on stable connection"
 msgstr "Приоритет стабильного соединения"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:905
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:927
 msgid "Pause when headphones are taken off"
 msgstr "Пауза, когда наушники сняты"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:911
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:933
 msgid "Turn off when headphones are taken off"
 msgstr "Выключать, когда наушники сняты"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:917
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:939
 msgid "Automatic power off when idle"
 msgstr "Автовыключение без использования"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:919
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:941
 msgid "Don't turn off"
 msgstr "Не выключать"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:920
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:942
 msgid "After 5 minutes"
 msgstr "Через 5 минут"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:921
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:943
 msgid "After 15 minutes"
 msgstr "Через 15 минут"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:922
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:944
 msgid "After 30 minutes"
 msgstr "Через 30 минут"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:923
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:945
 msgid "After 1 hour"
 msgstr "Через 1 час"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:924
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:946
 msgid "After 3 hours"
 msgstr "Через 3 часа"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:931
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:953
 msgid "Voice guidance"
 msgstr "Голосовые подсказки"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:932
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:954
 msgid "Spoken notifications such as battery level and mode changes"
 msgstr "Голосовые уведомления, например о заряде и смене режима"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:950
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:972
 msgid "Pair a new device"
 msgstr "Сопряжение нового устройства"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:954
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:976
 msgid "Pairing mode is on; the headphones are discoverable"
 msgstr "Режим сопряжения включён, наушники видны другим устройствам"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:955
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:977
 msgid "Makes the headphones discoverable over Bluetooth"
 msgstr "Делает наушники видимыми для поиска по Bluetooth"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:962
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:984
 msgid "Stop"
 msgstr "Остановить"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:962
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:984
 msgid "Start"
 msgstr "Начать"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:972
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:994
 msgid "Click again to turn the headphones off"
 msgstr "Нажмите ещё раз, чтобы выключить наушники"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:972
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:994
 msgid "Turn off the headphones"
 msgstr "Выключить наушники"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:979
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:1001
 msgid "Turn off"
 msgstr "Выключить"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:979
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:1001
 msgid "Turn off…"
 msgstr "Выключить…"
 
-#: plasmoid/org.rodada.headphones/contents/ui/main.qml:999
+#: plasmoid/org.rodada.headphones/contents/ui/main.qml:1021
 msgid "firmware %1"
 msgstr "прошивка %1"
 

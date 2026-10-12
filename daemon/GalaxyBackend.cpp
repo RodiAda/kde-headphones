@@ -13,6 +13,7 @@ constexpr uint8_t LegacyEom = 0xEE;
 
 constexpr uint8_t MsgStatusUpdated = 0x60;
 constexpr uint8_t MsgExtendedStatusUpdated = 0x61;
+constexpr uint8_t MsgSetAncWithOneEarbud = 0x6F;
 constexpr uint8_t MsgNoiseControlsUpdate = 0x77;
 constexpr uint8_t MsgNoiseControls = 0x78;
 constexpr uint8_t MsgSetAmbientMode = 0x80;
@@ -40,6 +41,7 @@ constexpr uint8_t TouchHoldCall = 1 << 5;
 
 constexpr uint8_t LegacyWearRight = 1;
 constexpr uint8_t LegacyWearLeft = 16;
+constexpr int PlacementWearing = 1;
 
 constexpr qint64 StatusTimeoutMs = 10000;
 
@@ -161,6 +163,8 @@ int GalaxyBackend::ambientMax() const
     case GalaxyModel::Buds4Pro:
         return 4;
     case GalaxyModel::BudsPro:
+    case GalaxyModel::Buds2Pro:
+    case GalaxyModel::Buds3Pro:
         return 3;
     case GalaxyModel::BudsLive:
         return 0;
@@ -208,6 +212,7 @@ void GalaxyBackend::send(uint8_t id, const QByteArray &payload)
     _tx.append(char(crc & 0xFF));
     _tx.append(char(crc >> 8));
     _tx.append(char(legacyFraming() ? LegacyEom : Eom));
+    qCDebug(lcHp) << "galaxy tx" << Qt::hex << id << payload.toHex(' ');
 }
 
 bool GalaxyBackend::flush()
@@ -274,6 +279,7 @@ bool GalaxyBackend::receive()
         _rx.remove(0, total);
         if (fragment || crc16(body) != crc)
             continue;
+        qCDebug(lcHp) << "galaxy rx" << Qt::hex << uint8_t(body.at(0)) << body.mid(1).toHex(' ');
         handle(uint8_t(body.at(0)), body.mid(1));
     }
     return true;
@@ -336,6 +342,8 @@ void GalaxyBackend::parseExtendedStatus(const QByteArray &p)
             return;
         s.leftPresent = s.batteryLeft > 0;
         s.rightPresent = s.batteryRight > 0;
+        s.wearingLeft = at(p, 6) & LegacyWearLeft;
+        s.wearingRight = at(p, 6) & LegacyWearRight;
         s.noiseMode = at(p, 7) == 1 ? NoiseAmbient : NoiseOff;
         s.ambientVolume = at(p, 9);
         s.equalizer = at(p, 10) == 1 ? (at(p, 11) % 5) + 1 : 0;
@@ -352,6 +360,8 @@ void GalaxyBackend::parseExtendedStatus(const QByteArray &p)
             return;
         s.leftPresent = (at(p, 6) >> 4) != 0;
         s.rightPresent = (at(p, 6) & 0x0F) != 0;
+        s.wearingLeft = (at(p, 6) >> 4) == PlacementWearing;
+        s.wearingRight = (at(p, 6) & 0x0F) == PlacementWearing;
         s.batteryCase = at(p, 7);
         s.noiseMode = at(p, 8) == 1 ? NoiseAmbient : NoiseOff;
         s.ambientVolume = at(p, 9);
@@ -367,6 +377,8 @@ void GalaxyBackend::parseExtendedStatus(const QByteArray &p)
             return;
         s.leftPresent = (at(p, 6) >> 4) != 0;
         s.rightPresent = (at(p, 6) & 0x0F) != 0;
+        s.wearingLeft = (at(p, 6) >> 4) == PlacementWearing;
+        s.wearingRight = (at(p, 6) & 0x0F) == PlacementWearing;
         s.batteryCase = at(p, 7);
         s.equalizer = at(p, 9);
         s.touchFlags = at(p, 10);
@@ -379,6 +391,15 @@ void GalaxyBackend::parseExtendedStatus(const QByteArray &p)
         s.seamlessKnown = true;
         if (combinedNoiseControl() && p.size() > 23)
             s.ambientVolume = at(p, 23);
+        if (_model == GalaxyModel::BudsPro) {
+            if (s.revision >= 8 && p.size() > 32) {
+                s.oneEarbud = at(p, 32) == 1;
+                s.oneEarbudKnown = true;
+            }
+        } else if (combinedNoiseControl() && (_model != GalaxyModel::Buds2 || s.revision >= 3) && p.size() > 28) {
+            s.oneEarbud = at(p, 28) == 1;
+            s.oneEarbudKnown = true;
+        }
         if (_model == GalaxyModel::Buds2 && s.revision >= 10 && p.size() > 36) {
             const uint8_t charging = at(p, 36);
             s.chargingLeft = charging & 0x10;
@@ -404,6 +425,8 @@ void GalaxyBackend::parseStatus(const QByteArray &p)
     }
     s.leftPresent = (at(p, 5) >> 4) != 0;
     s.rightPresent = (at(p, 5) & 0x0F) != 0;
+    s.wearingLeft = (at(p, 5) >> 4) == PlacementWearing;
+    s.wearingRight = (at(p, 5) & 0x0F) == PlacementWearing;
     if (p.size() > 6)
         s.batteryCase = at(p, 6);
     if (advancedTouchLock() && p.size() > 7) {
@@ -477,6 +500,12 @@ Snapshot GalaxyBackend::snapshot()
         {QStringLiteral("presets"), presets},
     };
     o[QStringLiteral("touchLock")] = st.touchLocked;
+    o[QStringLiteral("wearing")] = QJsonObject{
+        {QStringLiteral("left"), st.wearingLeft},
+        {QStringLiteral("right"), st.wearingRight},
+    };
+    if (st.oneEarbudKnown)
+        o[QStringLiteral("oneEarbudNoise")] = st.oneEarbud;
     if (st.seamlessKnown)
         o[QStringLiteral("seamless")] = st.seamless;
     s.settings = o;
@@ -554,6 +583,11 @@ QDBusError GalaxyBackend::apply(const QJsonObject &in)
             send(MsgLockTouchpad, QByteArray(1, char(locked)));
         }
         st.touchLocked = locked;
+    }
+
+    if (const QJsonValue v = in.value(QStringLiteral("oneEarbudNoise")); v.isBool() && st.oneEarbudKnown) {
+        send(MsgSetAncWithOneEarbud, QByteArray(1, char(v.toBool())));
+        st.oneEarbud = v.toBool();
     }
 
     if (const QJsonValue v = in.value(QStringLiteral("seamless")); v.isBool() && st.seamlessKnown) {
