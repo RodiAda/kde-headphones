@@ -8,6 +8,8 @@
 #include <QTimer>
 #include <QVariantMap>
 
+#include <deque>
+#include <functional>
 #include <optional>
 
 #include <mdr-c/Headphones.h>
@@ -28,6 +30,8 @@ class HeadphonesService : public QObject, protected QDBusContext
     Q_PROPERTY(bool FocusOnVoice READ focusOnVoice)
     Q_PROPERTY(QString Devices READ devices)
     Q_PROPERTY(QString DeviceAction READ deviceAction)
+    Q_PROPERTY(QString Settings READ settings)
+    Q_PROPERTY(QString Alert READ alert)
 
 public:
     static constexpr auto Service = "org.rodada.SonyHeadphones";
@@ -45,6 +49,8 @@ public:
     bool focusOnVoice() const { return _state.value(QStringLiteral("FocusOnVoice")).toBool(); }
     QString devices() const { return _state.value(QStringLiteral("Devices")).toString(); }
     QString deviceAction() const { return _state.value(QStringLiteral("DeviceAction")).toString(); }
+    QString settings() const { return _state.value(QStringLiteral("Settings")).toString(); }
+    QString alert() const { return _state.value(QStringLiteral("Alert")).toString(); }
 
 public Q_SLOTS:
     void SetMode(const QString &mode);
@@ -54,6 +60,10 @@ public Q_SLOTS:
     void SwitchPlayback(const QString &mac);
     void ConnectDevice(const QString &mac);
     void DisconnectDevice(const QString &mac);
+    void Apply(const QString &json);
+    void Playback(const QString &action);
+    void PowerOff();
+    void RespondToAlert(bool accept);
 
 private:
     enum class Link { Idle, Connecting, Connected };
@@ -80,6 +90,11 @@ private:
     bool requireConnected();
     void queueDeviceCommand(MDRPairedDeviceCommand command, const QString &mac);
     std::optional<Device> findConnectedDevice() const;
+    bool has(MDRFeature feature) const;
+    QString text(MDRText id, uint32_t index = 0) const;
+    QJsonObject settingsJson() const;
+    void queueOp(std::function<MDRResult()> op);
+    void runOps();
 
     static void onPacket(void *self, MDRPacketDirection direction, const unsigned char *frame, int size);
     void handlePayload(const QByteArray &payload);
@@ -92,6 +107,10 @@ private:
     Pending _pending;
     QHash<QString, int> _connectionOrder;
     QJsonObject _deviceAction;
+    std::deque<std::function<MDRResult()>> _ops;
+    QString _alert;
+    QString _settingsCache;
+    bool _settingsDirty = true;
     int _lastAmbientLevel = 10;
 
     QTimer _tick;

@@ -36,6 +36,55 @@ const QString ModeAmbient = QStringLiteral("ambient");
 const QString ModeOff = QStringLiteral("off");
 const QString AmbientLevelKey = QStringLiteral("ambientLevel");
 
+template<class T>
+struct Names {
+    T value;
+    const char *name;
+};
+
+constexpr Names<MDRSpeechSensitivity> SpeechSensitivities[] = {
+    {MDR_SPEECH_SENSITIVITY_AUTO, "auto"}, {MDR_SPEECH_SENSITIVITY_LOW, "low"}, {MDR_SPEECH_SENSITIVITY_HIGH, "high"}};
+constexpr Names<MDRSpeakTimeout> SpeakTimeouts[] = {
+    {MDR_SPEAK_TIMEOUT_SHORT, "short"}, {MDR_SPEAK_TIMEOUT_MEDIUM, "medium"},
+    {MDR_SPEAK_TIMEOUT_LONG, "long"}, {MDR_SPEAK_TIMEOUT_MANUAL, "manual"}};
+constexpr Names<MDRNoiseButtonMode> NoiseButtonModes[] = {
+    {MDR_NOISE_BUTTON_NOISE_AMBIENT_OFF, "nc-ambient-off"}, {MDR_NOISE_BUTTON_NOISE_AMBIENT, "nc-ambient"},
+    {MDR_NOISE_BUTTON_NOISE_OFF, "nc-off"}, {MDR_NOISE_BUTTON_AMBIENT_OFF, "ambient-off"}};
+constexpr Names<MDRAudioPriority> AudioPriorities[] = {
+    {MDR_AUDIO_PRIORITY_QUALITY, "quality"}, {MDR_AUDIO_PRIORITY_STABILITY, "stability"}};
+constexpr Names<MDRPlaybackStatus> PlaybackStatuses[] = {
+    {MDR_PLAYBACK_STOPPED, "stopped"}, {MDR_PLAYBACK_PLAYING, "playing"}, {MDR_PLAYBACK_PAUSED, "paused"}};
+constexpr Names<MDRPlaybackAction> PlaybackActions[] = {
+    {MDR_PLAYBACK_PLAY, "play"}, {MDR_PLAYBACK_PAUSE, "pause"}, {MDR_PLAYBACK_NEXT, "next"}, {MDR_PLAYBACK_PREVIOUS, "previous"}};
+constexpr Names<MDRAudioCodec> Codecs[] = {
+    {MDR_AUDIO_CODEC_SBC, "SBC"}, {MDR_AUDIO_CODEC_AAC, "AAC"}, {MDR_AUDIO_CODEC_LDAC, "LDAC"},
+    {MDR_AUDIO_CODEC_APTX, "aptX"}, {MDR_AUDIO_CODEC_APTX_HD, "aptX HD"}, {MDR_AUDIO_CODEC_LC3, "LC3"}};
+
+template<class T, size_t N>
+QString nameOf(const Names<T> (&table)[N], T value)
+{
+    for (const auto &e : table) {
+        if (e.value == value)
+            return QString::fromLatin1(e.name);
+    }
+    return {};
+}
+
+template<class T, size_t N>
+std::optional<T> valueOf(const Names<T> (&table)[N], const QString &name)
+{
+    for (const auto &e : table) {
+        if (name == QLatin1String(e.name))
+            return e.value;
+    }
+    return std::nullopt;
+}
+
+MDRBoolean mdrBool(bool b)
+{
+    return b ? MDR_TRUE : MDR_FALSE;
+}
+
 QByteArray framePayload(const unsigned char *frame, int size)
 {
     if (size < 2 || frame[0] != 0x3E || frame[size - 1] != 0x3C)
@@ -187,14 +236,28 @@ void HeadphonesService::serviceHeadphones()
         }
         if (event == MDR_EVENT_NONE)
             break;
+        _settingsDirty = true;
         switch (event) {
         case MDR_EVENT_INITIALIZE_COMPLETE:
             qCInfo(lcHp) << "initialized";
+            {
+                QStringList available;
+                for (MDRFeature f = MDR_FEATURE_IDENTITY; f <= MDR_FEATURE_MAX_VALUE; f++) {
+                    MDRFeatureAvailability a = MDR_AVAILABILITY_UNKNOWN;
+                    if (mdrHeadphonesGetFeature(_hp, f, &a) == MDR_RESULT_OK && a == MDR_AVAILABILITY_AVAILABLE)
+                        available << QString::number(f);
+                }
+                qCInfo(lcHp) << "features:" << available.join(QLatin1Char(' '));
+            }
             _initDone = true;
             _syncWanted = true;
             break;
         case MDR_EVENT_NEED_SYNC:
             _syncWanted = true;
+            break;
+        case MDR_EVENT_ALERT:
+            _alert = text(MDR_TEXT_LAST_ALERT);
+            qCInfo(lcHp) << "alert:" << _alert;
             break;
         default:
             break;
@@ -204,6 +267,9 @@ void HeadphonesService::serviceHeadphones()
     if (!_initDone || !mdrHeadphonesIsReady(_hp))
         return;
     applyPending();
+    runOps();
+    if (!mdrHeadphonesIsReady(_hp))
+        return;
     if (mdrHeadphonesIsDirty(_hp)) {
         if (mdrHeadphonesRequestCommit(_hp) != MDR_RESULT_OK)
             dropConnection(QStringLiteral("commit failed"));
@@ -259,6 +325,9 @@ void HeadphonesService::dropConnection(const QString &reason)
     _pending = {};
     _connectionOrder.clear();
     _deviceAction = {};
+    _ops.clear();
+    _alert.clear();
+    _settingsDirty = true;
 }
 
 void HeadphonesService::onPacket(void *self, MDRPacketDirection direction, const unsigned char *frame, int size)
@@ -367,6 +436,12 @@ void HeadphonesService::publishState()
     s[QStringLiteral("AmbientLevel")] = ambient;
     s[QStringLiteral("FocusOnVoice")] = voice;
     s[QStringLiteral("Devices")] = QString::fromUtf8(QJsonDocument(devices).toJson(QJsonDocument::Compact));
+    if (_settingsDirty) {
+        _settingsDirty = false;
+        _settingsCache = up ? QString::fromUtf8(QJsonDocument(settingsJson()).toJson(QJsonDocument::Compact)) : QString();
+    }
+    s[QStringLiteral("Settings")] = _settingsCache;
+    s[QStringLiteral("Alert")] = up ? _alert : QString();
     s[QStringLiteral("DeviceAction")] = _deviceAction.isEmpty()
         ? QString()
         : QString::fromUtf8(QJsonDocument(_deviceAction).toJson(QJsonDocument::Compact));
@@ -489,4 +564,356 @@ void HeadphonesService::ConnectDevice(const QString &mac)
 void HeadphonesService::DisconnectDevice(const QString &mac)
 {
     queueDeviceCommand(MDR_PAIRED_DEVICE_DISCONNECT, mac);
+}
+
+bool HeadphonesService::has(MDRFeature feature) const
+{
+    MDRFeatureAvailability a = MDR_AVAILABILITY_UNKNOWN;
+    return _hp && mdrHeadphonesGetFeature(_hp, feature, &a) == MDR_RESULT_OK && a == MDR_AVAILABILITY_AVAILABLE;
+}
+
+QString HeadphonesService::text(MDRText id, uint32_t index) const
+{
+    char buffer[512] = {};
+    uint32_t size = sizeof(buffer);
+    if (!_hp || mdrHeadphonesGetText(_hp, id, index, buffer, &size) != MDR_RESULT_OK)
+        return {};
+    return QString::fromUtf8(buffer, qstrnlen(buffer, sizeof(buffer)));
+}
+
+QJsonObject HeadphonesService::settingsJson() const
+{
+    QJsonObject o;
+    o[QStringLiteral("model")] = text(MDR_TEXT_MODEL_NAME);
+    o[QStringLiteral("firmware")] = text(MDR_TEXT_FIRMWARE_VERSION);
+    MDRModel model{};
+    if (mdrHeadphonesGetModel(_hp, &model) == MDR_RESULT_OK)
+        o[QStringLiteral("codec")] = nameOf(Codecs, model.audio_codec);
+
+    if (has(MDR_FEATURE_PLAYBACK_METADATA) || has(MDR_FEATURE_PLAYBACK_CONTROL) || has(MDR_FEATURE_PLAYBACK_VOLUME)) {
+        MDRPlayback pb{};
+        mdrHeadphonesGetPlayback(_hp, &pb);
+        o[QStringLiteral("playback")] = QJsonObject{
+            {QStringLiteral("status"), nameOf(PlaybackStatuses, pb.status)},
+            {QStringLiteral("title"), text(MDR_TEXT_TRACK_TITLE)},
+            {QStringLiteral("artist"), text(MDR_TEXT_TRACK_ARTIST)},
+            {QStringLiteral("album"), text(MDR_TEXT_TRACK_ALBUM)},
+            {QStringLiteral("volume"), has(MDR_FEATURE_PLAYBACK_VOLUME) ? QJsonValue(int(pb.volume)) : QJsonValue()},
+            {QStringLiteral("control"), has(MDR_FEATURE_PLAYBACK_CONTROL)},
+        };
+    }
+
+    if (has(MDR_FEATURE_SPEAK_TO_CHAT)) {
+        MDRSpeakToChat stc{};
+        if (mdrHeadphonesGetSpeakToChat(_hp, &stc) == MDR_RESULT_OK) {
+            o[QStringLiteral("speakToChat")] = QJsonObject{
+                {QStringLiteral("enabled"), stc.enabled == MDR_TRUE},
+                {QStringLiteral("sensitivity"), nameOf(SpeechSensitivities, stc.sensitivity)},
+                {QStringLiteral("timeout"), nameOf(SpeakTimeouts, stc.timeout)},
+            };
+        }
+    }
+
+    MDREqualizer eq{};
+    const bool eqOk = (has(MDR_FEATURE_EQUALIZER) || has(MDR_FEATURE_DSEE)) && mdrHeadphonesGetEqualizer(_hp, &eq) == MDR_RESULT_OK;
+    if (eqOk && has(MDR_FEATURE_EQUALIZER)) {
+        std::array<int8_t, 16> bands{};
+        uint32_t bandCount = bands.size();
+        QJsonArray bandArray;
+        if (mdrHeadphonesGetEqualizerBands(_hp, bands.data(), &bandCount) == MDR_RESULT_OK) {
+            for (uint32_t i = 0; i < bandCount; i++)
+                bandArray.append(bands[i]);
+        }
+        std::array<MDREqualizerPreset, 32> presets{};
+        uint32_t presetCount = presets.size();
+        QJsonArray presetArray;
+        if (mdrHeadphonesGetEqualizerPresets(_hp, presets.data(), &presetCount) == MDR_RESULT_OK) {
+            for (uint32_t i = 0; i < presetCount; i++) {
+                presetArray.append(QJsonObject{
+                    {QStringLiteral("id"), int(presets[i])},
+                    {QStringLiteral("name"), text(MDR_TEXT_EQUALIZER_PRESET_NAME, i)},
+                });
+            }
+        }
+        o[QStringLiteral("equalizer")] = QJsonObject{
+            {QStringLiteral("preset"), int(eq.preset)},
+            {QStringLiteral("presets"), presetArray},
+            {QStringLiteral("bands"), bandArray},
+            {QStringLiteral("clearBass"), eq.clear_bass},
+        };
+    }
+    if (eqOk && has(MDR_FEATURE_DSEE) && eq.dsee_available == MDR_TRUE)
+        o[QStringLiteral("dsee")] = eq.dsee_enabled == MDR_TRUE;
+
+    if (has(MDR_FEATURE_NOISE_CONTROL_BUTTON)) {
+        MDRNoiseControl nc{};
+        if (mdrHeadphonesGetNoiseControl(_hp, &nc) == MDR_RESULT_OK)
+            o[QStringLiteral("noiseButton")] = nameOf(NoiseButtonModes, nc.button_mode);
+    }
+
+    if (has(MDR_FEATURE_AUTO_POWER_OFF) || has(MDR_FEATURE_WEARING_DETECTION) || has(MDR_FEATURE_AUTO_PAUSE)) {
+        MDRPower power{};
+        if (mdrHeadphonesGetPower(_hp, &power) == MDR_RESULT_OK) {
+            QJsonObject p;
+            if (has(MDR_FEATURE_AUTO_POWER_OFF))
+                p[QStringLiteral("autoPowerOff")] = int(power.auto_power_off_minutes);
+            if (has(MDR_FEATURE_WEARING_DETECTION))
+                p[QStringLiteral("offWhenRemoved")] = power.wearing_power == MDR_WEARING_POWER_WHEN_REMOVED;
+            if (has(MDR_FEATURE_AUTO_PAUSE))
+                p[QStringLiteral("autoPause")] = power.auto_pause == MDR_TRUE;
+            o[QStringLiteral("power")] = p;
+        }
+    }
+    o[QStringLiteral("canPowerOff")] = has(MDR_FEATURE_SHUTDOWN);
+
+    if (has(MDR_FEATURE_VOICE_GUIDANCE)) {
+        MDRVoiceGuidance vg{};
+        if (mdrHeadphonesGetVoiceGuidance(_hp, &vg) == MDR_RESULT_OK) {
+            QJsonObject v{{QStringLiteral("enabled"), vg.enabled == MDR_TRUE}};
+            if (has(MDR_FEATURE_VOICE_GUIDANCE_VOLUME))
+                v[QStringLiteral("volume")] = vg.volume;
+            o[QStringLiteral("voiceGuidance")] = v;
+        }
+    }
+
+    if (has(MDR_FEATURE_CONNECTION_MODE)) {
+        MDRConnectionMode cm{};
+        if (mdrHeadphonesGetConnectionMode(_hp, &cm) == MDR_RESULT_OK)
+            o[QStringLiteral("connectionMode")] = nameOf(AudioPriorities, cm.audio_priority);
+    }
+
+    if (has(MDR_FEATURE_SOURCE_SWITCH_CONTROL)) {
+        MDRBoolean enabled = MDR_FALSE;
+        if (mdrHeadphonesGetSourceSwitchControl(_hp, &enabled) == MDR_RESULT_OK)
+            o[QStringLiteral("autoSwitch")] = enabled == MDR_TRUE;
+    }
+
+    if (has(MDR_FEATURE_PAIRING_MODE)) {
+        MDRPairing pairing{};
+        if (mdrHeadphonesGetPairing(_hp, &pairing) == MDR_RESULT_OK)
+            o[QStringLiteral("pairing")] = pairing.enabled == MDR_TRUE;
+    }
+
+    if (has(MDR_FEATURE_SAFE_LISTENING)) {
+        MDRSafeListening sl{};
+        if (mdrHeadphonesGetSafeListening(_hp, &sl) == MDR_RESULT_OK)
+            o[QStringLiteral("soundPressure")] = int(sl.sound_pressure);
+    }
+
+    if (has(MDR_FEATURE_GENERAL_SETTINGS)) {
+        std::array<MDRGeneralSettingInfo, 16> infos{};
+        uint32_t count = infos.size();
+        QJsonArray general;
+        if (mdrHeadphonesGetGeneralSettingInfo(_hp, infos.data(), &count) == MDR_RESULT_OK) {
+            for (uint32_t i = 0; i < count; i++) {
+                if (infos[i].type != MDR_GENERAL_SETTING_BOOLEAN)
+                    continue;
+                MDRGeneralSetting setting{};
+                if (mdrHeadphonesGetGeneralSetting(_hp, infos[i].index, &setting) != MDR_RESULT_OK)
+                    continue;
+                general.append(QJsonObject{
+                    {QStringLiteral("index"), int(infos[i].index)},
+                    {QStringLiteral("subject"), text(MDR_TEXT_GENERAL_SETTING_SUBJECT, infos[i].index)},
+                    {QStringLiteral("summary"), text(MDR_TEXT_GENERAL_SETTING_SUMMARY, infos[i].index)},
+                    {QStringLiteral("value"), setting.boolean_value == MDR_TRUE},
+                    {QStringLiteral("writable"), infos[i].writable == MDR_TRUE},
+                });
+            }
+        }
+        o[QStringLiteral("general")] = general;
+    }
+    return o;
+}
+
+void HeadphonesService::queueOp(std::function<MDRResult()> op)
+{
+    _ops.push_back(std::move(op));
+    _settingsDirty = true;
+}
+
+void HeadphonesService::runOps()
+{
+    while (!_ops.empty() && mdrHeadphonesIsReady(_hp)) {
+        const MDRResult r = _ops.front()();
+        if (r == MDR_RESULT_INPROGRESS)
+            return;
+        if (r != MDR_RESULT_OK)
+            qCWarning(lcHp) << "operation failed:" << r;
+        _ops.pop_front();
+        _settingsDirty = true;
+    }
+}
+
+void HeadphonesService::Apply(const QString &json)
+{
+    if (!requireConnected())
+        return;
+    QJsonParseError err{};
+    const QJsonObject in = QJsonDocument::fromJson(json.toUtf8(), &err).object();
+    if (err.error != QJsonParseError::NoError) {
+        sendErrorReply(QDBusError::InvalidArgs, err.errorString());
+        return;
+    }
+    MDRHeadphones *hp = _hp;
+
+    if (in.contains(QStringLiteral("speakToChat"))) {
+        const QJsonObject v = in.value(QStringLiteral("speakToChat")).toObject();
+        queueOp([hp, v] {
+            MDRSpeakToChat stc{};
+            if (MDRResult r = mdrHeadphonesGetSpeakToChat(hp, &stc); r != MDR_RESULT_OK)
+                return r;
+            if (v.contains(QStringLiteral("enabled")))
+                stc.enabled = mdrBool(v.value(QStringLiteral("enabled")).toBool());
+            if (auto s = valueOf(SpeechSensitivities, v.value(QStringLiteral("sensitivity")).toString()))
+                stc.sensitivity = *s;
+            if (auto t = valueOf(SpeakTimeouts, v.value(QStringLiteral("timeout")).toString()))
+                stc.timeout = *t;
+            return mdrHeadphonesSetSpeakToChat(hp, &stc);
+        });
+    }
+
+    if (in.contains(QStringLiteral("equalizer")) || in.contains(QStringLiteral("dsee"))) {
+        const QJsonObject v = in.value(QStringLiteral("equalizer")).toObject();
+        const QJsonValue dsee = in.value(QStringLiteral("dsee"));
+        if (v.contains(QStringLiteral("preset")) || v.contains(QStringLiteral("clearBass")) || dsee.isBool()) {
+            queueOp([hp, v, dsee] {
+                MDREqualizer eq{};
+                if (MDRResult r = mdrHeadphonesGetEqualizer(hp, &eq); r != MDR_RESULT_OK)
+                    return r;
+                if (v.contains(QStringLiteral("preset")))
+                    eq.preset = MDREqualizerPreset(v.value(QStringLiteral("preset")).toInt());
+                if (v.contains(QStringLiteral("clearBass")))
+                    eq.clear_bass = int8_t(std::clamp(v.value(QStringLiteral("clearBass")).toInt(), -10, 10));
+                if (dsee.isBool())
+                    eq.dsee_enabled = mdrBool(dsee.toBool());
+                return mdrHeadphonesSetEqualizer(hp, &eq);
+            });
+        }
+        if (v.contains(QStringLiteral("bands"))) {
+            std::vector<int8_t> bands;
+            for (const QJsonValue &b : v.value(QStringLiteral("bands")).toArray())
+                bands.push_back(int8_t(std::clamp(b.toInt(), -10, 10)));
+            queueOp([hp, bands] { return mdrHeadphonesSetEqualizerBands(hp, bands.data(), uint32_t(bands.size())); });
+        }
+    }
+
+    if (auto mode = valueOf(NoiseButtonModes, in.value(QStringLiteral("noiseButton")).toString())) {
+        queueOp([hp, m = *mode] {
+            MDRNoiseControl nc{};
+            if (MDRResult r = mdrHeadphonesGetNoiseControl(hp, &nc); r != MDR_RESULT_OK)
+                return r;
+            nc.button_mode = m;
+            return mdrHeadphonesSetNoiseControl(hp, &nc);
+        });
+    }
+
+    if (in.contains(QStringLiteral("power"))) {
+        const QJsonObject v = in.value(QStringLiteral("power")).toObject();
+        queueOp([hp, v] {
+            MDRPower power{};
+            if (MDRResult r = mdrHeadphonesGetPower(hp, &power); r != MDR_RESULT_OK)
+                return r;
+            if (v.contains(QStringLiteral("autoPowerOff")))
+                power.auto_power_off_minutes = uint32_t(v.value(QStringLiteral("autoPowerOff")).toInt());
+            if (v.contains(QStringLiteral("offWhenRemoved")))
+                power.wearing_power = v.value(QStringLiteral("offWhenRemoved")).toBool() ? MDR_WEARING_POWER_WHEN_REMOVED : MDR_WEARING_POWER_DISABLED;
+            if (v.contains(QStringLiteral("autoPause")))
+                power.auto_pause = mdrBool(v.value(QStringLiteral("autoPause")).toBool());
+            power.shutdown_requested = MDR_FALSE;
+            return mdrHeadphonesSetPower(hp, &power);
+        });
+    }
+
+    if (in.contains(QStringLiteral("voiceGuidance"))) {
+        const QJsonObject v = in.value(QStringLiteral("voiceGuidance")).toObject();
+        queueOp([hp, v] {
+            MDRVoiceGuidance vg{};
+            if (MDRResult r = mdrHeadphonesGetVoiceGuidance(hp, &vg); r != MDR_RESULT_OK)
+                return r;
+            if (v.contains(QStringLiteral("enabled")))
+                vg.enabled = mdrBool(v.value(QStringLiteral("enabled")).toBool());
+            if (v.contains(QStringLiteral("volume")))
+                vg.volume = int8_t(v.value(QStringLiteral("volume")).toInt());
+            return mdrHeadphonesSetVoiceGuidance(hp, &vg);
+        });
+    }
+
+    if (auto priority = valueOf(AudioPriorities, in.value(QStringLiteral("connectionMode")).toString())) {
+        queueOp([hp, p = *priority] {
+            const MDRConnectionMode cm{p};
+            return mdrHeadphonesSetConnectionMode(hp, &cm);
+        });
+    }
+
+    if (const QJsonValue v = in.value(QStringLiteral("autoSwitch")); v.isBool())
+        queueOp([hp, on = v.toBool()] { return mdrHeadphonesSetSourceSwitchControl(hp, mdrBool(on)); });
+
+    if (const QJsonValue v = in.value(QStringLiteral("pairing")); v.isBool()) {
+        queueOp([hp, on = v.toBool()] {
+            const MDRPairing pairing{mdrBool(on)};
+            return mdrHeadphonesSetPairing(hp, &pairing);
+        });
+    }
+
+    if (const QJsonValue v = in.value(QStringLiteral("volume")); v.isDouble()) {
+        queueOp([hp, volume = v.toInt()] {
+            MDRPlayback pb{};
+            if (MDRResult r = mdrHeadphonesGetPlayback(hp, &pb); r != MDR_RESULT_OK)
+                return r;
+            pb.volume = uint8_t(std::clamp(volume, 0, 30));
+            return mdrHeadphonesSetPlayback(hp, &pb);
+        });
+    }
+
+    const QJsonObject general = in.value(QStringLiteral("general")).toObject();
+    for (auto it = general.constBegin(); it != general.constEnd(); ++it) {
+        bool ok = false;
+        const uint32_t index = it.key().toUInt(&ok);
+        if (!ok || !it.value().isBool())
+            continue;
+        queueOp([hp, index, on = it.value().toBool()] {
+            const MDRGeneralSetting setting{index, mdrBool(on)};
+            return mdrHeadphonesSetGeneralSetting(hp, &setting);
+        });
+    }
+    publishState();
+}
+
+void HeadphonesService::Playback(const QString &action)
+{
+    if (!requireConnected())
+        return;
+    const auto a = valueOf(PlaybackActions, action);
+    if (!a) {
+        sendErrorReply(QDBusError::InvalidArgs, QStringLiteral("Action must be play, pause, next or previous"));
+        return;
+    }
+    queueOp([hp = _hp, a = *a] {
+        const MDRPlaybackCommand command{a};
+        return mdrHeadphonesPlayback(hp, &command);
+    });
+}
+
+void HeadphonesService::PowerOff()
+{
+    if (!requireConnected())
+        return;
+    queueOp([hp = _hp] {
+        MDRPower power{};
+        if (MDRResult r = mdrHeadphonesGetPower(hp, &power); r != MDR_RESULT_OK)
+            return r;
+        power.shutdown_requested = MDR_TRUE;
+        return mdrHeadphonesSetPower(hp, &power);
+    });
+}
+
+void HeadphonesService::RespondToAlert(bool accept)
+{
+    if (!requireConnected())
+        return;
+    _alert.clear();
+    queueOp([hp = _hp, accept] {
+        return mdrHeadphonesRequestRespondToAlert(hp, accept ? MDR_ALERT_ACTION_POSITIVE : MDR_ALERT_ACTION_NEGATIVE);
+    });
+    publishState();
 }

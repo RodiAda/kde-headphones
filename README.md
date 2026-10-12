@@ -4,8 +4,17 @@ A Plasma 6 system tray widget and a small user daemon for controlling Sony headp
 (tested with the WH-1000XM5).
 
 - Noise cancelling / ambient sound / off, ambient level, focus on voice
-- Battery level
+- Battery level, codec, firmware
 - Paired devices: connection order, connect / disconnect, switch the playback source
+- Playback control and volume
+- Equalizer presets, 5-band custom equalizer, Clear Bass, DSEE Extreme
+- Speak-to-Chat with sensitivity and timeout
+- NC/AMB button function, touch panel, multipoint, automatic source switching,
+  connection quality priority
+- Pause or power off when taken off, automatic power off, voice guidance
+- Pairing mode and powering the headphones off
+
+Only the features the headphones report as supported are shown.
 
 ```
 sony-headphonesd  ── RFCOMM ──  headphones
@@ -61,8 +70,25 @@ Properties: `Connected`, `DeviceName`, `Address`, `Battery` (-1 when unknown), `
 `Devices` (JSON array of `mac`, `name`, `connected`, `order`, `active`, `self`),
 `DeviceAction` (JSON describing the last connect/disconnect: `pending` → `in-progress` → `ok` | `error` | `busy`).
 
+`Settings` (JSON with every supported setting, see below), `Alert` (non-empty while the headphones
+wait for a confirmation).
+
 Methods: `SetMode(s)`, `SetAmbientLevel(i)`, `SetFocusOnVoice(b)`, `CycleMode()`,
-`SwitchPlayback(s mac)`, `ConnectDevice(s mac)`, `DisconnectDevice(s mac)`.
+`SwitchPlayback(s mac)`, `ConnectDevice(s mac)`, `DisconnectDevice(s mac)`,
+`Apply(s json)`, `Playback(s play|pause|next|previous)`, `PowerOff()`, `RespondToAlert(b)`.
+
+`Apply` takes a partial object with the same shape as `Settings`:
+
+```
+busctl --user call org.rodada.SonyHeadphones /org/rodada/SonyHeadphones org.rodada.SonyHeadphones \
+    Apply s '{"speakToChat":{"enabled":true,"timeout":"long"},"dsee":true}'
+```
+
+Keys: `speakToChat` {`enabled`, `sensitivity`: auto|high|low, `timeout`: short|medium|long|manual},
+`equalizer` {`preset`, `bands`, `clearBass`}, `dsee`, `noiseButton` (nc-ambient-off | nc-ambient | nc-off |
+ambient-off), `power` {`autoPowerOff`: 0|5|15|30|60|180, `offWhenRemoved`, `autoPause`},
+`voiceGuidance` {`enabled`, `volume`}, `connectionMode` (quality | stability), `autoSwitch`, `pairing`,
+`volume` (0..30), `general` {"<index>": bool}.
 
 `CycleMode` works well as a global shortcut (*System Settings → Shortcuts → Add Command*).
 
