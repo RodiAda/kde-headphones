@@ -1,0 +1,22 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "rodada"
+            }
+        ],
+        "Category": "System Information",
+        "Description": "Noise cancelling, ambient sound and battery of Sony headphones",
+        "Description[ru]": "Шумоподавление, окружающий звук и заряд наушников Sony",
+        "Icon": "audio-headphones",
+        "Id": "org.rodada.sonyheadphones",
+        "License": "MIT",
+        "Name": "Sony Headphones",
+        "Name[ru]": "Наушники Sony",
+        "Version": "0.1"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0",
+    "X-Plasma-NotificationArea": "true",
+    "X-Plasma-NotificationAreaCategory": "Hardware"
+}

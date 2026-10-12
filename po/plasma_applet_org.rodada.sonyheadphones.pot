@@ -1,0 +1,146 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the sony-headphones-kde package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: sony-headphones-kde\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-12 02:20+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:80
+msgid "Connecting…"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:80
+msgid "Disconnecting…"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:82
+msgid "Could not connect"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:82
+msgid "Could not disconnect"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:85
+msgid "This computer · connected first"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:85
+msgid "This computer · connected second"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:87
+msgid "Connected first"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:87
+msgid "Connected second"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:88
+msgid "Paired, not connected"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:98
+msgid "Noise cancelling"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:99
+msgid "Ambient sound"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:100
+msgid "Off"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:152
+msgid "Sony Headphones"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:155
+msgid "sony-headphonesd is not running"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:157
+msgid "Not connected"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:160
+msgid "battery %1%"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:161
+msgid "Middle-click to cycle the mode"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:234
+msgid "%1%"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:244
+msgid "Headphones not connected"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:244
+msgid "Service not running"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:246
+msgid ""
+"Connect the headphones over Bluetooth. If they are also connected to a "
+"phone, close Sound Connect there."
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:247
+msgid ""
+"Start it with:\n"
+"systemctl --user start sony-headphonesd"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:300
+msgid "Ambient sound level"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:326
+msgid "Focus on voice"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:341
+msgid "Devices"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:388
+msgid "Play audio from this device"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:399
+msgid "Disconnect from the headphones"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:400
+msgid "Connect to the headphones"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:401
+msgid "Two devices are already connected; disconnect one first"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:412
+msgid "Hide other devices"
+msgstr ""
+
+#: plasmoid/org.rodada.sonyheadphones/contents/ui/main.qml:413
+msgid "Other devices (%1)"
+msgstr ""
