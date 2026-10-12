@@ -10,6 +10,7 @@
 #include "HuaweiBackend.h"
 #include "SonyBackend.h"
 #include "XiaomiBackend.h"
+#include "SoundcoreBackend.h"
 
 namespace {
 
@@ -28,6 +29,7 @@ constexpr KnownService KnownServices[] = {
     {"00001101-0000-1000-8000-00805F9B34FB", DeviceKind::Huawei, "FreeLace", false},
     {"00001101-0000-1000-8000-00805F9B34FB", DeviceKind::Huawei, "FreeClip", false},
     {"00001101-0000-1000-8000-00805F9B34FB", DeviceKind::Huawei, "HONOR Earbuds", false},
+    {"00001101-0000-1000-8000-00805F9B34FB", DeviceKind::Soundcore, "Soundcore", false},
     {"00001101-0000-1000-8000-00805F9B34FB", DeviceKind::GalaxyClassic, "Buds", false},
     {"74EC2172-0BAD-4D01-8F77-997B2BE0722A", DeviceKind::AirPods, nullptr, true},
 };
@@ -62,6 +64,8 @@ std::unique_ptr<Backend> createBackend(MDRConnection *connection, const DeviceIn
         return std::make_unique<HuaweiBackend>(connection, device);
     case DeviceKind::Xiaomi:
         return std::make_unique<XiaomiBackend>(connection, device);
+    case DeviceKind::Soundcore:
+        return std::make_unique<SoundcoreBackend>(connection, device);
     default:
         return nullptr;
     }
