@@ -19,6 +19,7 @@ constexpr KnownService KnownServices[] = {
     {"00001102-0000-1000-8000-00805F9B34FD", DeviceKind::GalaxyLegacy, nullptr, false},
     {"25E97FF7-24CE-4C4C-8951-F764A708F7B5", DeviceKind::PixelBuds, nullptr, false},
     {"AEAC4A03-DFF5-498F-843A-34487CF133EB", DeviceKind::Nothing, nullptr, false},
+    {nullptr, DeviceKind::Beats, "Beats", true},
     {"00001101-0000-1000-8000-00805F9B34FB", DeviceKind::Bose, "Bose", false},
     {"00001101-0000-1000-8000-00805F9B34FB", DeviceKind::Huawei, "FreeBuds", false},
     {"00001101-0000-1000-8000-00805F9B34FB", DeviceKind::Huawei, "FreeLace", false},
@@ -46,6 +47,7 @@ std::unique_ptr<Backend> createBackend(MDRConnection *connection, const DeviceIn
     case DeviceKind::GalaxyLegacy:
         return std::make_unique<GalaxyBackend>(connection, device);
     case DeviceKind::AirPods:
+    case DeviceKind::Beats:
         return std::make_unique<AirPodsBackend>(connection, device);
     case DeviceKind::PixelBuds:
         return std::make_unique<PixelBudsBackend>(connection, device);

@@ -77,6 +77,7 @@ struct ModelSpec {
     AirPodsModel model;
     const char *name;
     uint32_t features;
+    bool beats = false;
 };
 
 constexpr uint32_t H2Features = FeatAnc | FeatAdaptive | FeatConversation | FeatPersonalizedVolume | FeatEarDetection;
@@ -91,6 +92,23 @@ constexpr ModelSpec ModelSpecs[] = {
     {AirPodsModel::AirPodsPro2, "AirPods Pro 2", H2Features},
     {AirPodsModel::AirPodsPro3, "AirPods Pro 3", H2Features},
     {AirPodsModel::AirPodsMax, "AirPods Max", FeatAnc | FeatEarDetection},
+    {AirPodsModel::PowerbeatsPro, "Powerbeats Pro", FeatEarDetection, true},
+    {AirPodsModel::PowerbeatsPro2, "Powerbeats Pro 2", FeatAnc | FeatEarDetection, true},
+    {AirPodsModel::Powerbeats3, "Powerbeats3", 0, true},
+    {AirPodsModel::Powerbeats4, "Powerbeats 4", 0, true},
+    {AirPodsModel::PowerbeatsFit, "Powerbeats Fit", FeatAnc | FeatEarDetection, true},
+    {AirPodsModel::BeatsFitPro, "Beats Fit Pro", FeatAnc | FeatEarDetection, true},
+    {AirPodsModel::BeatsStudioBuds, "Beats Studio Buds", FeatAnc, true},
+    {AirPodsModel::BeatsStudioBudsPlus, "Beats Studio Buds +", FeatAnc, true},
+    {AirPodsModel::BeatsSoloBuds, "Beats Solo Buds", 0, true},
+    {AirPodsModel::BeatsFlex, "Beats Flex", 0, true},
+    {AirPodsModel::BeatsX, "BeatsX", 0, true},
+    {AirPodsModel::BeatsSolo3, "Beats Solo3", 0, true},
+    {AirPodsModel::BeatsSolo4, "Beats Solo 4", 0, true},
+    {AirPodsModel::BeatsSoloPro, "Beats Solo Pro", FeatAnc, true},
+    {AirPodsModel::BeatsStudio3, "Beats Studio3", 0, true},
+    {AirPodsModel::BeatsStudioPro, "Beats Studio Pro", FeatAnc, true},
+    {AirPodsModel::Beats360, "Beats 360", FeatAnc, true},
 };
 
 struct ModelNumber {
@@ -124,6 +142,42 @@ constexpr ModelNumber ModelNumbers[] = {
     {"A3065", AirPodsModel::AirPodsPro3},
     {"A2096", AirPodsModel::AirPodsMax},
     {"A3184", AirPodsModel::AirPodsMax},
+    {"A2047", AirPodsModel::PowerbeatsPro},
+    {"A2048", AirPodsModel::PowerbeatsPro},
+    {"A2078", AirPodsModel::PowerbeatsPro},
+    {"A2453", AirPodsModel::PowerbeatsPro},
+    {"A2454", AirPodsModel::PowerbeatsPro},
+    {"A3157", AirPodsModel::PowerbeatsPro2},
+    {"A3158", AirPodsModel::PowerbeatsPro2},
+    {"A3159", AirPodsModel::PowerbeatsPro2},
+    {"A3160", AirPodsModel::PowerbeatsPro2},
+    {"A1747", AirPodsModel::Powerbeats3},
+    {"A2015", AirPodsModel::Powerbeats4},
+    {"A3476", AirPodsModel::PowerbeatsFit},
+    {"A3477", AirPodsModel::PowerbeatsFit},
+    {"A3479", AirPodsModel::PowerbeatsFit},
+    {"A2576", AirPodsModel::BeatsFitPro},
+    {"A2577", AirPodsModel::BeatsFitPro},
+    {"A2578", AirPodsModel::BeatsFitPro},
+    {"A2512", AirPodsModel::BeatsStudioBuds},
+    {"A2513", AirPodsModel::BeatsStudioBuds},
+    {"A2514", AirPodsModel::BeatsStudioBuds},
+    {"A2870", AirPodsModel::BeatsStudioBudsPlus},
+    {"A2871", AirPodsModel::BeatsStudioBudsPlus},
+    {"A2872", AirPodsModel::BeatsStudioBudsPlus},
+    {"A2952", AirPodsModel::BeatsStudioBudsPlus},
+    {"A3150", AirPodsModel::BeatsSoloBuds},
+    {"A3151", AirPodsModel::BeatsSoloBuds},
+    {"A3152", AirPodsModel::BeatsSoloBuds},
+    {"A3153", AirPodsModel::BeatsSoloBuds},
+    {"A2295", AirPodsModel::BeatsFlex},
+    {"A1763", AirPodsModel::BeatsX},
+    {"A1796", AirPodsModel::BeatsSolo3},
+    {"A3140", AirPodsModel::BeatsSolo4},
+    {"A1881", AirPodsModel::BeatsSoloPro},
+    {"A1914", AirPodsModel::BeatsStudio3},
+    {"A2924", AirPodsModel::BeatsStudioPro},
+    {"A3577", AirPodsModel::Beats360},
 };
 
 struct NamedModel {
@@ -135,6 +189,16 @@ constexpr NamedModel ModelNames[] = {
     {"AirPods Max", AirPodsModel::AirPodsMax},
     {"AirPods Pro 3", AirPodsModel::AirPodsPro3},
     {"AirPods Pro 2", AirPodsModel::AirPodsPro2},
+    {"Powerbeats Pro 2", AirPodsModel::PowerbeatsPro2},
+    {"Powerbeats Fit", AirPodsModel::PowerbeatsFit},
+    {"Beats Fit Pro", AirPodsModel::BeatsFitPro},
+    {"Studio Buds +", AirPodsModel::BeatsStudioBudsPlus},
+    {"Studio Buds+", AirPodsModel::BeatsStudioBudsPlus},
+    {"Beats Solo Buds", AirPodsModel::BeatsSoloBuds},
+    {"Beats Flex", AirPodsModel::BeatsFlex},
+    {"Beats Solo Pro", AirPodsModel::BeatsSoloPro},
+    {"Beats Studio Pro", AirPodsModel::BeatsStudioPro},
+    {"Beats 360", AirPodsModel::Beats360},
 };
 
 struct Toggle {
@@ -230,6 +294,15 @@ QString AirPodsBackend::modelName(AirPodsModel model)
     return QStringLiteral("AirPods");
 }
 
+bool AirPodsBackend::isBeats(AirPodsModel model)
+{
+    for (const auto &s : ModelSpecs) {
+        if (s.model == model)
+            return s.beats;
+    }
+    return false;
+}
+
 std::optional<AirPodsInfo> AirPodsBackend::parseInfo(const QByteArray &packet)
 {
     if (!packet.startsWith(messageHeader(MsgInformation)))
@@ -295,6 +368,26 @@ void AirPodsBackend::closeSocket()
         ::close(_fd);
     _fd = -1;
     _connected = false;
+}
+
+QString AirPodsBackend::vendor() const
+{
+    return beats() ? QStringLiteral("beats") : QStringLiteral("apple");
+}
+
+bool AirPodsBackend::beats() const
+{
+    if (_model != AirPodsModel::Unknown)
+        return isBeats(_model);
+    return _device.kind == DeviceKind::Beats || _device.name.contains(QLatin1String("Beats"), Qt::CaseInsensitive);
+}
+
+QString AirPodsBackend::displayName() const
+{
+    if (_model != AirPodsModel::Unknown)
+        return modelName(_model);
+    const QString family = beats() ? QStringLiteral("Beats") : QStringLiteral("AirPods");
+    return _modelNumber.isEmpty() ? family : QStringLiteral("%1 (%2)").arg(family, _modelNumber);
 }
 
 bool AirPodsBackend::supports(uint32_t feature) const
@@ -394,7 +487,7 @@ bool AirPodsBackend::start()
         closeSocket();
         return fail(QStringLiteral("cannot connect to AAP: %1").arg(errnoString(error)));
     }
-    qCInfo(lcHp) << "airpods model:" << modelName(_model) << (_model == AirPodsModel::Unknown ? "(waiting for device information)" : "");
+    qCInfo(lcHp) << "airpods model:" << displayName() << (_model == AirPodsModel::Unknown ? "(waiting for device information)" : "");
     return true;
 }
 
@@ -437,7 +530,7 @@ bool AirPodsBackend::receive()
             return fail(QStringLiteral("AAP connection lost: %1").arg(errnoString(errno)));
         }
         if (n == 0)
-            return fail(QStringLiteral("AAP connection closed by the AirPods"));
+            return fail(QStringLiteral("AAP connection closed by the headphones"));
         handlePacket(QByteArray(buffer.data(), int(n)));
     }
 }
@@ -484,7 +577,7 @@ bool AirPodsBackend::tick()
     if (!flush())
         return false;
     if (!_batteryKnown && _sinceConnect.elapsed() > StatusTimeoutMs)
-        return fail(QStringLiteral("no status from the AirPods"));
+        return fail(QStringLiteral("no status from the headphones"));
     return true;
 }
 
@@ -603,7 +696,7 @@ void AirPodsBackend::handleInfo(const QByteArray &packet)
     const AirPodsModel model = modelFromNumber(info->modelNumber);
     if (model != AirPodsModel::Unknown)
         _model = model;
-    qCInfo(lcHp) << "airpods:" << info->name << info->modelNumber << "firmware" << info->firmware << "->" << modelName(_model);
+    qCInfo(lcHp) << "airpods:" << info->name << info->modelNumber << "firmware" << info->firmware << "->" << displayName();
 }
 
 Snapshot AirPodsBackend::snapshot()
@@ -659,9 +752,7 @@ Snapshot AirPodsBackend::snapshot()
     }
 
     QJsonObject o;
-    o[QStringLiteral("model")] = _model == AirPodsModel::Unknown && !_modelNumber.isEmpty()
-        ? QStringLiteral("AirPods (%1)").arg(_modelNumber)
-        : modelName(_model);
+    o[QStringLiteral("model")] = displayName();
     o[QStringLiteral("untested")] = true;
     if (!_firmware.isEmpty())
         o[QStringLiteral("firmware")] = _firmware;
@@ -699,7 +790,7 @@ QDBusError AirPodsBackend::setMode(const QString &mode)
     if (!ready())
         return notReady();
     if (!modes().contains(mode))
-        return QDBusError(QDBusError::NotSupported, QStringLiteral("These AirPods do not support mode %1").arg(mode));
+        return QDBusError(QDBusError::NotSupported, QStringLiteral("These headphones do not support mode %1").arg(mode));
     const uint8_t value = mode == ModeNc ? ListeningNc
         : mode == ModeAmbient            ? ListeningTransparency
         : mode == ModeAdaptive           ? ListeningAdaptive

@@ -19,6 +19,23 @@ enum class AirPodsModel {
     AirPodsPro2,
     AirPodsPro3,
     AirPodsMax,
+    PowerbeatsPro,
+    PowerbeatsPro2,
+    Powerbeats3,
+    Powerbeats4,
+    PowerbeatsFit,
+    BeatsFitPro,
+    BeatsStudioBuds,
+    BeatsStudioBudsPlus,
+    BeatsSoloBuds,
+    BeatsFlex,
+    BeatsX,
+    BeatsSolo3,
+    BeatsSolo4,
+    BeatsSoloPro,
+    BeatsStudio3,
+    BeatsStudioPro,
+    Beats360,
     Unknown,
 };
 
@@ -39,13 +56,14 @@ public:
     static AirPodsModel modelFromNumber(const QString &modelNumber);
     static AirPodsModel modelFromName(const QString &name);
     static QString modelName(AirPodsModel model);
+    static bool isBeats(AirPodsModel model);
     static std::optional<AirPodsInfo> parseInfo(const QByteArray &packet);
     static QByteArray handshakePacket();
     static QByteArray featuresPacket();
     static QByteArray notificationsPacket();
     static QByteArray controlPacket(uint8_t id, uint8_t value);
 
-    QString vendor() const override { return QStringLiteral("apple"); }
+    QString vendor() const override;
     bool start() override;
     bool tick() override;
     bool ready() const override { return _batteryKnown; }
@@ -70,6 +88,8 @@ private:
 
     enum class Placement { Unknown, InEar, OutOfEar, InCase };
 
+    bool beats() const;
+    QString displayName() const;
     bool supports(uint32_t feature) const;
     QStringList modes() const;
     std::optional<uint8_t> control(uint8_t id) const;
