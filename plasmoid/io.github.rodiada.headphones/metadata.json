@@ -3,18 +3,19 @@
     "KPlugin": {
         "Authors": [
             {
-                "Name": "rodada"
+                "Name": "Rodion Adamenok"
             }
         ],
         "Category": "System Information",
         "Description": "Noise control, battery and settings of Sony and Samsung Galaxy headphones",
         "Description[ru]": "Шумоподавление, заряд и настройки наушников Sony и Samsung Galaxy",
         "Icon": "audio-headphones",
-        "Id": "org.rodada.headphones",
+        "Id": "io.github.rodiada.headphones",
         "License": "MIT",
         "Name": "Headphones",
         "Name[ru]": "Наушники",
-        "Version": "0.1"
+        "Version": "0.1.0",
+        "Website": "https://github.com/RodiAda/kde-headphones"
     },
     "X-Plasma-API-Minimum-Version": "6.0",
     "X-Plasma-NotificationArea": "true",

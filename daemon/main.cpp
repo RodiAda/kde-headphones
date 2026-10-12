@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
     app.setApplicationName(QStringLiteral("headphonesd"));
-    app.setOrganizationName(QStringLiteral("rodada"));
+    app.setOrganizationName(QStringLiteral("io.github.rodiada"));
 
     static volatile std::sig_atomic_t stopRequested = 0;
     for (int sig : {SIGTERM, SIGINT})

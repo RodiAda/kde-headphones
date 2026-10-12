@@ -1,5 +1,5 @@
 [Unit]
-Description=Headphones control daemon (D-Bus org.rodada.Headphones)
+Description=Headphones control daemon (D-Bus io.github.rodiada.Headphones)
 PartOf=graphical-session.target
 After=graphical-session.target bluetooth.target
 

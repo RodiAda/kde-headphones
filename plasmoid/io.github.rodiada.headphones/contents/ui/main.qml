@@ -12,8 +12,8 @@ import org.kde.plasma.workspace.dbus as DBus
 PlasmoidItem {
     id: root
 
-    readonly property string service: "org.rodada.Headphones"
-    readonly property string objectPath: "/org/rodada/Headphones"
+    readonly property string service: "io.github.rodiada.Headphones"
+    readonly property string objectPath: "/io/github/rodiada/Headphones"
 
     property var hp: ({})
     readonly property bool daemonUp: watcher.registered

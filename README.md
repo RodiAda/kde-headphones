@@ -1,132 +1,138 @@
 # Headphones for KDE Plasma
 
-A Plasma 6 system tray widget and a small user daemon for controlling wireless headphones:
-Sony (tested with the WH-1000XM5) and Samsung Galaxy Buds.
+A Plasma 6 system tray widget and a small user daemon for controlling Sony and Samsung Galaxy
+headphones over Bluetooth, without the vendor apps.
+
+| Main | Sound | Settings |
+| --- | --- | --- |
+| ![Main tab](docs/main.png) | ![Sound tab](docs/sound.png) | ![Settings tab](docs/settings.png) |
 
 - Noise cancelling / ambient sound / off, ambient level, focus on voice
-- Battery level, codec, firmware
-- Paired devices: connection order, connect / disconnect, switch the playback source
+- Battery of the headphones, both earbuds and the case; codec and firmware
+- Paired devices (Sony): connection order, connect / disconnect, switch the playback source
 - Playback control and volume
-- Equalizer presets, 5-band custom equalizer, Clear Bass, DSEE Extreme
+- Equalizer presets, custom equalizer bands, Clear Bass, DSEE Extreme
 - Speak-to-Chat with sensitivity and timeout
-- NC/AMB button function, touch panel, multipoint, automatic source switching,
+- NC/AMB button function, touch controls, multipoint, automatic source switching,
   connection quality priority
 - Pause or power off when taken off, automatic power off, voice guidance
+- Touch lock, seamless connection and noise control with one earbud (Galaxy Buds)
 - Pairing mode and powering the headphones off
 
-Only the features the headphones support are shown.
+The widget only shows what the connected model supports. It follows the system language
+(English and Russian so far).
 
-Sony: both protocol generations handled by libmdr are supported: MDR V2 (WH-1000XM5/XM6, WF-1000XM5/XM6,
-WH-CH720N, WF-C510, WF-C700N, LinkBuds) and the legacy MDR V1 (WH-1000XM3/XM4, WF-1000XM3/XM4),
-picked by the Sony control service the device exposes. Only the WH-1000XM5 has been tested with this
-widget; see the [libmdr support matrix](https://github.com/mos9527/SonyHeadphonesClient/tree/main/docs/device-support).
-Paired device management, the connection order and the connect/disconnect results are available
-on MDR V2 only. BLE-only devices are not supported.
+## Supported headphones
 
-Samsung Galaxy Buds: own implementation of the Galaxy Buds RFCOMM protocol for every model it covers:
-Galaxy Buds, Buds+, Buds Live, Buds Pro, Buds2, Buds2 Pro, Buds FE, Buds3, Buds3 Pro, Buds3 FE,
-Buds Core, Buds4 and Buds4 Pro. Earbud and case battery, the noise modes each model has (noise
-cancelling, ambient sound, off; adaptive is shown when the earbuds report it), ambient level,
-equalizer presets, touch lock and seamless connection. The status parser is checked against frames
-captured from the Buds, Buds+, Buds Live, Buds Pro, Buds2, Buds2 Pro and Buds FE; newer models
-share the Buds Pro layout. Renamed Buds2-or-newer earbuds fall back to the Buds2 layout.
+**Sony**, through [libmdr](https://github.com/mos9527/SonyHeadphonesClient/tree/main/libmdr) from
+SonyHeadphonesClient (git submodule). Both protocol generations are supported: MDR V2
+(WH-1000XM5/XM6, WF-1000XM5/XM6, WH-CH720N, WF-C510, WF-C700N, LinkBuds) and MDR V1
+(WH-1000XM3/XM4, WF-1000XM3/XM4). See the
+[libmdr support matrix](https://github.com/mos9527/SonyHeadphonesClient/tree/main/docs/device-support).
+Paired device management is MDR V2 only; BLE-only devices are not supported.
 
-```
-headphonesd  ── RFCOMM ──  headphones
-   │  backends: Sony (libmdr), Samsung Galaxy Buds
-   │ session D-Bus: org.rodada.Headphones
-plasmoid org.rodada.headphones (pure QML)
-```
+**Samsung Galaxy Buds**, with its own implementation of the Galaxy Buds RFCOMM protocol: Galaxy Buds,
+Buds+, Buds Live, Buds Pro, Buds2, Buds2 Pro, Buds FE, Buds3, Buds3 Pro, Buds3 FE, Buds Core, Buds4 and
+Buds4 Pro. Renamed Buds2-or-newer earbuds fall back to the Buds2 layout.
 
-The Sony protocol is handled by [libmdr](https://github.com/mos9527/SonyHeadphonesClient/tree/main/libmdr)
-from SonyHeadphonesClient, pulled in as a git submodule.
+Tested with real hardware: **Sony WH-1000XM5** and **Samsung Galaxy Buds2 Pro**. The Galaxy status
+parser is also checked against frames captured from the Buds, Buds+, Buds Live, Buds Pro, Buds2 and
+Buds FE. Everything else follows the protocol documentation and has not been tried; reports are welcome.
 
 ## Install
 
-Requirements: CMake 3.31+, a C++20 compiler, Qt 6 (Core, DBus), BlueZ and D-Bus development files,
-gettext, Plasma 6.
+Build dependencies:
+
+- Arch Linux: `sudo pacman -S --needed base-devel cmake ninja git qt6-base bluez-libs dbus gettext`
+- Debian / Ubuntu: `sudo apt install build-essential cmake ninja-build git qt6-base-dev libbluetooth-dev libdbus-1-dev gettext`
+
+CMake 3.31 or newer and a C++20 compiler are required. The first build downloads
+[{fmt}](https://github.com/fmtlib/fmt) for libmdr.
 
 ```
-git clone --recurse-submodules <this repo>
+git clone --recurse-submodules https://github.com/RodiAda/kde-headphones.git
+cd kde-headphones
 ./install.sh
 ```
 
-The script builds the daemon, installs it to `~/.local/bin`, enables the
-`headphonesd.service` user unit, compiles the translations and installs the widget.
-Add the widget via *Configure System Tray → Entries → Headphones*. If it is not listed,
-restart plasmashell: `systemctl --user restart plasma-plasmashell`.
+The script builds the daemon, installs it to `~/.local/bin`, enables the `headphonesd.service` user
+unit, compiles the translations and installs the widget; nothing needs root. Add the widget via
+*Configure System Tray → Entries → Headphones*. If it is not listed, restart plasmashell:
+`systemctl --user restart plasma-plasmashell`.
 
-Middle-click the tray icon to cycle the noise mode.
+Remove everything with `./uninstall.sh`.
 
-## Translations
-
-The widget follows the system language. Strings are written in English and translated through
-gettext catalogs in `po/` (domain `plasma_applet_org.rodada.headphones`); `install.sh` compiles
-them into the widget package. Currently available: Russian.
-
-To update the template after changing strings and merge it into a catalog:
-
-```
-xgettext --from-code=UTF-8 -C -kde -ki18n:1 -ki18nc:1c,2 -o po/plasma_applet_org.rodada.headphones.pot \
-    plasmoid/org.rodada.headphones/contents/ui/*.qml
-msgmerge -U po/ru.po po/plasma_applet_org.rodada.headphones.pot
-```
-
-A new language is a new `po/<lang>.po`.
+Middle-click the tray icon to cycle the noise mode. The widget hides itself while no supported
+headphones are connected.
 
 ## D-Bus
 
+The daemon runs on the session bus as `io.github.rodiada.Headphones`, object `/io/github/rodiada/Headphones`.
+
 ```
-busctl --user introspect org.rodada.Headphones /org/rodada/Headphones
-busctl --user call org.rodada.Headphones /org/rodada/Headphones org.rodada.Headphones CycleMode
+busctl --user introspect io.github.rodiada.Headphones /io/github/rodiada/Headphones
+busctl --user call io.github.rodiada.Headphones /io/github/rodiada/Headphones io.github.rodiada.Headphones CycleMode
 ```
 
-Properties: `Connected`, `Vendor` (sony | samsung), `DeviceName`, `Address`, `Battery` (-1 when unknown; the lower earbud on
-true wireless models), `Batteries` (JSON array of `part`: main|left|right|case, `level`, `charging`),
-`Modes` (JSON array of the noise modes the model supports), `Mode`
-(`noise-cancelling` | `ambient` | `off`), `AmbientLevel` (1..20), `FocusOnVoice`,
-`Devices` (JSON array of `mac`, `name`, `connected`, `order`, `active`, `self`),
-`DeviceAction` (JSON describing the last connect/disconnect: `pending` → `in-progress` → `ok` | `error` | `busy`).
+`CycleMode` works well as a global shortcut (*System Settings → Shortcuts → Add Command*).
 
-`Settings` (JSON with every supported setting, see below; `ambient` gives the level range), `Alert` (non-empty while the headphones
-wait for a confirmation).
+Properties: `Connected`, `Vendor` (sony | samsung), `DeviceName`, `Address`, `Battery` (-1 when unknown;
+the lower earbud on true wireless models), `Batteries` (JSON array of `part`: main | left | right | case,
+`level`, `charging`), `Modes` (JSON array of the noise modes the model supports), `Mode`
+(`noise-cancelling` | `ambient` | `off` | `adaptive`), `AmbientLevel`, `FocusOnVoice`, `Devices` (JSON array
+of `mac`, `name`, `connected`, `order`, `active`, `self`), `DeviceAction` (JSON describing the last
+connect/disconnect: `pending` → `in-progress` → `ok` | `error` | `busy`), `Settings` (JSON with every
+supported setting; `ambient` gives the level range), `Alert` (non-empty while the headphones wait for a
+confirmation).
 
-Methods: `SetMode(s)`, `SetAmbientLevel(i)`, `SetFocusOnVoice(b)`, `CycleMode()`,
-`SwitchPlayback(s mac)`, `ConnectDevice(s mac)`, `DisconnectDevice(s mac)`,
-`Apply(s json)`, `Playback(s play|pause|next|previous)`, `PowerOff()`, `RespondToAlert(b)`.
+Methods: `SetMode(s)`, `SetAmbientLevel(i)`, `SetFocusOnVoice(b)`, `CycleMode()`, `SwitchPlayback(s mac)`,
+`ConnectDevice(s mac)`, `DisconnectDevice(s mac)`, `Apply(s json)`, `Playback(s play|pause|next|previous)`,
+`PowerOff()`, `RespondToAlert(b)`.
 
 `Apply` takes a partial object with the same shape as `Settings`:
 
 ```
-busctl --user call org.rodada.Headphones /org/rodada/Headphones org.rodada.Headphones \
+busctl --user call io.github.rodiada.Headphones /io/github/rodiada/Headphones io.github.rodiada.Headphones \
     Apply s '{"speakToChat":{"enabled":true,"timeout":"long"},"dsee":true}'
 ```
 
-Keys: `speakToChat` {`enabled`, `sensitivity`: auto|high|low, `timeout`: short|medium|long|manual},
+Sony keys: `speakToChat` {`enabled`, `sensitivity`: auto | high | low, `timeout`: short | medium | long | manual},
 `equalizer` {`preset`, `bands`, `clearBass`}, `dsee`, `noiseButton` (nc-ambient-off | nc-ambient | nc-off |
-ambient-off), `power` {`autoPowerOff`: 0|5|15|30|60|180, `offWhenRemoved`, `autoPause`},
+ambient-off), `power` {`autoPowerOff`: 0 | 5 | 15 | 30 | 60 | 180, `offWhenRemoved`, `autoPause`},
 `voiceGuidance` {`enabled`, `volume`}, `connectionMode` (quality | stability), `autoSwitch`, `pairing`,
-`volume` (0..30), `general` {"<index>": bool}. Galaxy Buds: `equalizer` {`preset`}, `touchLock`, `seamless`.
+`volume` (0..30), `general` {"<index>": bool}.
 
-`CycleMode` works well as a global shortcut (*System Settings → Shortcuts → Add Command*).
+Galaxy Buds keys: `equalizer` {`preset`}, `touchLock`, `seamless`, `oneEarbudNoise`.
 
 ## Notes
 
-- The daemon picks the first connected BlueZ device that exposes a known control service
-  and retries every 5 seconds.
-- The headphones accept a single control connection. If a phone holds it (Sound Connect open),
-  the daemon cannot connect.
+- The daemon picks the first connected BlueZ device that exposes a known control service and retries
+  every 5 seconds. Galaxy Buds+, Live and Pro use the generic serial port service, so they are matched
+  by name as well.
+- The headphones accept a single control connection. If a phone holds it (Sound Connect or Galaxy
+  Wearable open), the daemon cannot connect.
 - The daemon refuses to disconnect the computer it runs on, since that would drop the control link.
+- Galaxy Buds refuse noise cancelling and ambient sound with only one earbud worn unless
+  *Noise control with one earbud* is on; the widget shows a hint in that case.
 - libmdr does not expose the connection order or the result of connect/disconnect; the daemon reads
-  both from raw packets (`PERI_RET/NTFY_PARAM` type 2 and `PERI_NTFY_EXTENDED_PARAM`).
-- Connecting a device reports `in-progress` first and `ok` or `error` later; `error` means the
-  device itself refused.
-- The last Sony ambient level is kept in `~/.config/rodada/headphonesd.conf`, because the headphones
-  do not report it while noise cancelling is on.
-- `DBus.Properties` in plasmashell does not expose all properties before the first
-  `PropertiesChanged`, so the widget reads the initial state with its own `GetAll`.
-- After reinstalling the widget, restart plasmashell; `kpackagetool6 -u` only updates the files.
-- Logs: `journalctl --user -u headphonesd`.
+  both from raw packets.
+- The last Sony ambient level is kept in `~/.config/io.github.rodiada/headphonesd.conf`, because the
+  headphones do not report it while noise cancelling is on.
+- Logs: `journalctl --user -u headphonesd`. Frame dumps for Galaxy Buds:
+  `systemctl --user set-environment QT_LOGGING_RULES=headphonesd.debug=true` and restart the unit.
+
+## Translations
+
+Strings are written in English and translated through gettext catalogs in `po/` (domain
+`plasma_applet_io.github.rodiada.headphones`); `install.sh` compiles them into the widget package.
+
+```
+xgettext --from-code=UTF-8 -C -kde -ki18n:1 -ki18nc:1c,2 -o po/plasma_applet_io.github.rodiada.headphones.pot \
+    plasmoid/io.github.rodiada.headphones/contents/ui/*.qml
+msgmerge -U po/ru.po po/plasma_applet_io.github.rodiada.headphones.pot
+```
+
+A new language is a new `po/<lang>.po`.
 
 ## Tests
 
@@ -134,7 +140,15 @@ ambient-off), `power` {`autoPowerOff`: 0|5|15|30|60|180, `offWhenRemoved`, `auto
 cmake -B build-test -DHEADPHONES_TESTS=ON && cmake --build build-test --target galaxy-test && build-test/galaxy-test
 ```
 
-The Galaxy backend test replays extended status frames captured from seven Galaxy Buds models.
+The Galaxy backend test replays extended status frames from eight earbuds. The Buds2 Pro frame
+labelled C3D4 was captured for this project; the others come from the test data of
+[GalaxyBudsClient](https://github.com/timschneeb/GalaxyBudsClient), which also served as the reference
+for the Galaxy Buds protocol. No GalaxyBudsClient code is used.
+
+## Disclaimer
+
+This project is not affiliated with, endorsed by or connected to Sony or Samsung. Product names are
+trademarks of their owners. The protocols were reverse engineered; use at your own risk.
 
 ## License
 

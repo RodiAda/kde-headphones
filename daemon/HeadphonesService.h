@@ -16,7 +16,7 @@ struct MDRConnectionLinux;
 class HeadphonesService : public QObject, protected QDBusContext
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.rodada.Headphones")
+    Q_CLASSINFO("D-Bus Interface", "io.github.rodiada.Headphones")
 
     Q_PROPERTY(bool Connected READ connected)
     Q_PROPERTY(QString Vendor READ vendor)
@@ -34,8 +34,8 @@ class HeadphonesService : public QObject, protected QDBusContext
     Q_PROPERTY(QString Alert READ alert)
 
 public:
-    static constexpr auto Service = "org.rodada.Headphones";
-    static constexpr auto Path = "/org/rodada/Headphones";
+    static constexpr auto Service = "io.github.rodiada.Headphones";
+    static constexpr auto Path = "/io/github/rodiada/Headphones";
 
     explicit HeadphonesService(QObject *parent = nullptr);
     ~HeadphonesService() override;

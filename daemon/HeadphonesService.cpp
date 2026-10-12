@@ -236,7 +236,7 @@ Backend *HeadphonesService::requireReady()
     if (_backend && _backend->ready())
         return _backend.get();
     if (calledFromDBus())
-        sendErrorReply(QStringLiteral("org.rodada.Headphones.Error.NotConnected"), QStringLiteral("Headphones are not connected"));
+        sendErrorReply(QStringLiteral("io.github.rodiada.Headphones.Error.NotConnected"), QStringLiteral("Headphones are not connected"));
     return nullptr;
 }
 
