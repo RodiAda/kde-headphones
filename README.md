@@ -1,7 +1,8 @@
 # Headphones for KDE Plasma
 
-A Plasma 6 system tray widget and a small user daemon for controlling Sony and Samsung Galaxy
-headphones over Bluetooth, without the vendor apps.
+A Plasma 6 system tray widget and a small user daemon for controlling Bluetooth headphones without
+the vendor apps: Sony, Samsung Galaxy Buds, AirPods and Beats, Pixel Buds, Nothing and CMF, Bose,
+Soundcore, Huawei, Xiaomi, Sennheiser and Jabra.
 
 | Main | Sound | Settings |
 | --- | --- | --- |
@@ -24,20 +25,36 @@ The widget only shows what the connected model supports. It follows the system l
 
 ## Supported headphones
 
-**Sony**, through [libmdr](https://github.com/mos9527/SonyHeadphonesClient/tree/main/libmdr) from
-SonyHeadphonesClient (git submodule). Both protocol generations are supported: MDR V2
-(WH-1000XM5/XM6, WF-1000XM5/XM6, WH-CH720N, WF-C510, WF-C700N, LinkBuds) and MDR V1
-(WH-1000XM3/XM4, WF-1000XM3/XM4). See the
-[libmdr support matrix](https://github.com/mos9527/SonyHeadphonesClient/tree/main/docs/device-support).
-Paired device management is MDR V2 only; BLE-only devices are not supported.
+**Only the Sony WH-1000XM5 and the Samsung Galaxy Buds2 Pro have been tested with real hardware.**
+Every other brand and model below is implemented from public protocol documentation and packet
+captures and checked by unit tests, but has never been run against the actual device. The widget shows
+an "untested" notice for these. If you try one, please
+[report how it works](https://github.com/RodiAda/kde-headphones/issues).
 
-**Samsung Galaxy Buds**, with its own implementation of the Galaxy Buds RFCOMM protocol: Galaxy Buds,
-Buds+, Buds Live, Buds Pro, Buds2, Buds2 Pro, Buds FE, Buds3, Buds3 Pro, Buds3 FE, Buds Core, Buds4 and
-Buds4 Pro. Renamed Buds2-or-newer earbuds fall back to the Buds2 layout.
+| Brand | Models | Status | Protocol reference |
+| --- | --- | --- | --- |
+| Sony | WH-1000XM3–XM6, WF-1000XM3–XM6, WH-CH720N, WF-C510, WF-C700N, LinkBuds | XM5 tested | [libmdr](https://github.com/mos9527/SonyHeadphonesClient) (used as a library) |
+| Samsung | Galaxy Buds, Buds+, Live, Pro, Buds2, Buds2 Pro, FE, Buds3, Buds3 Pro, Buds3 FE, Core, Buds4, Buds4 Pro | Buds2 Pro tested | [GalaxyBudsClient](https://github.com/timschneeb/GalaxyBudsClient) |
+| Apple | AirPods 1–4, AirPods 4 (ANC), AirPods Pro, Pro 2, Pro 3, Max | untested | [LibrePods](https://github.com/librepods-org/librepods), [apple-wireshark](https://github.com/pabloaul/apple-wireshark) |
+| Beats | Powerbeats Pro/Pro 2/Fit, Fit Pro, Studio Buds/Buds +, Solo Pro, Studio Pro, Beats 360 and others (battery) | untested | [MagicPodsCore](https://github.com/steam3d/MagicPodsCore), AppleDB |
+| Google | Pixel Buds Pro, Pixel Buds Pro 2 | untested | [pbpctrl](https://github.com/qzed/pbpctrl) |
+| Nothing / CMF | Ear (1), (2), (a), (3), (3a), Ear, Ear (stick), Ear (open), Headphone (1)/(1) Pro/(a), CMF Buds, Buds Pro/Pro 2, Buds 2/2 Plus/2a, Neckband Pro, Headphone Pro | untested | Gadgetbridge, [ear-web](https://github.com/radiance-project/ear-web), [omarchy-headphones](https://github.com/ncr/omarchy-headphones) |
+| Bose | QC35/QC35 II, NC 700, QC45, QC Earbuds, QC Ultra headphones and earbuds (1st/2nd gen), Ultra Open, Sport earbuds | untested | [bosectl](https://github.com/aaronsb/bosectl), [based-connect](https://github.com/Denton-L/based-connect), Gadgetbridge |
+| Anker Soundcore | Life Q30/Q35, Life Tune/Tune Pro, Space Q45, Space A40, Life Note 3/3S, Life P3, Life Dot 2 NC, Life A2 NC, Liberty Air 2 Pro, Liberty 4 NC, P30i/R50i NC | untested | [OpenSCQ30](https://github.com/Oppzippy/OpenSCQ30) |
+| Huawei / Honor | FreeBuds Pro–Pro 5, Studio, 4, 4i, 5, 5i, 6, 6i, SE–SE 4, 3, FreeClip, FreeClip 2, FreeLace Pro/Pro 2, HONOR Earbuds 2 | untested | [OpenFreebuds](https://github.com/melianmiko/OpenFreebuds), [LibreBuds](https://github.com/librebuds) |
+| Xiaomi / Redmi | Redmi Buds 3 Pro, 5 Pro, 6, 6 Pro, 6 Lite, 6 Active, 4 Active, REDMI Buds 8 Active; other Xiaomi Buds with a minimal layout | untested | Gadgetbridge |
+| Sennheiser | MOMENTUM 4 Wireless, MOMENTUM 5 | untested | [momentum4-control](https://github.com/Ariazonaa/momentum4-control) |
+| Jabra | Evolve2 55, Evolve2 65, Evolve2 85, Evolve 65 | untested | Gadgetbridge, [jabridge](https://github.com/Watchdog0x/jabridge) |
 
-Tested with real hardware: **Sony WH-1000XM5** and **Samsung Galaxy Buds2 Pro**. The Galaxy status
-parser is also checked against frames captured from the Buds, Buds+, Buds Live, Buds Pro, Buds2 and
-Buds FE. Everything else follows the protocol documentation and has not been tried; reports are welcome.
+Notes:
+
+- Sony paired device management is MDR V2 only; BLE-only Sony devices are not supported.
+- AirPods features that need the computer to identify itself as an Apple device (hearing aid,
+  transparency customization) are left out.
+- Not supported for lack of a public protocol description: Sennheiser true wireless earbuds, Jabra
+  Elite earbuds, pre-Apple Beats, and several Soundcore models listed in the backend.
+- All protocol references were used for facts only (UUIDs, message layouts, test vectors); no code from
+  them is included.
 
 ## Install
 

@@ -7,8 +7,8 @@
             }
         ],
         "Category": "System Information",
-        "Description": "Noise control, battery and settings of Sony and Samsung Galaxy headphones",
-        "Description[ru]": "Шумоподавление, заряд и настройки наушников Sony и Samsung Galaxy",
+        "Description": "Noise control, battery and settings of Bluetooth headphones",
+        "Description[ru]": "Шумоподавление, заряд и настройки Bluetooth-наушников",
         "Icon": "audio-headphones",
         "Id": "io.github.rodiada.headphones",
         "License": "MIT",
