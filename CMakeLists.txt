@@ -21,6 +21,7 @@ add_executable(headphonesd
     daemon/HeadphonesService.cpp
     daemon/SonyBackend.cpp
     daemon/GalaxyBackend.cpp
+    daemon/Registry.cpp
     daemon/Log.cpp
 )
 target_link_libraries(headphonesd PRIVATE mdr mdr::bt Qt6::Core Qt6::DBus)

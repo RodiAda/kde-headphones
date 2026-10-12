@@ -79,6 +79,7 @@ private:
     void tick();
     void tryConnect();
     void pollConnecting();
+    void startBackend();
     void dropConnection(const QString &reason);
     void publishState();
     Backend *requireReady();

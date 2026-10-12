@@ -8,13 +8,27 @@
 
 #include <mdr-c/Connection.h>
 
-enum class DeviceKind { SonyV2, SonyV1, Galaxy, GalaxyClassic, GalaxyLegacy };
+enum class DeviceKind {
+    SonyV2,
+    SonyV1,
+    Galaxy,
+    GalaxyClassic,
+    GalaxyLegacy,
+    AirPods,
+    PixelBuds,
+    Bose,
+    Soundcore,
+    Huawei,
+    Nothing,
+};
 
 struct DeviceInfo {
     QString name;
     QString address;
     QString adapterAddress;
     DeviceKind kind = DeviceKind::SonyV2;
+    QString serviceUuid;
+    bool ownTransport = false;
 };
 
 enum class DeviceCommand { Connect, Disconnect, SelectPlayback };

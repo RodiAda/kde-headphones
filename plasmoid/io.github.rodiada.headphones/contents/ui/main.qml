@@ -162,6 +162,44 @@ PlasmoidItem {
         return key
     }
 
+    function humanize(key) {
+        const words = String(key).replace(/([a-z0-9])([A-Z])/g, "$1 $2").replace(/[-_]+/g, " ").toLowerCase()
+        return words.charAt(0).toUpperCase() + words.slice(1)
+    }
+
+    function controlLabel(key) {
+        switch (key) {
+        case "conversationAwareness": return i18n("Conversation awareness")
+        case "earDetection": return i18n("Automatic ear detection")
+        case "personalizedVolume": return i18n("Personalized volume")
+        case "adaptiveAudio": return i18n("Adaptive audio")
+        case "ancStrength": return i18n("Noise cancelling strength")
+        case "ambientStrength": return i18n("Ambient sound strength")
+        case "multipoint": return i18n("Connect to 2 devices simultaneously")
+        case "lowLatency": return i18n("Low latency mode")
+        case "voicePrompts": return i18n("Voice prompts")
+        case "touchControls": return i18n("Touch controls")
+        case "wearDetection": return i18n("Wear detection")
+        case "spatialAudio": return i18n("Spatial audio")
+        case "headTracking": return i18n("Head tracking")
+        case "bassBoost": return i18n("Bass boost")
+        case "autoPowerOff": return i18n("Automatic power off")
+        }
+        return humanize(key)
+    }
+
+    function optionLabel(option) {
+        switch (option) {
+        case "off": return i18n("Off")
+        case "on": return i18n("On")
+        case "low": return i18n("Low")
+        case "medium": return i18n("Medium")
+        case "high": return i18n("High")
+        case "auto": return i18n("Auto")
+        }
+        return humanize(option)
+    }
+
     function generalLabel(subject) {
         switch (subject) {
         case "TOUCH_PANEL_SETTING": return i18n("Touch sensor control panel")
@@ -234,6 +272,8 @@ PlasmoidItem {
             return i18n("headphonesd is not running")
         if (!available)
             return i18n("Not connected")
+        if (cfg.untested === true)
+            return [modeLabel(mode), batterySummary()].filter(s => s.length > 0).join(" · ") + "\n" + i18n("Support for this model is untested")
         const parts = [modeLabel(mode), batterySummary()].filter(s => s.length > 0)
         let text = parts.join(" · ")
         if (modes.length > 1)
@@ -319,7 +359,7 @@ PlasmoidItem {
         }
 
         Rectangle {
-            visible: root.mode === "noise-cancelling" || root.mode === "ambient"
+            visible: root.mode === "noise-cancelling" || root.mode === "ambient" || root.mode === "adaptive"
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             width: badge.implicitWidth + Kirigami.Units.smallSpacing
@@ -329,7 +369,7 @@ PlasmoidItem {
             PlasmaComponents3.Label {
                 id: badge
                 anchors.centerIn: parent
-                text: root.mode === "noise-cancelling" ? "NC" : "A"
+                text: root.mode === "noise-cancelling" ? "NC" : root.mode === "adaptive" ? "AD" : "A"
                 font.pixelSize: Math.max(Kirigami.Theme.smallFont.pixelSize * 0.8, 7)
                 font.bold: true
                 color: Kirigami.Theme.highlightedTextColor
@@ -437,6 +477,20 @@ PlasmoidItem {
 
             Kirigami.InlineMessage {
                 Layout.fillWidth: true
+                visible: root.cfg.untested === true
+                type: Kirigami.MessageType.Information
+                text: i18n("Support for these headphones has not been tested on real hardware yet.")
+                actions: [
+                    Kirigami.Action {
+                        text: i18n("Report how it works")
+                        icon.name: "tools-report-bug"
+                        onTriggered: Qt.openUrlExternally("https://github.com/RodiAda/kde-headphones/issues")
+                    }
+                ]
+            }
+
+            Kirigami.InlineMessage {
+                Layout.fillWidth: true
                 visible: root.alert.length > 0
                 type: Kirigami.MessageType.Warning
                 text: i18n("The headphones ask to confirm this change. They may disconnect for a moment.")
@@ -467,6 +521,7 @@ PlasmoidItem {
                         model: [
                             { mode: "noise-cancelling", icon: "audio-volume-muted" },
                             { mode: "ambient", icon: "audio-input-microphone" },
+                            { mode: "adaptive", icon: "audio-headphones" },
                             { mode: "off", icon: "system-shutdown" }
                         ].filter(m => root.modes.includes(m.mode))
                         delegate: PlasmaComponents3.Button {
@@ -848,6 +903,76 @@ PlasmoidItem {
                 Layout.fillWidth: true
                 visible: root.currentTab === 2
                 spacing: Kirigami.Units.largeSpacing
+
+                Repeater {
+                    model: root.cfg.toggles || []
+                    delegate: SettingSwitch {
+                        required property var modelData
+                        text: root.controlLabel(modelData.key)
+                        checked: modelData.value === true
+                        onToggled: on => {
+                            const change = {}
+                            change[modelData.key] = on
+                            root.apply({ toggles: change })
+                        }
+                    }
+                }
+
+                Repeater {
+                    model: root.cfg.choices || []
+                    delegate: SettingChoice {
+                        required property var modelData
+                        text: root.controlLabel(modelData.key)
+                        options: (modelData.options || []).map(o => ({ text: root.optionLabel(o), value: o }))
+                        value: modelData.value
+                        onChosen: v => {
+                            const change = {}
+                            change[modelData.key] = v
+                            root.apply({ choices: change })
+                        }
+                    }
+                }
+
+                Repeater {
+                    model: root.cfg.sliders || []
+                    delegate: ColumnLayout {
+                        id: sliderSetting
+                        required property var modelData
+                        Layout.fillWidth: true
+                        spacing: Kirigami.Units.smallSpacing
+                        RowLayout {
+                            Layout.fillWidth: true
+                            PlasmaComponents3.Label {
+                                Layout.fillWidth: true
+                                text: root.controlLabel(sliderSetting.modelData.key)
+                            }
+                            PlasmaComponents3.Label {
+                                text: genericSlider.value
+                                font.features: { "tnum": 1 }
+                            }
+                        }
+                        PlasmaComponents3.Slider {
+                            id: genericSlider
+                            Layout.fillWidth: true
+                            from: sliderSetting.modelData.min
+                            to: sliderSetting.modelData.max
+                            stepSize: 1
+                            snapMode: PlasmaComponents3.Slider.SnapAlways
+                            value: sliderSetting.modelData.value
+                            onMoved: sendGeneric.restart()
+                            Timer {
+                                id: sendGeneric
+                                interval: 200
+                                onTriggered: {
+                                    const change = {}
+                                    change[sliderSetting.modelData.key] = genericSlider.value
+                                    root.apply({ sliders: change })
+                                    genericSlider.value = Qt.binding(() => sliderSetting.modelData.value)
+                                }
+                            }
+                        }
+                    }
+                }
 
                 SettingSwitch {
                     visible: root.cfg.touchLock !== undefined

@@ -12,9 +12,8 @@
 #include <mdr-bt/ConnectionLinux.h>
 #include <mdr-c/Headphones.h>
 
-#include "GalaxyBackend.h"
 #include "Log.h"
-#include "SonyBackend.h"
+#include "Registry.h"
 
 
 using namespace std::chrono_literals;
@@ -27,29 +26,6 @@ using ManagedObjects = QMap<QDBusObjectPath, InterfaceMap>;
 constexpr auto TickInterval = 50ms;
 constexpr qint64 ReconnectIntervalMs = 5000;
 constexpr qint64 ConnectTimeoutMs = 15000;
-
-struct KnownService {
-    const char *uuid;
-    DeviceKind kind;
-    const char *nameHint;
-};
-
-constexpr KnownService KnownServices[] = {
-    {MDR_SERVICE_UUID_XM5, DeviceKind::SonyV2, nullptr},
-    {MDR_SERVICE_UUID_LEGACY, DeviceKind::SonyV1, nullptr},
-    {"2E73A4AD-332D-41FC-90E2-16BEF06523F2", DeviceKind::Galaxy, nullptr},
-    {"00001102-0000-1000-8000-00805F9B34FD", DeviceKind::GalaxyLegacy, nullptr},
-    {"00001101-0000-1000-8000-00805F9B34FB", DeviceKind::GalaxyClassic, "Buds"},
-};
-
-const char *serviceUuid(DeviceKind kind)
-{
-    for (const auto &s : KnownServices) {
-        if (s.kind == kind)
-            return s.uuid;
-    }
-    return MDR_SERVICE_UUID_XM5;
-}
 
 QString compact(const QJsonArray &a)
 {
@@ -122,18 +98,20 @@ std::optional<DeviceInfo> HeadphonesService::findConnectedDevice() const
             continue;
         const QStringList uuids = dev->value(QStringLiteral("UUIDs")).toStringList();
         const QString alias = dev->value(QStringLiteral("Alias")).toString();
-        const auto known = std::find_if(std::begin(KnownServices), std::end(KnownServices), [&](const KnownService &s) {
-            return uuids.contains(QString::fromLatin1(s.uuid), Qt::CaseInsensitive)
+        const auto services = knownServices();
+        const auto known = std::find_if(services.begin(), services.end(), [&](const KnownService &s) {
+            return (!s.uuid || uuids.contains(QString::fromLatin1(s.uuid), Qt::CaseInsensitive))
                 && (!s.nameHint || alias.contains(QLatin1String(s.nameHint), Qt::CaseInsensitive));
         });
-        if (known == std::end(KnownServices))
+        if (known == services.end())
             continue;
         const QString adapterPath = dev->value(QStringLiteral("Adapter")).value<QDBusObjectPath>().path();
         const QString adapterAddress = objects.value(QDBusObjectPath(adapterPath))
                                            .value(QStringLiteral("org.bluez.Adapter1"))
                                            .value(QStringLiteral("Address"))
                                            .toString();
-        return DeviceInfo{alias, dev->value(QStringLiteral("Address")).toString(), adapterAddress, known->kind};
+        return DeviceInfo{alias, dev->value(QStringLiteral("Address")).toString(), adapterAddress, known->kind,
+                          QString::fromLatin1(known->uuid ? known->uuid : ""), known->ownTransport};
     }
     return std::nullopt;
 }
@@ -149,7 +127,11 @@ void HeadphonesService::tryConnect()
         return;
     _device = *device;
     qCInfo(lcHp) << "connecting to" << _device.name << _device.address;
-    const MDRResult r = mdrConnectionConnect(_conn, _device.address.toLatin1().constData(), serviceUuid(_device.kind));
+    if (_device.ownTransport) {
+        startBackend();
+        return;
+    }
+    const MDRResult r = mdrConnectionConnect(_conn, _device.address.toLatin1().constData(), _device.serviceUuid.toLatin1().constData());
     if (r != MDR_RESULT_OK && r != MDR_RESULT_INPROGRESS) {
         qCInfo(lcHp) << "connect failed:" << mdrConnectionGetLastError(_conn);
         mdrConnectionDisconnect(_conn);
@@ -170,10 +152,16 @@ void HeadphonesService::pollConnecting()
         dropConnection(QString::fromUtf8(mdrConnectionGetLastError(_conn)));
         return;
     }
-    if (_device.kind == DeviceKind::Galaxy || _device.kind == DeviceKind::GalaxyClassic || _device.kind == DeviceKind::GalaxyLegacy)
-        _backend = std::make_unique<GalaxyBackend>(_conn, _device);
-    else
-        _backend = std::make_unique<SonyBackend>(_conn, _device);
+    startBackend();
+}
+
+void HeadphonesService::startBackend()
+{
+    _backend = createBackend(_conn, _device);
+    if (!_backend) {
+        dropConnection(QStringLiteral("no backend for this device"));
+        return;
+    }
     if (!_backend->start()) {
         dropConnection(_backend->errorString());
         return;
