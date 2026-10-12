@@ -110,3 +110,29 @@ jobs:
         with:
           files: dist/*
           generate_release_notes: true
+
+  aur:
+    if: github.ref_type == 'tag'
+    needs: [version, release]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: key
+        env:
+          AUR_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+        run: |
+          if [ -n "$AUR_KEY" ]; then echo present=true; else echo present=false; fi >> "$GITHUB_OUTPUT"
+      - name: Set version
+        if: steps.key.outputs.present == 'true'
+        run: |
+          sed -i "s/^pkgver=.*/pkgver=${{ needs.version.outputs.version }}/; s/^pkgrel=.*/pkgrel=1/" packaging/arch/PKGBUILD
+      - name: Publish to the AUR
+        if: steps.key.outputs.present == 'true'
+        uses: KSXGitHub/github-actions-deploy-aur@v4.2.0
+        with:
+          pkgname: kde-headphones
+          pkgbuild: packaging/arch/PKGBUILD
+          commit_username: ${{ secrets.AUR_USERNAME }}
+          commit_email: ${{ secrets.AUR_EMAIL }}
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: Update to ${{ needs.version.outputs.version }}
