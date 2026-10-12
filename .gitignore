@@ -8,3 +8,4 @@ packaging/arch/*.pkg.tar.*
 packaging/arch/kde-headphones/
 packaging/arch/SonyHeadphonesClient/
 packaging/arch/*.tar.gz
+.claude/
