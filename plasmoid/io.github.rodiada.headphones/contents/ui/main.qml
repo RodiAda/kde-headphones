@@ -333,6 +333,25 @@ PlasmoidItem {
         return subject
     }
 
+    function vendorName(v) {
+        switch (v) {
+        case "sony": return "Sony"
+        case "samsung": return "Samsung"
+        case "apple": return "Apple"
+        case "beats": return "Beats"
+        case "google": return "Google"
+        case "nothing": return "Nothing"
+        case "bose": return "Bose"
+        case "soundcore": return "Soundcore"
+        case "huawei": return "Huawei"
+        case "xiaomi": return "Xiaomi"
+        case "sennheiser": return "Sennheiser"
+        case "jabra": return "Jabra"
+        case "jbl": return "JBL"
+        }
+        return v ? v.charAt(0).toUpperCase() + v.slice(1) : ""
+    }
+
     function batteryIcon(level) {
         if (level < 0)
             return "battery-missing"
@@ -526,16 +545,29 @@ PlasmoidItem {
                 spacing: Kirigami.Units.smallSpacing
                 RowLayout {
                     Layout.fillWidth: true
-                    Kirigami.Heading {
-                        Layout.fillWidth: true
-                        level: 3
-                        text: root.deviceName
-                        elide: Text.ElideRight
+                    Kirigami.Icon {
+                        source: "audio-headphones"
+                        implicitWidth: Kirigami.Units.iconSizes.medium
+                        implicitHeight: implicitWidth
                     }
-                    PlasmaComponents3.Label {
-                        visible: !!root.cfg.codec
-                        text: root.cfg.codec || ""
-                        opacity: 0.7
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 0
+                        Kirigami.Heading {
+                            Layout.fillWidth: true
+                            level: 3
+                            text: root.deviceName
+                            elide: Text.ElideRight
+                        }
+                        PlasmaComponents3.Label {
+                            Layout.fillWidth: true
+                            text: [root.vendorName(root.cfg.vendor), i18n("Bluetooth"), root.cfg.codec || "",
+                                   root.cfg.firmware ? i18n("firmware %1", root.cfg.firmware) : ""]
+                                  .filter(s => s.length > 0).join(" · ")
+                            font: Kirigami.Theme.smallFont
+                            opacity: 0.7
+                            elide: Text.ElideRight
+                        }
                     }
                     Repeater {
                         model: root.hasMainBattery || root.batteries.length === 0
@@ -755,7 +787,7 @@ PlasmoidItem {
                             text: i18n("Ambient sound level")
                         }
                         PlasmaComponents3.Label {
-                            text: ambientSlider.value
+                            text: Math.round(ambientSlider.value)
                             font.features: { "tnum": 1 }
                         }
                     }
@@ -764,15 +796,13 @@ PlasmoidItem {
                         Layout.fillWidth: true
                         from: root.ambientRange ? root.ambientRange.min : 1
                         to: root.ambientRange ? root.ambientRange.max : 20
-                        stepSize: 1
-                        snapMode: PlasmaComponents3.Slider.SnapAlways
                         value: root.ambientLevel
                         onMoved: sendLevel.restart()
                         Timer {
                             id: sendLevel
                             interval: 150
                             onTriggered: {
-                                root.call("SetAmbientLevel", [new DBus.int32(ambientSlider.value)])
+                                root.call("SetAmbientLevel", [new DBus.int32(Math.round(ambientSlider.value))])
                                 ambientSlider.value = Qt.binding(() => root.ambientLevel)
                             }
                         }
@@ -871,7 +901,7 @@ PlasmoidItem {
 
                 PlasmaComponents3.ToolButton {
                     visible: root.pairedDevices.length > 0
-                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignLeft
                     icon.name: root.showPaired ? "arrow-up" : "arrow-down"
                     text: root.showPaired ? i18n("Hide other devices")
                                           : i18n("Other devices (%1)", root.pairedDevices.length)
@@ -928,14 +958,13 @@ PlasmoidItem {
                             visible: parent.pb.volume !== undefined && parent.pb.volume !== null
                             from: 0
                             to: 30
-                            stepSize: 1
                             value: parent.pb.volume || 0
                             onMoved: sendVolume.restart()
                             Timer {
                                 id: sendVolume
                                 interval: 150
                                 onTriggered: {
-                                    root.apply({ volume: volumeSlider.value })
+                                    root.apply({ volume: Math.round(volumeSlider.value) })
                                     volumeSlider.value = Qt.binding(() => (root.cfg.playback || {}).volume || 0)
                                 }
                             }
@@ -1335,8 +1364,8 @@ PlasmoidItem {
 
                 PlasmaComponents3.Label {
                     Layout.fillWidth: true
-                    text: [root.cfg.model, root.cfg.firmware ? i18n("firmware %1", root.cfg.firmware) : "", root.cfg.codec]
-                        .filter(s => !!s).join(" · ")
+                    visible: !!root.cfg.model && root.cfg.model !== root.deviceName
+                    text: root.cfg.model || ""
                     font: Kirigami.Theme.smallFont
                     opacity: 0.6
                     wrapMode: Text.WordWrap

@@ -965,3 +965,6 @@ msgstr "Подключены, ждём канал управления…"
 
 msgid "Connect"
 msgstr "Подключить"
+
+msgid "Bluetooth"
+msgstr "Bluetooth"
