@@ -968,3 +968,6 @@ msgstr "Подключить"
 
 msgid "Bluetooth"
 msgstr "Bluetooth"
+
+msgid "Power"
+msgstr "Питание"

@@ -36,6 +36,7 @@ PlasmoidItem {
     readonly property var pairedHeadphones: daemonUp && !available ? parseJson(unwrap(hp.Paired, ""), []) : []
     property bool showPaired: false
     property int currentTab: 0
+    readonly property bool hasPowerTab: !!cfg.power || !!cfg.voiceGuidance || cfg.canPowerOff === true
     property string pendingMode: ""
 
     Timer {
@@ -605,6 +606,12 @@ PlasmoidItem {
                     }
                     PlasmaComponents3.TabButton {
                         text: i18n("Settings")
+                    }
+                    Repeater {
+                        model: root.hasPowerTab ? 1 : 0
+                        delegate: PlasmaComponents3.TabButton {
+                            text: i18n("Power")
+                        }
                     }
                 }
             }
@@ -1263,10 +1270,36 @@ PlasmoidItem {
                     onChosen: v => root.apply({ connectionMode: v })
                 }
 
-                Kirigami.Separator {
+                RowLayout {
                     Layout.fillWidth: true
-                    visible: !!root.cfg.power || !!root.cfg.voiceGuidance
+                    visible: root.cfg.pairing !== undefined
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 0
+                        PlasmaComponents3.Label {
+                            Layout.fillWidth: true
+                            text: i18n("Pair a new device")
+                        }
+                        PlasmaComponents3.Label {
+                            Layout.fillWidth: true
+                            text: root.cfg.pairing === true ? i18n("Pairing mode is on; the headphones are discoverable")
+                                                            : i18n("Makes the headphones discoverable over Bluetooth")
+                            font: Kirigami.Theme.smallFont
+                            opacity: 0.7
+                            wrapMode: Text.WordWrap
+                        }
+                    }
+                    PlasmaComponents3.Button {
+                        text: root.cfg.pairing === true ? i18n("Stop") : i18n("Start")
+                        onClicked: root.apply({ pairing: root.cfg.pairing !== true })
+                    }
                 }
+            }
+
+            ColumnLayout {
+                Layout.fillWidth: true
+                visible: root.currentTab === (root.hasPowerTab ? 3 : 2)
+                spacing: Kirigami.Units.largeSpacing
 
                 SettingSwitch {
                     visible: (root.cfg.power || {}).autoPause !== undefined
@@ -1300,36 +1333,6 @@ PlasmoidItem {
                     subtitle: i18n("Spoken notifications such as battery level and mode changes")
                     checked: (root.cfg.voiceGuidance || {}).enabled === true
                     onToggled: on => root.apply({ voiceGuidance: { enabled: on } })
-                }
-
-                Kirigami.Separator {
-                    Layout.fillWidth: true
-                    visible: root.cfg.pairing !== undefined || root.cfg.canPowerOff === true
-                }
-
-                RowLayout {
-                    Layout.fillWidth: true
-                    visible: root.cfg.pairing !== undefined
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 0
-                        PlasmaComponents3.Label {
-                            Layout.fillWidth: true
-                            text: i18n("Pair a new device")
-                        }
-                        PlasmaComponents3.Label {
-                            Layout.fillWidth: true
-                            text: root.cfg.pairing === true ? i18n("Pairing mode is on; the headphones are discoverable")
-                                                            : i18n("Makes the headphones discoverable over Bluetooth")
-                            font: Kirigami.Theme.smallFont
-                            opacity: 0.7
-                            wrapMode: Text.WordWrap
-                        }
-                    }
-                    PlasmaComponents3.Button {
-                        text: root.cfg.pairing === true ? i18n("Stop") : i18n("Start")
-                        onClicked: root.apply({ pairing: root.cfg.pairing !== true })
-                    }
                 }
 
                 RowLayout {
