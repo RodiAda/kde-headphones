@@ -126,11 +126,12 @@ the lower earbud on true wireless models), `Batteries` (JSON array of `part`: ma
 of `mac`, `name`, `connected`, `order`, `active`, `self`), `DeviceAction` (JSON describing the last
 connect/disconnect: `pending` → `in-progress` → `ok` | `error` | `busy`), `Settings` (JSON with every
 supported setting; `ambient` gives the level range), `Alert` (non-empty while the headphones wait for a
-confirmation).
+confirmation), `Paired` (JSON array of paired supported headphones with `name`, `address`, `connected` and
+`state`: connecting | failed; filled only while no headphones are connected).
 
 Methods: `SetMode(s)`, `SetAmbientLevel(i)`, `SetFocusOnVoice(b)`, `CycleMode()`, `SwitchPlayback(s mac)`,
 `ConnectDevice(s mac)`, `DisconnectDevice(s mac)`, `Apply(s json)`, `Playback(s play|pause|next|previous)`,
-`PowerOff()`, `RespondToAlert(b)`.
+`PowerOff()`, `RespondToAlert(b)`, `ConnectHeadphones(s address)` (asks BlueZ to connect paired headphones).
 
 `Apply` takes a partial object with the same shape as `Settings`:
 

@@ -5,6 +5,9 @@
 #include <QDBusMessage>
 #include <QDBusMetaType>
 #include <QDBusObjectPath>
+#include <QDBusPendingCallWatcher>
+#include <QDBusPendingReply>
+#include <QJsonObject>
 #include <QJsonDocument>
 
 #include <algorithm>
@@ -88,7 +91,7 @@ void HeadphonesService::tick()
     publishState();
 }
 
-std::optional<DeviceInfo> HeadphonesService::findConnectedDevice() const
+std::optional<DeviceInfo> HeadphonesService::findConnectedDevice()
 {
     auto call = QDBusMessage::createMethodCall(QStringLiteral("org.bluez"), QStringLiteral("/"),
                                                QStringLiteral("org.freedesktop.DBus.ObjectManager"),
@@ -99,6 +102,28 @@ std::optional<DeviceInfo> HeadphonesService::findConnectedDevice() const
 
     ManagedObjects objects;
     reply.arguments().constFirst().value<QDBusArgument>() >> objects;
+    const auto services = knownServices();
+    auto knownFor = [&](const QVariantMap &dev) {
+        const QStringList uuids = dev.value(QStringLiteral("UUIDs")).toStringList();
+        const QString alias = dev.value(QStringLiteral("Alias")).toString();
+        return std::find_if(services.begin(), services.end(), [&](const KnownService &s) {
+            return (!s.uuid || uuids.contains(QString::fromLatin1(s.uuid), Qt::CaseInsensitive))
+                && (!s.nameHint || alias.contains(QLatin1String(s.nameHint), Qt::CaseInsensitive));
+        });
+    };
+    QJsonArray paired;
+    _pairedPaths.clear();
+    for (auto obj = objects.cbegin(); obj != objects.cend(); ++obj) {
+        const auto dev = obj->constFind(QStringLiteral("org.bluez.Device1"));
+        if (dev == obj->cend() || !dev->value(QStringLiteral("Paired")).toBool() || knownFor(*dev) == services.end())
+            continue;
+        const QString address = dev->value(QStringLiteral("Address")).toString();
+        _pairedPaths.insert(address, obj.key().path());
+        paired.append(QJsonObject{{QStringLiteral("name"), dev->value(QStringLiteral("Alias")).toString()},
+                                  {QStringLiteral("address"), address},
+                                  {QStringLiteral("connected"), dev->value(QStringLiteral("Connected")).toBool()}});
+    }
+    _paired = paired;
     for (const InterfaceMap &ifaces : std::as_const(objects)) {
         const auto dev = ifaces.constFind(QStringLiteral("org.bluez.Device1"));
         if (dev == ifaces.cend() || !dev->value(QStringLiteral("Connected")).toBool())
@@ -106,13 +131,8 @@ std::optional<DeviceInfo> HeadphonesService::findConnectedDevice() const
         const auto failed = _failedDevices.constFind(dev->value(QStringLiteral("Address")).toString());
         if (failed != _failedDevices.cend() && failed->elapsed() < FailedDeviceBackoffMs)
             continue;
-        const QStringList uuids = dev->value(QStringLiteral("UUIDs")).toStringList();
         const QString alias = dev->value(QStringLiteral("Alias")).toString();
-        const auto services = knownServices();
-        const auto known = std::find_if(services.begin(), services.end(), [&](const KnownService &s) {
-            return (!s.uuid || uuids.contains(QString::fromLatin1(s.uuid), Qt::CaseInsensitive))
-                && (!s.nameHint || alias.contains(QLatin1String(s.nameHint), Qt::CaseInsensitive));
-        });
+        const auto known = knownFor(*dev);
         if (known == services.end())
             continue;
         const QString adapterPath = dev->value(QStringLiteral("Adapter")).value<QDBusObjectPath>().path();
@@ -216,6 +236,17 @@ void HeadphonesService::publishState()
     s[QStringLiteral("DeviceAction")] = compact(snap.deviceAction);
     s[QStringLiteral("Settings")] = up ? compact(settings) : QString();
     s[QStringLiteral("Alert")] = snap.alert;
+    QJsonArray paired;
+    for (const QJsonValue &v : std::as_const(_paired)) {
+        QJsonObject d = v.toObject();
+        const QString address = d.value(QStringLiteral("address")).toString();
+        if (address == _connectingAddress)
+            d[QStringLiteral("state")] = QStringLiteral("connecting");
+        else if (address == _failedAddress)
+            d[QStringLiteral("state")] = QStringLiteral("failed");
+        paired.append(d);
+    }
+    s[QStringLiteral("Paired")] = up ? QString() : compact(paired);
 
     QVariantMap changed;
     for (auto it = s.cbegin(); it != s.cend(); ++it) {
@@ -326,4 +357,38 @@ void HeadphonesService::RespondToAlert(bool accept)
 {
     if (Backend *b = requireReady())
         reply(b->respondToAlert(accept));
+}
+
+void HeadphonesService::ConnectHeadphones(const QString &address)
+{
+    const QString path = _pairedPaths.value(address);
+    if (path.isEmpty()) {
+        if (calledFromDBus())
+            sendErrorReply(QDBusError::InvalidArgs, QStringLiteral("Unknown headphones"));
+        return;
+    }
+    _connectingAddress = address;
+    _failedAddress.clear();
+    publishState();
+    auto call = QDBusMessage::createMethodCall(QStringLiteral("org.bluez"), path, QStringLiteral("org.bluez.Device1"),
+                                               QStringLiteral("Connect"));
+    auto *watcher = new QDBusPendingCallWatcher(QDBusConnection::systemBus().asyncCall(call, 30000), this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, address](QDBusPendingCallWatcher *w) {
+        const QDBusPendingReply<> r = *w;
+        w->deleteLater();
+        if (_connectingAddress == address)
+            _connectingAddress.clear();
+        if (r.isError()) {
+            qCInfo(lcHp) << "bluez connect failed:" << r.error().message();
+            _failedAddress = address;
+            QTimer::singleShot(10000, this, [this, address] {
+                if (_failedAddress == address) {
+                    _failedAddress.clear();
+                    publishState();
+                }
+            });
+        }
+        _sinceConnectAttempt.invalidate();
+        publishState();
+    });
 }

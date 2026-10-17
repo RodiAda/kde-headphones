@@ -33,6 +33,7 @@ PlasmoidItem {
     readonly property var batteries: available ? parseJson(unwrap(hp.Batteries, ""), []) : []
     readonly property bool hasMainBattery: batteries.some(b => b.part === "main")
     readonly property var modes: available ? parseJson(unwrap(hp.Modes, ""), []) : []
+    readonly property var pairedHeadphones: daemonUp && !available ? parseJson(unwrap(hp.Paired, ""), []) : []
     property bool showPaired: false
     property int currentTab: 0
     property string pendingMode: ""
@@ -513,7 +514,7 @@ PlasmoidItem {
             Screen.desktopAvailableHeight * 0.8)
         Layout.minimumWidth: Kirigami.Units.gridUnit * 22
         Layout.preferredWidth: Layout.minimumWidth
-        Layout.minimumHeight: root.available ? contentFitHeight : placeholder.implicitHeight + Kirigami.Units.gridUnit * 2
+        Layout.minimumHeight: root.available ? contentFitHeight : disconnectedView.implicitHeight + Kirigami.Units.gridUnit * 2
         Layout.preferredHeight: Layout.minimumHeight
         Layout.maximumHeight: Layout.minimumHeight
 
@@ -577,16 +578,70 @@ PlasmoidItem {
             }
         }
 
-        PlasmaExtras.PlaceholderMessage {
-            id: placeholder
+        ColumnLayout {
+            id: disconnectedView
             anchors.centerIn: parent
             width: parent.width - Kirigami.Units.gridUnit * 2
             visible: !root.available
-            iconName: "audio-headphones"
-            text: root.daemonUp ? i18n("Headphones not connected") : i18n("Service not running")
-            explanation: root.daemonUp
-                ? i18n("Connect the headphones over Bluetooth. If they are also connected to a phone, close the headphones app there (Sound Connect, Galaxy Wearable).")
-                : i18n("Start it with:\nsystemctl --user start headphonesd")
+            spacing: Kirigami.Units.largeSpacing
+
+            PlasmaExtras.PlaceholderMessage {
+                id: placeholder
+                Layout.fillWidth: true
+                iconName: "audio-headphones"
+                text: root.daemonUp ? i18n("Headphones not connected") : i18n("Service not running")
+                explanation: !root.daemonUp
+                    ? i18n("Start it with:\nsystemctl --user start headphonesd")
+                    : root.pairedHeadphones.length > 0
+                        ? i18n("If the headphones are also connected to a phone, close the headphones app there (Sound Connect, Galaxy Wearable).")
+                        : i18n("Connect the headphones over Bluetooth. If they are also connected to a phone, close the headphones app there (Sound Connect, Galaxy Wearable).")
+            }
+
+            Repeater {
+                model: root.pairedHeadphones
+                delegate: RowLayout {
+                    required property var modelData
+                    Layout.fillWidth: true
+                    Kirigami.Icon {
+                        source: "audio-headphones"
+                        implicitWidth: Kirigami.Units.iconSizes.medium
+                        implicitHeight: implicitWidth
+                    }
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 0
+                        PlasmaComponents3.Label {
+                            Layout.fillWidth: true
+                            text: modelData.name
+                            elide: Text.ElideRight
+                        }
+                        PlasmaComponents3.Label {
+                            Layout.fillWidth: true
+                            visible: text.length > 0
+                            text: modelData.state === "connecting" ? i18n("Connecting…")
+                                : modelData.state === "failed" ? i18n("Could not connect. Make sure the headphones are on and nearby.")
+                                : modelData.connected ? i18n("Connected, waiting for the control channel…")
+                                : ""
+                            font: Kirigami.Theme.smallFont
+                            opacity: 0.7
+                            wrapMode: Text.WordWrap
+                        }
+                    }
+                    PlasmaComponents3.BusyIndicator {
+                        visible: modelData.state === "connecting"
+                        implicitWidth: Kirigami.Units.iconSizes.small
+                        implicitHeight: implicitWidth
+                        running: visible
+                    }
+                    PlasmaComponents3.Button {
+                        visible: !modelData.connected
+                        enabled: modelData.state !== "connecting"
+                        icon.name: "network-connect"
+                        text: i18n("Connect")
+                        onClicked: root.call("ConnectHeadphones", [new DBus.string(modelData.address)])
+                    }
+                }
+            }
         }
 
         PlasmaComponents3.ScrollView {

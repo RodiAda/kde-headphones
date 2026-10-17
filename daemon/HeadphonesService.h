@@ -3,6 +3,7 @@
 #include <QDBusContext>
 #include <QElapsedTimer>
 #include <QHash>
+#include <QJsonArray>
 #include <QObject>
 #include <QTimer>
 #include <QVariantMap>
@@ -33,6 +34,7 @@ class HeadphonesService : public QObject, protected QDBusContext
     Q_PROPERTY(QString DeviceAction READ deviceAction)
     Q_PROPERTY(QString Settings READ settings)
     Q_PROPERTY(QString Alert READ alert)
+    Q_PROPERTY(QString Paired READ paired)
 
 public:
     static constexpr auto Service = "io.github.rodiada.Headphones";
@@ -55,6 +57,7 @@ public:
     QString deviceAction() const { return value("DeviceAction").toString(); }
     QString settings() const { return value("Settings").toString(); }
     QString alert() const { return value("Alert").toString(); }
+    QString paired() const { return value("Paired").toString(); }
 
 public Q_SLOTS:
     void SetMode(const QString &mode);
@@ -68,6 +71,7 @@ public Q_SLOTS:
     void Playback(const QString &action);
     void PowerOff();
     void RespondToAlert(bool accept);
+    void ConnectHeadphones(const QString &address);
 
 private:
     enum class Link { Idle, Connecting, Connected };
@@ -85,7 +89,7 @@ private:
     void publishState();
     Backend *requireReady();
     void reply(const QDBusError &error);
-    std::optional<DeviceInfo> findConnectedDevice() const;
+    std::optional<DeviceInfo> findConnectedDevice();
 
     MDRConnectionLinux *_linux = nullptr;
     MDRConnection *_conn = nullptr;
@@ -99,4 +103,8 @@ private:
     bool _deviceReady = false;
 
     QVariantMap _state;
+    QJsonArray _paired;
+    QHash<QString, QString> _pairedPaths;
+    QString _connectingAddress;
+    QString _failedAddress;
 };

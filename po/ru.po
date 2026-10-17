@@ -953,3 +953,15 @@ msgstr "Выключить…"
 #: plasmoid/io.github.rodiada.headphones/contents/ui/main.qml:1263
 msgid "firmware %1"
 msgstr "прошивка %1"
+
+msgid "If the headphones are also connected to a phone, close the headphones app there (Sound Connect, Galaxy Wearable)."
+msgstr "Если наушники подключены ещё и к телефону, закройте там приложение для наушников (Sound Connect, Galaxy Wearable)."
+
+msgid "Could not connect. Make sure the headphones are on and nearby."
+msgstr "Не удалось подключиться. Проверьте, что наушники включены и рядом."
+
+msgid "Connected, waiting for the control channel…"
+msgstr "Подключены, ждём канал управления…"
+
+msgid "Connect"
+msgstr "Подключить"
