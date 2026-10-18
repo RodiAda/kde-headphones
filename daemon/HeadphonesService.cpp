@@ -30,6 +30,7 @@ constexpr auto TickInterval = 50ms;
 constexpr qint64 ReconnectIntervalMs = 5000;
 constexpr qint64 ConnectTimeoutMs = 15000;
 constexpr qint64 FailedDeviceBackoffMs = 30000;
+constexpr qint64 ReadyTimeoutMs = 20000;
 
 QString compact(const QJsonArray &a)
 {
@@ -86,6 +87,8 @@ void HeadphonesService::tick()
             _deviceReady = true;
             _failedDevices.remove(_device.address);
         }
+        if (!_deviceReady && _sinceBackendStart.elapsed() > ReadyTimeoutMs)
+            dropConnection(QStringLiteral("no response from the headphones"));
         break;
     }
     publishState();
@@ -196,6 +199,7 @@ void HeadphonesService::startBackend()
         dropConnection(_backend->errorString());
         return;
     }
+    _sinceBackendStart.start();
     qCInfo(lcHp) << "connected to" << _device.name << _device.address << "via" << _backend->vendor()
                  << (_device.kind == DeviceKind::SonyV1 ? "(MDR V1)" : "");
     _link = Link::Connected;

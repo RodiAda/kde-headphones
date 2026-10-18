@@ -99,6 +99,7 @@ private:
 
     QTimer _tick;
     QElapsedTimer _sinceConnectAttempt;
+    QElapsedTimer _sinceBackendStart;
     QHash<QString, QElapsedTimer> _failedDevices;
     bool _deviceReady = false;
 
