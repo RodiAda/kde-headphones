@@ -1,14 +1,14 @@
 # Maintainer: Rodion Adamenok <https://github.com/RodiAda>
 
 pkgname=kde-headphones
-pkgver=0.4.3
+pkgver=0.4.4
 pkgrel=1
 pkgdesc="KDE Plasma tray widget for Bluetooth headphones"
 arch=('x86_64' 'aarch64')
 url="https://github.com/RodiAda/kde-headphones"
 license=('MIT')
 depends=('glibc' 'libgcc' 'libstdc++' 'qt6-base' 'qt6-declarative' 'libplasma' 'kirigami'
-         'plasma-workspace' 'dbus' 'bluez' 'bluez-libs')
+         'plasma-workspace' 'dbus' 'bluez' 'bluez-libs' 'bluez-utils')
 makedepends=('cmake' 'ninja' 'git' 'gettext')
 _fmtver=12.1.0
 source=("git+$url.git#tag=v$pkgver"

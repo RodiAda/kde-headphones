@@ -160,6 +160,11 @@ Galaxy Buds keys: `equalizer` {`preset`}, `touchLock`, `seamless`, `oneEarbudNoi
   *Noise control with one earbud* is on; the widget shows a hint in that case.
 - libmdr does not expose the connection order or the result of connect/disconnect; the daemon reads
   both from raw packets.
+- Play/pause gestures on the headphones (double tap on Sony, tap on Galaxy Buds) send separate *play* and
+  *pause* commands chosen from the playback state the computer reports over AVRCP. Without a registered
+  player the headphones guess and get out of sync whenever playback is paused elsewhere, so the gesture
+  has to be repeated. `headphonesd.service` therefore pulls in BlueZ's `mpris-proxy.service`
+  (`bluez-utils` on Arch, `bluez` on Debian and Fedora), which reports the state of MPRIS players.
 - The last Sony ambient level is kept in `~/.config/io.github.rodiada/headphonesd.conf`, because the
   headphones do not report it while noise cancelling is on.
 - Logs: `journalctl --user -u headphonesd`. Frame dumps for Galaxy Buds:
