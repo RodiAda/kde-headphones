@@ -9,7 +9,7 @@ arch=('x86_64' 'aarch64')
 url="https://github.com/RodiAda/kde-headphones"
 license=('MIT')
 depends=('glibc' 'libgcc' 'libstdc++' 'qt6-base' 'qt6-declarative' 'libplasma' 'kirigami'
-         'plasma-workspace' 'dbus' 'bluez' 'bluez-libs' 'bluez-utils')
+         'plasma-workspace' 'dbus' 'bluez' 'bluez-libs')
 makedepends=('cmake' 'ninja' 'git' 'gettext')
 provides=("$_pkgname")
 conflicts=("$_pkgname")

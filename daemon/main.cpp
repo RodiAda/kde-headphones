@@ -5,6 +5,7 @@
 
 #include <csignal>
 
+#include "AvrcpPlayer.h"
 #include "HeadphonesService.h"
 
 int main(int argc, char *argv[])
@@ -34,6 +35,9 @@ int main(int argc, char *argv[])
         qCritical("Cannot own %s (already running?): %s", HeadphonesService::Service, qPrintable(bus.lastError().message()));
         return 1;
     }
+
+    AvrcpPlayer player;
+    player.start();
 
     return app.exec();
 }

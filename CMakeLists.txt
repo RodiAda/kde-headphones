@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.31)
-project(kde-headphones VERSION 0.4.4 LANGUAGES C CXX)
+project(kde-headphones VERSION 0.4.5 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -24,6 +24,7 @@ target_link_libraries(headphones-backends PUBLIC mdr mdr::bt Qt6::Core Qt6::DBus
 add_executable(headphonesd
     daemon/main.cpp
     daemon/HeadphonesService.cpp
+    daemon/AvrcpPlayer.cpp
 )
 target_link_libraries(headphonesd PRIVATE headphones-backends)
 install(TARGETS headphonesd RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})

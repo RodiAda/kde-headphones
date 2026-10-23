@@ -161,10 +161,11 @@ Galaxy Buds keys: `equalizer` {`preset`}, `touchLock`, `seamless`, `oneEarbudNoi
 - libmdr does not expose the connection order or the result of connect/disconnect; the daemon reads
   both from raw packets.
 - Play/pause gestures on the headphones (double tap on Sony, tap on Galaxy Buds) send separate *play* and
-  *pause* commands chosen from the playback state the computer reports over AVRCP. Without a registered
-  player the headphones guess and get out of sync whenever playback is paused elsewhere, so the gesture
-  has to be repeated. `headphonesd.service` therefore pulls in BlueZ's `mpris-proxy.service`
-  (`bluez-utils` on Arch, `bluez` on Debian and Fedora), which reports the state of MPRIS players.
+  *pause* commands chosen from the playback state the computer reports over AVRCP. The daemon registers its
+  own AVRCP player with BlueZ: it reports *playing* while any local MPRIS player plays, pauses every playing
+  player and resumes the one that played last. KDE Connect players (media on the phone) are ignored, so the
+  gesture never controls the phone. BlueZ's `mpris-proxy` is not needed and should stay disabled, because it
+  exports every MPRIS player, phone ones included, and BlueZ may route the gesture to any of them.
 - The last Sony ambient level is kept in `~/.config/io.github.rodiada/headphonesd.conf`, because the
   headphones do not report it while noise cancelling is on.
 - Logs: `journalctl --user -u headphonesd`. Frame dumps for Galaxy Buds:
