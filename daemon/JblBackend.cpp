@@ -319,6 +319,8 @@ void JblGatt::evaluate(const QDBusMessage &reply)
         if (r < 0)
             continue;
         const bool hasUuid = dev->value(QStringLiteral("UUIDs")).toStringList().contains(JblServiceUuid, Qt::CaseInsensitive);
+        if (!hasUuid && !it->contains(LeBearerIface) && dev->value(QStringLiteral("Connected")).toBool())
+            continue;
         if (candidate.isEmpty() || (hasUuid && !candidateHasUuid) || (hasUuid == candidateHasUuid && r < candidateRank)) {
             candidate = it.key().path();
             candidateRank = r;
