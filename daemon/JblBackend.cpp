@@ -251,6 +251,17 @@ void JblGatt::evaluate(const QDBusMessage &reply)
         return -1;
     };
 
+    const auto classicOnly = [&](const QString &path) {
+        const InterfaceProps &obj = objects.value(QDBusObjectPath(path));
+        const QVariantMap dev = obj.value(DeviceIface);
+        const QVariantMap le = obj.value(LeBearerIface);
+        if (!dev.value(QStringLiteral("Connected")).toBool())
+            return false;
+        if (le.contains(QStringLiteral("Connected")))
+            return !le.value(QStringLiteral("Connected")).toBool() && !le.value(QStringLiteral("Paired")).toBool();
+        return !dev.value(QStringLiteral("UUIDs")).toStringList().contains(JblServiceUuid, Qt::CaseInsensitive);
+    };
+
     QString bestService;
     int bestRank = 2;
     for (auto it = objects.cbegin(); it != objects.cend(); ++it) {
@@ -259,7 +270,7 @@ void JblGatt::evaluate(const QDBusMessage &reply)
             continue;
         const QString devicePath = service->value(QStringLiteral("Device")).value<QDBusObjectPath>().path();
         const int r = rank(devicePath);
-        if (r >= 0 && r < bestRank) {
+        if (r >= 0 && r < bestRank && !classicOnly(devicePath)) {
             bestRank = r;
             bestService = it.key().path();
             _devicePath = devicePath;
@@ -317,6 +328,8 @@ void JblGatt::evaluate(const QDBusMessage &reply)
             continue;
         const int r = rank(it.key().path());
         if (r < 0)
+            continue;
+        if (classicOnly(it.key().path()))
             continue;
         const bool hasUuid = dev->value(QStringLiteral("UUIDs")).toStringList().contains(JblServiceUuid, Qt::CaseInsensitive);
         if (candidate.isEmpty() || (hasUuid && !candidateHasUuid) || (hasUuid == candidateHasUuid && r < candidateRank)) {
